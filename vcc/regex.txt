@@ -9,10 +9,12 @@ number
 [+-]?([0-9]*[.])?[0-9]+
 
 identifier
+[A-Za-z][A-Za-z0-9_]*(\.[1-9][0-9]?)?
 [A-Za-z][A-Za-z0-9_]*
 
 file
 <[^<;:" ]+>
+<[^<;:" ]+\.[^<;:" ]+>
 <[^</*?"\\:>\|]+$>
 <.*>
 
@@ -28,9 +30,9 @@ IGNORE
 
         <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
-        <READ value="[+-]?([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
-        <READ value="[A-Za-z][A-Za-z0-9_]*" token="identifier" color="#E1FFFF"/>
-        <READ value="&lt;[^&lt;/*?&quot;\\:&gt;\|]+$&gt;" token="file" color="#E1FFFF"/>
+        <READ value="([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
+        <READ value="[A-Za-z][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
+        <READ value="&lt;[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
         <READ value="[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
 

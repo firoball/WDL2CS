@@ -13,8 +13,8 @@ SimpleItem -> Identifier Identifier , SimpleParameters ;
 SimpleParameters -> String | File | File , Number , Number | File , Number , Number , Number , Number
 
 ComplexItem -> Identifier Identifier { Instructions }
-Instructions -> Instruction ; Instructions | Identifier : Instructions | EPSILON
-Instruction -> Identifier | ComplexParameters | F | S | FS | SS | SN | SK | FN | FNN | Calc | Flow
+Instructions -> Instruction ; Instructions | Identifier : Instructions | Flow Instructions | EPSILON
+Instruction -> Identifier | ComplexParameters | F | S | FS | SS | SN | SK | FN | FNN | Calc
 ComplexParameters -> Identifier ComplexParameterList
 ComplexParameterList -> ComplexParameter , ComplexParameterList | ComplexParameter
 ComplexParameter -> NumberOnly | Keyword
@@ -43,7 +43,9 @@ Comparison2 -> (Comparison) | Expression
 Cmp -> '||' | && | != | == | <= | >= | < | >
 
 Keyword -> Identifier | Identifier . number | Identifier . Identifier
-Identifier -> identifier
+
+%RANDOM is ambiguous in original WDL syntax. can be value as well as math function
+Identifier -> identifier | RANDOM 
 
 %Workaround for ambiguity of +/- operators in math expressions
 NumberSign -> OpPM | EPSILON
