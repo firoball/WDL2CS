@@ -1,0 +1,23 @@
+number
+[+-]?([0-9]*[.])?[0-9]+
+
+identifier
+[A-Za-z][A-Za-z0-9_]*
+
+file
+<.*>
+
+string
+"(.|[\r\n])*?"
+(?<=")(.|[\r\n])*?(?=")
+".*"
+
+IGNORE
+[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)
+
+        <READ value="[+-]?([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
+        <READ value="[A-Za-z][A-Za-z0-9_]*" token="identifier" color="#E1FFFF"/>
+        <READ value="&lt;.*&gt;" token="file" color="#E1FFFF"/>
+        <READ value="&quot;.*&quot;" token="string" color="#E1FFFF"/>
+        <READ value="[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
+

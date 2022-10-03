@@ -1,0 +1,49 @@
+Code -> TopSection Code | TopSection
+TopSection -> Preprocessor | Section
+Preprocessor -> IFDEF Identifier ; PreprocessorSection | IFNDEF Identifier ; PreprocessorSection 
+PreprocessorSection -> Section ENDIF; | Section IFELSE; Section ENDIF;
+Section -> SimpleItem | ComplexItem | Define | Predefined
+
+Define -> DEFINE Identifier , NumberOnly ; | DEFINE Identifier , Keyword ; | DEFINE Identifier ;
+
+Predefined -> Identifier PredefinedParameter ;
+PredefinedParameter -> NumberOnly | File | String | Keyword
+
+SimpleItem -> Identifier Identifier , SimpleParameters ;
+SimpleParameters -> String | File | File , Number , Number | File , Number , Number , Number , Number
+
+ComplexItem -> Identifier Identifier { Instructions }
+Instructions -> Instruction ; Instructions | Identifier : Instructions | EPSILON
+Instruction -> Identifier | ComplexParameters | F | S | FS | SS | SN | SK | FN | FNN | Calc | Flow
+ComplexParameters -> Identifier ComplexParameterList
+ComplexParameterList -> ComplexParameter , ComplexParameterList | ComplexParameter
+ComplexParameter -> NumberOnly | Keyword
+
+F -> Identifier File
+S -> Identifier String
+FS -> Identifier File , String
+SS -> Identifier String , String
+SN -> Identifier String , NumberOnly
+SK -> Identifier String , Keyword
+FN -> Identifier File , Number
+FNN -> Identifier File , Number , Number
+
+Calc -> Identifier Keyword Assign Expression
+Expression -> Expression3 | Expression Op Expression2 | ( Expression )
+Expression2 -> Expression3 | ( Expression )
+Expression3 -> NumberOnly | Keyword | Math ( Expression )
+Op -> + | - | * | / | % | '|' | ^ | & 
+Assign -> = | += | -= | *= | /=
+Math -> SIN | COS | TAN | ASIN | ACOS | SQRT | SIGN | ABS | INT | EXP | LOG | LOG10 | LOG2 | RANDOM
+
+Flow -> IF ( Comparison ) { Instructions } | IF ( Comparison ) { Instructions } ELSE { Instructions } | WHILE ( Comparison ) { Instructions }
+Comparison -> Expression Cmp Expression | Expression
+Cmp -> '||' | && | != | == | <= | >= | < | >
+
+Keyword -> Identifier | Identifier . number | Identifier . Identifier
+Identifier -> identifier
+%avoid reduce/shift conflicts - use NumberOnly if Identifier is already handled via parallel Keyword path
+NumberOnly -> number 
+Number -> NumberOnly | Identifier
+File -> file
+String -> string
