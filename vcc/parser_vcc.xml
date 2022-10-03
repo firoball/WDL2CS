@@ -18,11 +18,11 @@
         <READ value="%" token="Char37" color="#E1FFFF"/>
         <READ value="&amp;" token="Char38" color="#E1FFFF"/>
         <READ value="\*" token="Char42" color="#E1FFFF"/>
-        <READ value="\+" token="Char43" color="#E1FFFF"/>
-        <READ value="\-" token="Char45" color="#E1FFFF"/>
         <READ value="/" token="Char47" color="#E1FFFF"/>
         <READ value="\^" token="Char94" color="#E1FFFF"/>
-        <READ value="|" token="Char124" color="#E1FFFF"/>
+        <READ value="\|" token="Char124" color="#E1FFFF"/>
+        <READ value="\+" token="Char43" color="#E1FFFF"/>
+        <READ value="\-" token="Char45" color="#E1FFFF"/>
         <READ value="\*=" token="Char42Char61" color="#E1FFFF"/>
         <READ value="\+=" token="Char43Char61" color="#E1FFFF"/>
         <READ value="\-=" token="Char45Char61" color="#E1FFFF"/>
@@ -45,6 +45,7 @@
         <READ value="IF" token="IF" color="#E1FFFF"/>
         <READ value="ELSE" token="ELSE" color="#E1FFFF"/>
         <READ value="WHILE" token="WHILE" color="#E1FFFF"/>
+        <READ value="\(Comparison\)" token="Char40ComparisonChar41" color="#E1FFFF"/>
         <READ value="!=" token="Char33Char61" color="#E1FFFF"/>
         <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
         <READ value="&lt;" token="Char60" color="#E1FFFF"/>
@@ -52,11 +53,11 @@
         <READ value="==" token="Char61Char61" color="#E1FFFF"/>
         <READ value="&gt;" token="Char62" color="#E1FFFF"/>
         <READ value="&gt;=" token="Char62Char61" color="#E1FFFF"/>
-        <READ value="||" token="Char124Char124" color="#E1FFFF"/>
+        <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
-        <READ value="[+-]?([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
+        <READ value="([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
         <READ value="[A-Za-z][A-Za-z0-9_]*" token="identifier" color="#E1FFFF"/>
-        <READ value="&lt;.*&gt;" token="file" color="#E1FFFF"/>
+        <READ value="&lt;[^&lt;;:&quot; ]+&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
         <READ value="[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
     </SCANNER>
@@ -256,6 +257,16 @@
 
                 </CODE>
             </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Identifier"/>
+                <RULE name="Identifier"/>
+                <RULE name="SimpleParameters"/>
+                <TOKEN name="Char59"/>
+                <CODE>
+                    $$ = $1 + $2 + $3 + $4;
+
+                </CODE>
+            </RIGHTSIDE>
         </RULE>
         <RULE name="SimpleParameters" color="#FFE1FF">
             <RIGHTSIDE>
@@ -425,6 +436,15 @@
             </RIGHTSIDE>
         </RULE>
         <RULE name="ComplexParameters" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Identifier"/>
+                <TOKEN name="Char44"/>
+                <RULE name="ComplexParameterList"/>
+                <CODE>
+                    $$ = $1 + $2 + $3;
+
+                </CODE>
+            </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
                 <RULE name="ComplexParameterList"/>
@@ -668,20 +688,6 @@
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="Char43"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char45"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <TOKEN name="Char47"/>
                 <CODE>
                     $$ = $1;
@@ -697,6 +703,29 @@
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char124"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="OpPM"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="OpPM" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char43"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char45"/>
                 <CODE>
                     $$ = $1;
 
@@ -887,7 +916,7 @@
         </RULE>
         <RULE name="Comparison" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Expression"/>
+                <TOKEN name="Char40ComparisonChar41"/>
                 <CODE>
                     $$ = $1;
 
@@ -895,10 +924,33 @@
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Expression"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Comparison"/>
                 <RULE name="Cmp"/>
-                <RULE name="Expression"/>
+                <RULE name="Comparison2"/>
                 <CODE>
                     $$ = $1 + $2 + $3;
+
+                </CODE>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Comparison2" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char40ComparisonChar41"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Expression"/>
+                <CODE>
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -997,11 +1049,27 @@
                 </CODE>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="NumberOnly" color="#FFE1FF">
+        <RULE name="NumberSign" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="number"/>
+                <RULE name="OpPM"/>
                 <CODE>
                     $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <CODE>
+                    $$ = "";
+
+                </CODE>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="NumberOnly" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="NumberSign"/>
+                <TOKEN name="number"/>
+                <CODE>
+                    $$ = $1 + $2;
 
                 </CODE>
             </RIGHTSIDE>

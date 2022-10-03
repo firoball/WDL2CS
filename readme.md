@@ -1,6 +1,6 @@
 # WDL2CS
 
-WDL to C# transpiler for Acknex3
+WDL to C# transpiler for Acknex3 Engine
 
 ## What is this?
 
@@ -13,7 +13,7 @@ Workflow is as follows:
 
 ![Process](process.jpg)
 
-__Important:__ At this very early stage the transpiler __does not do anything productive__ yet. It can be tested against actual WDL files in order to verify whether parsing works as inteded or not.
+__Important:__ At this very early stage the transpiler __does not do anything productive__ yet. It can be tested against actual WDL files in order to verify whether parsing works as intended or not.
 
 ## Next steps
 

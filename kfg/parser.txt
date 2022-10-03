@@ -32,18 +32,29 @@ Calc -> Identifier Keyword Assign Expression
 Expression -> Expression3 | Expression Op Expression2 | ( Expression )
 Expression2 -> Expression3 | ( Expression )
 Expression3 -> NumberOnly | Keyword | Math ( Expression )
-Op -> + | - | * | / | % | '|' | ^ | & 
+Op -> OpPM | * | / | % | '|' | ^ | & 
+OpPM -> + | -
 Assign -> = | += | -= | *= | /=
 Math -> SIN | COS | TAN | ASIN | ACOS | SQRT | SIGN | ABS | INT | EXP | LOG | LOG10 | LOG2 | RANDOM
 
 Flow -> IF ( Comparison ) { Instructions } | IF ( Comparison ) { Instructions } ELSE { Instructions } | WHILE ( Comparison ) { Instructions }
-Comparison -> Expression Cmp Expression | Expression
+Comparison -> Comparison Cmp Comparison2 | (Comparison) | Expression
+Comparison2 -> (Comparison) | Expression
 Cmp -> '||' | && | != | == | <= | >= | < | >
 
 Keyword -> Identifier | Identifier . number | Identifier . Identifier
 Identifier -> identifier
+
+%Workaround for ambiguity of +/- operators in math expressions
+NumberSign -> OpPM | EPSILON
+
 %avoid reduce/shift conflicts - use NumberOnly if Identifier is already handled via parallel Keyword path
-NumberOnly -> number 
+NumberOnly -> NumberSign number 
 Number -> NumberOnly | Identifier
+
 File -> file
 String -> string
+
+%Compatibility patches - WDL parser allowed undefined expressions
+SimpleItem -> Identifier Identifier SimpleParameters ;
+ComplexParameters -> Identifier , ComplexParameterList
