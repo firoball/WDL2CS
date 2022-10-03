@@ -13,13 +13,15 @@ Workflow is as follows:
 
 ![Process](process.jpg)
 
-## Next Steps
+__Important:__ At this very early stage the transpiler __does not do anything productive__ yet. It can be tested against actual WDL files in order to verify whether parsing works as inteded or not.
 
-Road map:
-* define grammar and token regex <--
-* define WDL API for C#
-* add token to script generator logic
-* export C# scripts
+## Next steps
+
+High-level road map:
+* [ ] define grammar and token regex <-- __HERE__
+* [ ] define WDL API for C#
+* [ ] add token to script generator logic
+* [ ] export C# scripts
 
 
 ## Legal stuff
