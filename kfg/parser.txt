@@ -10,24 +10,30 @@ Define -> DEFINE Identifier , NumberOnly ; | DEFINE Identifier , Keyword ; | DEF
 Predefined -> Identifier PredefinedParameter ;
 PredefinedParameter -> NumberOnly | File | String | Keyword
 
-SimpleItem -> Identifier Identifier , SimpleParameters ;
-SimpleParameters -> String | File | File , Number , Number | File , Number , Number , Number , Number
+%SimpleItem -> Identifier Identifier Sep SimpleParameters ;
+%SimpleParameters -> String | File | File , Number , Number | File , Number , Number , Number , Number
+SimpleItem -> Identifier ComplexParameters ;
 
-ComplexItem -> Identifier Identifier { Instructions }
+
+ComplexItem -> Identifier Identifier Sep { Instructions }
 Instructions -> Instruction ; Instructions | Identifier : Instructions | Flow Instructions | EPSILON
-Instruction -> Identifier | ComplexParameters | F | S | FS | SS | SN | SK | FN | FNN | Calc
+%Instruction -> Identifier | ComplexParameters | F | S | FS | SS | SN | SK | FN | FNN | Calc
+Instruction -> Identifier | ComplexParameters | Calc
 ComplexParameters -> Identifier ComplexParameterList
-ComplexParameterList -> ComplexParameter , ComplexParameterList | ComplexParameter
-ComplexParameter -> NumberOnly | Keyword
+ComplexParameterList -> ComplexParameter Sep ComplexParameterList | ComplexParameter
+%ComplexParameter -> NumberOnly | Keyword
+ComplexParameter -> NumberOnly | Keyword | File | String
 
-F -> Identifier File
-S -> Identifier String
-FS -> Identifier File , String
-SS -> Identifier String , String
-SN -> Identifier String , NumberOnly
-SK -> Identifier String , Keyword
-FN -> Identifier File , Number
-FNN -> Identifier File , Number , Number
+Sep -> , | EPSILON
+
+%F -> Identifier File
+%S -> Identifier String
+%FS -> Identifier File , String
+%SS -> Identifier String , String
+%SN -> Identifier String , NumberOnly
+%SK -> Identifier String , Keyword
+%FN -> Identifier File , Number
+%FNN -> Identifier File , Number , Number
 
 Calc -> Identifier Keyword Assign Expression
 Expression -> Expr | Expression Op ExpressionRight | ( Expression )
@@ -54,7 +60,7 @@ OptionalSign -> OpPM | EPSILON
 
 %avoid reduce/shift conflicts - use NumberOnly if Identifier is already handled via parallel Keyword path
 NumberOnly -> OptionalSign number 
-Number -> NumberOnly | Identifier
+%Number -> NumberOnly | Identifier
 
 %Math function identifiers are ambiguous in original WDL syntax. can be value/variable as well as math function
 Identifier -> identifier | Math 
@@ -67,13 +73,17 @@ String -> string
 
 %Compatibility patches - WDL parser allowed syntax violating the specification
 %WDL parser allows leaving/adding commas
-SimpleItem -> Identifier Identifier SimpleParameters ;
-ComplexItem -> Identifier Identifier , { Instructions }
+%SimpleItem -> Identifier Identifier SimpleParameters ;
+%ComplexItem -> Identifier Identifier , { Instructions }
 ComplexParameters -> Identifier , ComplexParameterList
-ComplexParameterList -> ComplexParameter ComplexParameterList | ComplexParameter
+%ComplexParameterList -> ComplexParameter ComplexParameterList | ComplexParameter
 %WDL parser allows IF/WHILE without enclosing parantheses
 IfWhilePatch -> ( Comparison ) Cmp ( Comparison ) | ( Comparison ) Cmp IfWhilePatch
 Flow -> IF IfWhilePatch { Instructions } | IfWhilePatch { Instructions } ELSE { Instructions } | WHILE IfWhilePatch { Instructions }
 %WDL parser accepts isolated ELSE ... Needs to be ignored by code generator
 %Flow -> IF ( Comparison ) { Instructions } PatchInstructions ELSE { Instructions }
 %PatchInstructions -> Instruction ; PatchInstructions | Identifier : PatchInstructions
+
+%Regex patches
+%Combined assign operators += etc. may have spaces inbetween. Needs to be captured with regex and taken care of by code generator
+%Command terminator ; may be put multiple times without error. Needs to be captured with regex and taken care of by code generator
