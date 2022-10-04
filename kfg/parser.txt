@@ -1,3 +1,4 @@
+Start -> Code
 Code -> TopSection Code | TopSection
 TopSection -> Preprocessor | Section
 Preprocessor -> IFDEF Identifier ; PreprocessorSection | IFNDEF Identifier ; PreprocessorSection 
@@ -37,7 +38,9 @@ OpPM -> + | -
 Assign -> = | += | -= | *= | /=
 Math -> SIN | COS | TAN | ASIN | ACOS | SQRT | SIGN | ABS | INT | EXP | LOG | LOG10 | LOG2 | RANDOM
 
-Flow -> IF ( Comparison ) { Instructions } | IF ( Comparison ) { Instructions } ELSE { Instructions } | WHILE ( Comparison ) { Instructions }
+%WDL parser accepts isolated ELSE ... Needs to be taken care of by code generator
+%Flow -> IF ( Comparison ) { Instructions } | IF ( Comparison ) { Instructions } ELSE { Instructions } | WHILE ( Comparison ) { Instructions }
+Flow -> IF ( Comparison ) { Instructions } | ELSE { Instructions } | WHILE ( Comparison ) { Instructions }
 Comparison -> Comparison Cmp ComparisonRight | ( ComparisonNoExpr ) | Expression
 ComparisonRight -> ( ComparisonNoExpr ) | Expression
 %fix reduce/shift conflict with () in Comparison and Expression nesting
@@ -46,15 +49,17 @@ Cmp -> '||' | && | != | == | <= | >= | < | >
 
 Keyword -> Identifier | Identifier . Identifier
 
-%Math function identifiers are ambiguous in original WDL syntax. can be value/variable as well as math function
-Identifier -> identifier | Math 
-
 %Resolve ambiguity of +/- operators in math expressions
 OptionalSign -> OpPM | EPSILON
 
 %avoid reduce/shift conflicts - use NumberOnly if Identifier is already handled via parallel Keyword path
 NumberOnly -> OptionalSign number 
 Number -> NumberOnly | Identifier
+
+%Math function identifiers are ambiguous in original WDL syntax. can be value/variable as well as math function
+Identifier -> identifier | Math 
+%Note: Identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
+%Note: Identifiers support dot-separated slot index, e.g. LAYERS.1. Needs to be captured with regex and taken care of by code generator
 
 %Complex Regex terminals must be added at end of token list
 File -> file
@@ -63,8 +68,12 @@ String -> string
 %Compatibility patches - WDL parser allowed syntax violating the specification
 %WDL parser allows leaving/adding commas
 SimpleItem -> Identifier Identifier SimpleParameters ;
+ComplexItem -> Identifier Identifier , { Instructions }
 ComplexParameters -> Identifier , ComplexParameterList
 ComplexParameterList -> ComplexParameter ComplexParameterList | ComplexParameter
 %WDL parser allows IF/WHILE without enclosing parantheses
 IfWhilePatch -> ( Comparison ) Cmp ( Comparison ) | ( Comparison ) Cmp IfWhilePatch
 Flow -> IF IfWhilePatch { Instructions } | IfWhilePatch { Instructions } ELSE { Instructions } | WHILE IfWhilePatch { Instructions }
+%WDL parser accepts isolated ELSE ... Needs to be ignored by code generator
+%Flow -> IF ( Comparison ) { Instructions } PatchInstructions ELSE { Instructions }
+%PatchInstructions -> Instruction ; PatchInstructions | Identifier : PatchInstructions
