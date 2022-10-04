@@ -2,12 +2,12 @@
 <VCC>
     <CODETYPE value="C#"/>
     <SCANNER>
-        <READ value="IFDEF" token="IFDEF" color="#E1FFFF"/>
+        <READ value="(?i)IFDEF" token="IFDEF" color="#E1FFFF"/>
         <READ value=";" token="Char59" color="#E1FFFF"/>
-        <READ value="IFNDEF" token="IFNDEF" color="#E1FFFF"/>
-        <READ value="IFELSE;" token="IFELSEChar59" color="#E1FFFF"/>
-        <READ value="ENDIF;" token="ENDIFChar59" color="#E1FFFF"/>
-        <READ value="DEFINE" token="DEFINE" color="#E1FFFF"/>
+        <READ value="(?i)IFNDEF" token="IFNDEF" color="#E1FFFF"/>
+        <READ value="(?i)IFELSE;" token="IFELSEChar59" color="#E1FFFF"/>
+        <READ value="(?i)ENDIF;" token="ENDIFChar59" color="#E1FFFF"/>
+        <READ value="(?i)DEFINE" token="DEFINE" color="#E1FFFF"/>
         <READ value="," token="Char44" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
         <READ value="\}" token="Char125" color="#E1FFFF"/>
@@ -22,29 +22,28 @@
         <READ value="\|" token="Char124" color="#E1FFFF"/>
         <READ value="\+" token="Char43" color="#E1FFFF"/>
         <READ value="\-" token="Char45" color="#E1FFFF"/>
-        <READ value="\*=" token="Char42Char61" color="#E1FFFF"/>
-        <READ value="\+=" token="Char43Char61" color="#E1FFFF"/>
-        <READ value="\-=" token="Char45Char61" color="#E1FFFF"/>
-        <READ value="/=" token="Char47Char61" color="#E1FFFF"/>
+        <READ value="\*[\s\t]*=" token="Char42Char61" color="#E1FFFF"/>
+        <READ value="\+[\s\t]*=" token="Char43Char61" color="#E1FFFF"/>
+        <READ value="\-[\s\t]*=" token="Char45Char61" color="#E1FFFF"/>
+        <READ value="/[\s\t]*=" token="Char47Char61" color="#E1FFFF"/>
         <READ value="=" token="Char61" color="#E1FFFF"/>
-        <READ value="ABS" token="ABS" color="#E1FFFF"/>
-        <READ value="ACOS" token="ACOS" color="#E1FFFF"/>
-        <READ value="ASIN" token="ASIN" color="#E1FFFF"/>
-        <READ value="COS" token="COS" color="#E1FFFF"/>
-        <READ value="EXP" token="EXP" color="#E1FFFF"/>
-        <READ value="INT" token="INT" color="#E1FFFF"/>
-        <READ value="LOG" token="LOG" color="#E1FFFF"/>
-        <READ value="LOG10" token="LOG10" color="#E1FFFF"/>
-        <READ value="LOG2" token="LOG2" color="#E1FFFF"/>
-        <READ value="RANDOM" token="RANDOM" color="#E1FFFF"/>
-        <READ value="SIGN" token="SIGN" color="#E1FFFF"/>
-        <READ value="SIN" token="SIN" color="#E1FFFF"/>
-        <READ value="SQRT" token="SQRT" color="#E1FFFF"/>
-        <READ value="TAN" token="TAN" color="#E1FFFF"/>
-        <READ value="IF" token="IF" color="#E1FFFF"/>
-        <READ value="ELSE" token="ELSE" color="#E1FFFF"/>
-        <READ value="WHILE" token="WHILE" color="#E1FFFF"/>
-        <READ value="\(Comparison\)" token="Char40ComparisonChar41" color="#E1FFFF"/>
+        <READ value="(?i)ABS" token="ABS" color="#E1FFFF"/>
+        <READ value="(?i)ACOS" token="ACOS" color="#E1FFFF"/>
+        <READ value="(?i)ASIN" token="ASIN" color="#E1FFFF"/>
+        <READ value="(?i)COS" token="COS" color="#E1FFFF"/>
+        <READ value="(?i)EXP" token="EXP" color="#E1FFFF"/>
+        <READ value="(?i)INT" token="INT" color="#E1FFFF"/>
+        <READ value="(?i)LOG" token="LOG" color="#E1FFFF"/>
+        <READ value="(?i)LOG10" token="LOG10" color="#E1FFFF"/>
+        <READ value="(?i)LOG2" token="LOG2" color="#E1FFFF"/>
+        <READ value="(?i)RANDOM" token="RANDOM" color="#E1FFFF"/>
+        <READ value="(?i)SIGN" token="SIGN" color="#E1FFFF"/>
+        <READ value="(?i)SIN" token="SIN" color="#E1FFFF"/>
+        <READ value="(?i)SQRT" token="SQRT" color="#E1FFFF"/>
+        <READ value="(?i)TAN" token="TAN" color="#E1FFFF"/>
+        <READ value="(?i)IF" token="IF" color="#E1FFFF"/>
+        <READ value="(?i)ELSE" token="ELSE" color="#E1FFFF"/>
+        <READ value="(?i)WHILE" token="WHILE" color="#E1FFFF"/>
         <READ value="!=" token="Char33Char61" color="#E1FFFF"/>
         <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
         <READ value="&lt;" token="Char60" color="#E1FFFF"/>
@@ -54,8 +53,8 @@
         <READ value="&gt;=" token="Char62Char61" color="#E1FFFF"/>
         <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
-        <READ value="([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
         <READ value="[A-Za-z][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
+        <READ value="([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
         <READ value="&lt;[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
         <READ value="[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
@@ -330,6 +329,11 @@
                 <RULE name="ComplexParameter"/>
                 <CODE/>
             </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="ComplexParameter"/>
+                <RULE name="ComplexParameterList"/>
+                <CODE/>
+            </RIGHTSIDE>
         </RULE>
         <RULE name="ComplexParameter" color="#FFE1FF">
             <RIGHTSIDE>
@@ -428,17 +432,17 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Expression3"/>
+                <RULE name="Expr"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Expression"/>
                 <RULE name="Op"/>
-                <RULE name="Expression2"/>
+                <RULE name="ExpressionRight"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Expression2" color="#FFE1FF">
+        <RULE name="ExpressionRight" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="Char40"/>
                 <RULE name="Expression"/>
@@ -446,12 +450,13 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Expression3"/>
+                <RULE name="Expr"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Expression3" color="#FFE1FF">
+        <RULE name="Expr" color="#FFE1FF">
             <RIGHTSIDE>
+                <RULE name="OptionalSign"/>
                 <RULE name="Math"/>
                 <TOKEN name="Char40"/>
                 <RULE name="Expression"/>
@@ -459,6 +464,7 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <RULE name="OptionalSign"/>
                 <RULE name="Keyword"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -603,6 +609,17 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <RULE name="IfWhilePatch"/>
+                <TOKEN name="Char123"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="Char125"/>
+                <TOKEN name="ELSE"/>
+                <TOKEN name="Char123"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="Char125"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <TOKEN name="IF"/>
                 <TOKEN name="Char40"/>
                 <RULE name="Comparison"/>
@@ -622,10 +639,28 @@
                 <TOKEN name="Char125"/>
                 <CODE/>
             </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="IF"/>
+                <RULE name="IfWhilePatch"/>
+                <TOKEN name="Char123"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="Char125"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="WHILE"/>
+                <RULE name="IfWhilePatch"/>
+                <TOKEN name="Char123"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="Char125"/>
+                <CODE/>
+            </RIGHTSIDE>
         </RULE>
         <RULE name="Comparison" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="Char40ComparisonChar41"/>
+                <TOKEN name="Char40"/>
+                <RULE name="ComparisonNoExpr"/>
+                <TOKEN name="Char41"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
@@ -635,17 +670,33 @@
             <RIGHTSIDE>
                 <RULE name="Comparison"/>
                 <RULE name="Cmp"/>
-                <RULE name="Comparison2"/>
+                <RULE name="ComparisonRight"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Comparison2" color="#FFE1FF">
+        <RULE name="ComparisonRight" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="Char40ComparisonChar41"/>
+                <TOKEN name="Char40"/>
+                <RULE name="ComparisonNoExpr"/>
+                <TOKEN name="Char41"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Expression"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="ComparisonNoExpr" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char40"/>
+                <RULE name="ComparisonNoExpr"/>
+                <TOKEN name="Char41"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Comparison"/>
+                <RULE name="Cmp"/>
+                <RULE name="ComparisonRight"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -687,12 +738,6 @@
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
                 <TOKEN name="Char46"/>
-                <TOKEN name="number"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Identifier"/>
-                <TOKEN name="Char46"/>
                 <RULE name="Identifier"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -703,15 +748,15 @@
         </RULE>
         <RULE name="Identifier" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="RANDOM"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <TOKEN name="identifier"/>
                 <CODE/>
             </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Math"/>
+                <CODE/>
+            </RIGHTSIDE>
         </RULE>
-        <RULE name="NumberSign" color="#FFE1FF">
+        <RULE name="OptionalSign" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="OpPM"/>
                 <CODE/>
@@ -722,7 +767,7 @@
         </RULE>
         <RULE name="NumberOnly" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="NumberSign"/>
+                <RULE name="OptionalSign"/>
                 <TOKEN name="number"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -746,6 +791,26 @@
         <RULE name="String" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="string"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="IfWhilePatch" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char40"/>
+                <RULE name="Comparison"/>
+                <TOKEN name="Char41"/>
+                <RULE name="Cmp"/>
+                <TOKEN name="Char40"/>
+                <RULE name="Comparison"/>
+                <TOKEN name="Char41"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char40"/>
+                <RULE name="Comparison"/>
+                <TOKEN name="Char41"/>
+                <RULE name="Cmp"/>
+                <RULE name="IfWhilePatch"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>

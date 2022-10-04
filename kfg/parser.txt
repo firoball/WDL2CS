@@ -29,34 +29,42 @@ FN -> Identifier File , Number
 FNN -> Identifier File , Number , Number
 
 Calc -> Identifier Keyword Assign Expression
-Expression -> Expression3 | Expression Op Expression2 | ( Expression )
-Expression2 -> Expression3 | ( Expression )
-Expression3 -> NumberOnly | Keyword | Math ( Expression )
+Expression -> Expr | Expression Op ExpressionRight | ( Expression )
+ExpressionRight -> Expr | ( Expression )
+Expr -> NumberOnly | OptionalSign Keyword | OptionalSign Math ( Expression )
 Op -> OpPM | * | / | % | '|' | ^ | & 
 OpPM -> + | -
 Assign -> = | += | -= | *= | /=
 Math -> SIN | COS | TAN | ASIN | ACOS | SQRT | SIGN | ABS | INT | EXP | LOG | LOG10 | LOG2 | RANDOM
 
 Flow -> IF ( Comparison ) { Instructions } | IF ( Comparison ) { Instructions } ELSE { Instructions } | WHILE ( Comparison ) { Instructions }
-Comparison -> Comparison Cmp Comparison2 | (Comparison) | Expression
-Comparison2 -> (Comparison) | Expression
+Comparison -> Comparison Cmp ComparisonRight | ( ComparisonNoExpr ) | Expression
+ComparisonRight -> ( ComparisonNoExpr ) | Expression
+%fix reduce/shift conflict with () in Comparison and Expression nesting
+ComparisonNoExpr -> Comparison Cmp ComparisonRight | ( ComparisonNoExpr )
 Cmp -> '||' | && | != | == | <= | >= | < | >
 
-Keyword -> Identifier | Identifier . number | Identifier . Identifier
+Keyword -> Identifier | Identifier . Identifier
 
-%RANDOM is ambiguous in original WDL syntax. can be value as well as math function
-Identifier -> identifier | RANDOM 
+%Math function identifiers are ambiguous in original WDL syntax. can be value/variable as well as math function
+Identifier -> identifier | Math 
 
-%Workaround for ambiguity of +/- operators in math expressions
-NumberSign -> OpPM | EPSILON
+%Resolve ambiguity of +/- operators in math expressions
+OptionalSign -> OpPM | EPSILON
 
 %avoid reduce/shift conflicts - use NumberOnly if Identifier is already handled via parallel Keyword path
-NumberOnly -> NumberSign number 
+NumberOnly -> OptionalSign number 
 Number -> NumberOnly | Identifier
 
+%Complex Regex terminals must be added at end of token list
 File -> file
 String -> string
 
-%Compatibility patches - WDL parser allowed undefined expressions
+%Compatibility patches - WDL parser allowed syntax violating the specification
+%WDL parser allows leaving/adding commas
 SimpleItem -> Identifier Identifier SimpleParameters ;
 ComplexParameters -> Identifier , ComplexParameterList
+ComplexParameterList -> ComplexParameter ComplexParameterList | ComplexParameter
+%WDL parser allows IF/WHILE without enclosing parantheses
+IfWhilePatch -> ( Comparison ) Cmp ( Comparison ) | ( Comparison ) Cmp IfWhilePatch
+Flow -> IF IfWhilePatch { Instructions } | IfWhilePatch { Instructions } ELSE { Instructions } | WHILE IfWhilePatch { Instructions }
