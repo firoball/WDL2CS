@@ -2,43 +2,31 @@ Start -> Code
 Code -> TopSection Code | TopSection
 TopSection -> Preprocessor | Section
 Preprocessor -> IFDEF Identifier ; PreprocessorSection | IFNDEF Identifier ; PreprocessorSection 
-PreprocessorSection -> Section ENDIF; | Section IFELSE; Section ENDIF;
+PreprocessorSection -> Sections ENDIF; | Sections IFELSE; Sections ENDIF;
+Sections -> Section Sections | EPSILON
 Section -> SimpleItem | ComplexItem | Define | Predefined
 
-Define -> DEFINE Identifier , NumberOnly ; | DEFINE Identifier , Keyword ; | DEFINE Identifier ;
+Define -> DEFINE Identifier , Number ; | DEFINE Identifier , Keyword ; | DEFINE Identifier ;
 
 Predefined -> Identifier PredefinedParameter ;
-PredefinedParameter -> NumberOnly | File | String | Keyword
+PredefinedParameter -> Number | File | String | Keyword
 
-%SimpleItem -> Identifier Identifier Sep SimpleParameters ;
-%SimpleParameters -> String | File | File , Number , Number | File , Number , Number , Number , Number
-SimpleItem -> Identifier ComplexParameters ;
-
+SimpleItem -> Identifier Parameters ;
 
 ComplexItem -> Identifier Identifier Sep { Instructions }
 Instructions -> Instruction ; Instructions | Identifier : Instructions | Flow Instructions | EPSILON
-%Instruction -> Identifier | ComplexParameters | F | S | FS | SS | SN | SK | FN | FNN | Calc
-Instruction -> Identifier | ComplexParameters | Calc
-ComplexParameters -> Identifier ComplexParameterList
-ComplexParameterList -> ComplexParameter Sep ComplexParameterList | ComplexParameter
-%ComplexParameter -> NumberOnly | Keyword
-ComplexParameter -> NumberOnly | Keyword | File | String
+Instruction -> Identifier | Parameters | Calc
+
+Parameters -> Identifier ParameterList
+ParameterList -> Parameter Sep ParameterList | Parameter
+Parameter -> Number | Keyword | File | String
 
 Sep -> , | EPSILON
-
-%F -> Identifier File
-%S -> Identifier String
-%FS -> Identifier File , String
-%SS -> Identifier String , String
-%SN -> Identifier String , NumberOnly
-%SK -> Identifier String , Keyword
-%FN -> Identifier File , Number
-%FNN -> Identifier File , Number , Number
 
 Calc -> Identifier Keyword Assign Expression
 Expression -> Expr | Expression Op ExpressionRight | ( Expression )
 ExpressionRight -> Expr | ( Expression )
-Expr -> NumberOnly | OptionalSign Keyword | OptionalSign Math ( Expression )
+Expr -> Number | OptionalSign Keyword | OptionalSign Math ( Expression )
 Op -> OpPM | * | / | % | '|' | ^ | & 
 OpPM -> + | -
 Assign -> = | += | -= | *= | /=
@@ -51,16 +39,18 @@ Comparison -> Comparison Cmp ComparisonRight | ( ComparisonNoExpr ) | Expression
 ComparisonRight -> ( ComparisonNoExpr ) | Expression
 %fix reduce/shift conflict with () in Comparison and Expression nesting
 ComparisonNoExpr -> Comparison Cmp ComparisonRight | ( ComparisonNoExpr )
-Cmp -> '||' | && | != | == | <= | >= | < | >
+Cmp -> '||' | && | != | == | <= | >= | < | > 
+
+%Comparison -> ComparisonHack '|' ComparisonRight
+%ComparisonHack -> Comparison Cmp ComparisonHack | Expr | ( ComparisonNoExpr )
 
 Keyword -> Identifier | Identifier . Identifier
 
 %Resolve ambiguity of +/- operators in math expressions
 OptionalSign -> OpPM | EPSILON
 
-%avoid reduce/shift conflicts - use NumberOnly if Identifier is already handled via parallel Keyword path
-NumberOnly -> OptionalSign number 
-%Number -> NumberOnly | Identifier
+%avoid reduce/shift conflicts - make sign optional and separated
+Number -> OptionalSign number 
 
 %Math function identifiers are ambiguous in original WDL syntax. can be value/variable as well as math function
 Identifier -> identifier | Math 
@@ -73,17 +63,14 @@ String -> string
 
 %Compatibility patches - WDL parser allowed syntax violating the specification
 %WDL parser allows leaving/adding commas
-%SimpleItem -> Identifier Identifier SimpleParameters ;
-%ComplexItem -> Identifier Identifier , { Instructions }
-ComplexParameters -> Identifier , ComplexParameterList
-%ComplexParameterList -> ComplexParameter ComplexParameterList | ComplexParameter
+Parameters -> Identifier , ParameterList
 %WDL parser allows IF/WHILE without enclosing parantheses
 IfWhilePatch -> ( Comparison ) Cmp ( Comparison ) | ( Comparison ) Cmp IfWhilePatch
 Flow -> IF IfWhilePatch { Instructions } | IfWhilePatch { Instructions } ELSE { Instructions } | WHILE IfWhilePatch { Instructions }
 %WDL parser accepts isolated ELSE ... Needs to be ignored by code generator
-%Flow -> IF ( Comparison ) { Instructions } PatchInstructions ELSE { Instructions }
-%PatchInstructions -> Instruction ; PatchInstructions | Identifier : PatchInstructions
 
-%Regex patches
-%Combined assign operators += etc. may have spaces inbetween. Needs to be captured with regex and taken care of by code generator
-%Command terminator ; may be put multiple times without error. Needs to be captured with regex and taken care of by code generator
+%Regex patches - Odd behavior captured with regex and needs to be taken care of by code generator
+%Combined assign operators += etc. may have spaces inbetween. 
+%Command terminator ; may be put multiple times without error. 
+%comma separator may be put at end of instruction right before ;. 
+%a false ; may be put right after closing curly brace.

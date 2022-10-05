@@ -39,14 +39,14 @@ IGNORE
 [\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)
 
         <READ value="(?i)IFDEF" token="IFDEF" color="#E1FFFF"/>
-        <READ value=";+" token="Char59" color="#E1FFFF"/>
+        <READ value="(,[\s\t]*)?;+" token="Char59" color="#E1FFFF"/>
         <READ value="(?i)IFNDEF" token="IFNDEF" color="#E1FFFF"/>
         <READ value="(?i)IFELSE;" token="IFELSEChar59" color="#E1FFFF"/>
         <READ value="(?i)ENDIF;" token="ENDIFChar59" color="#E1FFFF"/>
         <READ value="(?i)DEFINE" token="DEFINE" color="#E1FFFF"/>
         <READ value="," token="Char44" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
-        <READ value="\}" token="Char125" color="#E1FFFF"/>
+        <READ value="\}([\t\s]*;+)?" token="Char125" color="#E1FFFF"/>
         <READ value=":" token="Char58" color="#E1FFFF"/>
         <READ value="\(" token="Char40" color="#E1FFFF"/>
         <READ value="\)" token="Char41" color="#E1FFFF"/>
