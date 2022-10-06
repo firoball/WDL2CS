@@ -59,7 +59,7 @@
         <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
         <READ value="([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
         <READ value="[A-Za-z0-9][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
-        <READ value="&lt;[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+&gt;" token="file" color="#E1FFFF"/>
+        <READ value="&lt;[\s]?[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+[\s]?&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
         <READ value="[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
     </SCANNER>
@@ -67,28 +67,43 @@
     <RULES>
         <RULE name="Start" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Code"/>
+                <RULE name="Sections"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Code" color="#FFE1FF">
-            <RIGHTSIDE>
-                <RULE name="TopSection"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="TopSection"/>
-                <RULE name="Code"/>
-                <CODE/>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="TopSection" color="#FFE1FF">
+        <RULE name="Sections" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Section"/>
+                <RULE name="Sections"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Section" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Include"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Predefined"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Preprocessor"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="SimpleItem"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="ComplexItem"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Define"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -122,35 +137,33 @@
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Sections" color="#FFE1FF">
+        <RULE name="PreprocInst" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Section"/>
-                <RULE name="Sections"/>
+                <TOKEN name="IFDEF"/>
+                <RULE name="Identifier"/>
+                <TOKEN name="Char59"/>
+                <RULE name="PreprocInstSection"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <TOKEN name="IFNDEF"/>
+                <RULE name="Identifier"/>
+                <TOKEN name="Char59"/>
+                <RULE name="PreprocInstSection"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Section" color="#FFE1FF">
+        <RULE name="PreprocInstSection" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Include"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="IFELSEChar59"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="ENDIFChar59"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Predefined"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Define"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="SimpleItem"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ComplexItem"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="ENDIFChar59"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -159,15 +172,13 @@
                 <TOKEN name="DEFINE"/>
                 <RULE name="Identifier"/>
                 <TOKEN name="Char44"/>
-                <RULE name="Keyword"/>
+                <RULE name="Parameter"/>
                 <TOKEN name="Char59"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="DEFINE"/>
                 <RULE name="Identifier"/>
-                <TOKEN name="Char44"/>
-                <RULE name="Number"/>
                 <TOKEN name="Char59"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -175,11 +186,6 @@
                 <TOKEN name="UNDEF"/>
                 <RULE name="Identifier"/>
                 <TOKEN name="Char59"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="DEFINE"/>
-                <RULE name="Identifier"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -251,6 +257,11 @@
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Flow"/>
+                <RULE name="Instructions"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="PreprocInst"/>
                 <RULE name="Instructions"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -530,6 +541,10 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <TOKEN name="Char43"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <TOKEN name="Char45"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -538,12 +553,12 @@
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
                 <RULE name="Keyword"/>
-                <RULE name="Assign"/>
+                <RULE name="OpAssign"/>
                 <RULE name="Expression"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Assign" color="#FFE1FF">
+        <RULE name="OpAssign" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="Char42Char61"/>
                 <CODE/>

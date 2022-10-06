@@ -1,22 +1,26 @@
-Start -> Code
-Code -> TopSection Code | TopSection
-TopSection -> Preprocessor | Section
-%TODO: Preprocessor can be anywhere, also within Actions and other objects
+Start -> Sections
+
+
+Sections -> Section Sections | EPSILON
+Section -> SimpleItem | ComplexItem | Define | Include | Predefined | Preprocessor
+
 Preprocessor -> IFDEF Identifier ; PreprocessorSection | IFNDEF Identifier ; PreprocessorSection 
 PreprocessorSection -> Sections ENDIF; | Sections IFELSE; Sections ENDIF;
-Sections -> Section Sections | EPSILON
-Section -> SimpleItem | ComplexItem | Define | Include | Predefined
+PreprocInst -> IFDEF Identifier ; PreprocInstSection | IFNDEF Identifier ; PreprocInstSection 
+PreprocInstSection -> Instructions ENDIF; | Instructions IFELSE; Instructions ENDIF;
 
-Define -> DEFINE Identifier , Number ; | DEFINE Identifier , Keyword ; | DEFINE Identifier | UNDEF Identifier ;
+Define -> DEFINE Identifier , Parameter ; | DEFINE Identifier ; | UNDEF Identifier ;
 Include -> INCLUDE File ;
 
+%TODO name this properly
 Predefined -> Identifier PredefinedParameter ;
 PredefinedParameter -> Number | File | String | Keyword
 
 SimpleItem -> Identifier Parameters ;
 
+%TODO: support RULES{} which is a group of RULE statements (a = b;)
 ComplexItem -> Identifier Identifier Sep { Instructions }
-Instructions -> Instruction ; Instructions | Identifier : Instructions | Flow Instructions | EPSILON
+Instructions -> Instruction ; Instructions | Identifier : Instructions | Flow Instructions | PreprocInst Instructions | EPSILON
 Instruction -> Identifier | Parameters | Calc
 
 Parameters -> Identifier ParameterList
@@ -45,10 +49,10 @@ OpEq -> == | !=
 OpCmp -> <= | >= | < | > 
 OpTerm -> + | -
 OpFac -> / | * | %
-OpUn -> ! | - 
+OpUn -> ! | - | +
 
-Calc -> Identifier Keyword Assign Expression
-Assign -> = | += | -= | *= | /=
+Calc -> Identifier Keyword OpAssign Expression
+OpAssign -> = | += | -= | *= | /=
 Math -> SIN | COS | TAN | ASIN | ACOS | SQRT | SIGN | ABS | INT | EXP | LOG | LOG10 | LOG2 | RANDOM
 
 %WDL parser accepts isolated ELSE ... Needs to be taken care of by code generator
@@ -73,3 +77,4 @@ String -> string
 %Command terminator ; may be put multiple times without error. 
 %Comma separator may be put at end of instruction right before ;. 
 %A false ; may be put right after closing curly brace.
+%File name may have leading and traling spaces e.g. <file.wdl >. TODO: cleaner filename detection
