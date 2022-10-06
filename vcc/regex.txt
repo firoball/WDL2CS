@@ -45,19 +45,30 @@ IGNORE
         <READ value="(?i)ENDIF;" token="ENDIFChar59" color="#E1FFFF"/>
         <READ value="(?i)DEFINE" token="DEFINE" color="#E1FFFF"/>
         <READ value="," token="Char44" color="#E1FFFF"/>
+        <READ value="(?i)UNDEF" token="UNDEF" color="#E1FFFF"/>
+        <READ value="(?i)INCLUDE" token="INCLUDE" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
         <READ value="\}([\t\s]*;+)?" token="Char125" color="#E1FFFF"/>
         <READ value=":" token="Char58" color="#E1FFFF"/>
+        <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
+        <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
+        <READ value="\|" token="Char124" color="#E1FFFF"/>
+        <READ value="\^" token="Char94" color="#E1FFFF"/>
+        <READ value="&amp;" token="Char38" color="#E1FFFF"/>
         <READ value="\(" token="Char40" color="#E1FFFF"/>
         <READ value="\)" token="Char41" color="#E1FFFF"/>
-        <READ value="%" token="Char37" color="#E1FFFF"/>
-        <READ value="&amp;" token="Char38" color="#E1FFFF"/>
-        <READ value="\*" token="Char42" color="#E1FFFF"/>
-        <READ value="/" token="Char47" color="#E1FFFF"/>
-        <READ value="\^" token="Char94" color="#E1FFFF"/>
-        <READ value="\|" token="Char124" color="#E1FFFF"/>
+        <READ value="!=" token="Char33Char61" color="#E1FFFF"/>
+        <READ value="==" token="Char61Char61" color="#E1FFFF"/>
+        <READ value="&lt;" token="Char60" color="#E1FFFF"/>
+        <READ value="&lt;=" token="Char60Char61" color="#E1FFFF"/>
+        <READ value="&gt;" token="Char62" color="#E1FFFF"/>
+        <READ value="&gt;=" token="Char62Char61" color="#E1FFFF"/>
         <READ value="\+" token="Char43" color="#E1FFFF"/>
         <READ value="\-" token="Char45" color="#E1FFFF"/>
+        <READ value="%" token="Char37" color="#E1FFFF"/>
+        <READ value="\*" token="Char42" color="#E1FFFF"/>
+        <READ value="/" token="Char47" color="#E1FFFF"/>
+        <READ value="!" token="Char33" color="#E1FFFF"/>
         <READ value="\*[\s\t]*=" token="Char42Char61" color="#E1FFFF"/>
         <READ value="\+[\s\t]*=" token="Char43Char61" color="#E1FFFF"/>
         <READ value="\-[\s\t]*=" token="Char45Char61" color="#E1FFFF"/>
@@ -80,15 +91,8 @@ IGNORE
         <READ value="(?i)IF" token="IF" color="#E1FFFF"/>
         <READ value="(?i)ELSE" token="ELSE" color="#E1FFFF"/>
         <READ value="(?i)WHILE" token="WHILE" color="#E1FFFF"/>
-        <READ value="!=" token="Char33Char61" color="#E1FFFF"/>
-        <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
-        <READ value="&lt;" token="Char60" color="#E1FFFF"/>
-        <READ value="&lt;=" token="Char60Char61" color="#E1FFFF"/>
-        <READ value="==" token="Char61Char61" color="#E1FFFF"/>
-        <READ value="&gt;" token="Char62" color="#E1FFFF"/>
-        <READ value="&gt;=" token="Char62Char61" color="#E1FFFF"/>
-        <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
+        <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
         <READ value="([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
         <READ value="[A-Za-z0-9][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
         <READ value="&lt;[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+&gt;" token="file" color="#E1FFFF"/>

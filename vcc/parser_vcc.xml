@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VCC>
     <CODETYPE value="C#"/>
-    <PARSERTYPE value="LALR(1)"/>
     <SCANNER>
         <READ value="(?i)IFDEF" token="IFDEF" color="#E1FFFF"/>
         <READ value="(,[\s\t]*)?;+" token="Char59" color="#E1FFFF"/>
@@ -10,19 +9,30 @@
         <READ value="(?i)ENDIF;" token="ENDIFChar59" color="#E1FFFF"/>
         <READ value="(?i)DEFINE" token="DEFINE" color="#E1FFFF"/>
         <READ value="," token="Char44" color="#E1FFFF"/>
+        <READ value="(?i)UNDEF" token="UNDEF" color="#E1FFFF"/>
+        <READ value="(?i)INCLUDE" token="INCLUDE" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
         <READ value="\}([\t\s]*;+)?" token="Char125" color="#E1FFFF"/>
         <READ value=":" token="Char58" color="#E1FFFF"/>
+        <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
+        <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
+        <READ value="\|" token="Char124" color="#E1FFFF"/>
+        <READ value="\^" token="Char94" color="#E1FFFF"/>
+        <READ value="&amp;" token="Char38" color="#E1FFFF"/>
         <READ value="\(" token="Char40" color="#E1FFFF"/>
         <READ value="\)" token="Char41" color="#E1FFFF"/>
-        <READ value="%" token="Char37" color="#E1FFFF"/>
-        <READ value="&amp;" token="Char38" color="#E1FFFF"/>
-        <READ value="\*" token="Char42" color="#E1FFFF"/>
-        <READ value="/" token="Char47" color="#E1FFFF"/>
-        <READ value="\^" token="Char94" color="#E1FFFF"/>
-        <READ value="\|" token="Char124" color="#E1FFFF"/>
+        <READ value="!=" token="Char33Char61" color="#E1FFFF"/>
+        <READ value="==" token="Char61Char61" color="#E1FFFF"/>
+        <READ value="&lt;" token="Char60" color="#E1FFFF"/>
+        <READ value="&lt;=" token="Char60Char61" color="#E1FFFF"/>
+        <READ value="&gt;" token="Char62" color="#E1FFFF"/>
+        <READ value="&gt;=" token="Char62Char61" color="#E1FFFF"/>
         <READ value="\+" token="Char43" color="#E1FFFF"/>
         <READ value="\-" token="Char45" color="#E1FFFF"/>
+        <READ value="%" token="Char37" color="#E1FFFF"/>
+        <READ value="\*" token="Char42" color="#E1FFFF"/>
+        <READ value="/" token="Char47" color="#E1FFFF"/>
+        <READ value="!" token="Char33" color="#E1FFFF"/>
         <READ value="\*[\s\t]*=" token="Char42Char61" color="#E1FFFF"/>
         <READ value="\+[\s\t]*=" token="Char43Char61" color="#E1FFFF"/>
         <READ value="\-[\s\t]*=" token="Char45Char61" color="#E1FFFF"/>
@@ -45,66 +55,41 @@
         <READ value="(?i)IF" token="IF" color="#E1FFFF"/>
         <READ value="(?i)ELSE" token="ELSE" color="#E1FFFF"/>
         <READ value="(?i)WHILE" token="WHILE" color="#E1FFFF"/>
-        <READ value="!=" token="Char33Char61" color="#E1FFFF"/>
-        <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
-        <READ value="&lt;" token="Char60" color="#E1FFFF"/>
-        <READ value="&lt;=" token="Char60Char61" color="#E1FFFF"/>
-        <READ value="==" token="Char61Char61" color="#E1FFFF"/>
-        <READ value="&gt;" token="Char62" color="#E1FFFF"/>
-        <READ value="&gt;=" token="Char62Char61" color="#E1FFFF"/>
-        <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
+        <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
         <READ value="([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
         <READ value="[A-Za-z0-9][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
         <READ value="&lt;[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
         <READ value="[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
     </SCANNER>
-    <GLOBALCODE>
-        
-    </GLOBALCODE>
+    <GLOBALCODE/>
     <RULES>
         <RULE name="Start" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Code"/>
-                <CODE>
-                    $$ = $1;
-//Output.WriteLine($$);
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Code" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="TopSection"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="TopSection"/>
                 <RULE name="Code"/>
-                <CODE>
-                    $$ = $1 + $2;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="TopSection" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Section"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Preprocessor"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Preprocessor" color="#FFE1FF">
@@ -113,20 +98,14 @@
                 <RULE name="Identifier"/>
                 <TOKEN name="Char59"/>
                 <RULE name="PreprocessorSection"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="IFNDEF"/>
                 <RULE name="Identifier"/>
                 <TOKEN name="Char59"/>
                 <RULE name="PreprocessorSection"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="PreprocessorSection" color="#FFE1FF">
@@ -135,64 +114,44 @@
                 <TOKEN name="IFELSEChar59"/>
                 <RULE name="Sections"/>
                 <TOKEN name="ENDIFChar59"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Sections"/>
                 <TOKEN name="ENDIFChar59"/>
-                <CODE>
-                    $$ = $1 + $2;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Sections" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Section"/>
                 <RULE name="Sections"/>
-                <CODE>
-                    $$ = $1 + $2;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <CODE>
-                    $$ = "";
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Section" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Define"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <RULE name="Include"/>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Predefined"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Define"/>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="SimpleItem"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ComplexItem"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Define" color="#FFE1FF">
@@ -202,10 +161,7 @@
                 <TOKEN name="Char44"/>
                 <RULE name="Keyword"/>
                 <TOKEN name="Char59"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="DEFINE"/>
@@ -213,19 +169,26 @@
                 <TOKEN name="Char44"/>
                 <RULE name="Number"/>
                 <TOKEN name="Char59"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
-
-                </CODE>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="UNDEF"/>
+                <RULE name="Identifier"/>
+                <TOKEN name="Char59"/>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="DEFINE"/>
                 <RULE name="Identifier"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Include" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="INCLUDE"/>
+                <RULE name="File"/>
                 <TOKEN name="Char59"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Predefined" color="#FFE1FF">
@@ -233,40 +196,25 @@
                 <RULE name="Identifier"/>
                 <RULE name="PredefinedParameter"/>
                 <TOKEN name="Char59"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="PredefinedParameter" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="String"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Keyword"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Number"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="File"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="SimpleItem" color="#FFE1FF">
@@ -274,10 +222,7 @@
                 <RULE name="Identifier"/>
                 <RULE name="Parameters"/>
                 <TOKEN name="Char59"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="ComplexItem" color="#FFE1FF">
@@ -288,10 +233,7 @@
                 <TOKEN name="Char123"/>
                 <RULE name="Instructions"/>
                 <TOKEN name="Char125"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5 + $6;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Instructions" color="#FFE1FF">
@@ -299,56 +241,35 @@
                 <RULE name="Identifier"/>
                 <TOKEN name="Char58"/>
                 <RULE name="Instructions"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Instruction"/>
                 <TOKEN name="Char59"/>
                 <RULE name="Instructions"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Flow"/>
                 <RULE name="Instructions"/>
-                <CODE>
-                    $$ = $1 + $2;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <CODE>
-                    $$ = "";
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Instruction" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Calc"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Parameters"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Parameters" color="#FFE1FF">
@@ -356,81 +277,261 @@
                 <RULE name="Identifier"/>
                 <TOKEN name="Char44"/>
                 <RULE name="ParameterList"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
                 <RULE name="ParameterList"/>
-                <CODE>
-                    $$ = $1 + $2;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="ParameterList" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Parameter"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Parameter"/>
                 <RULE name="Sep"/>
                 <RULE name="ParameterList"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Parameter" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="File"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="String"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Number"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Keyword"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Sep" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="Char44"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <CODE>
-                    $$ = "";
-
-                </CODE>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Expression" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="LogicOr"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="LogicOr" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="LogicOr"/>
+                <TOKEN name="Char124Char124"/>
+                <RULE name="LogicAnd"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="LogicAnd"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="LogicAnd" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="LogicAnd"/>
+                <TOKEN name="Char38Char38"/>
+                <RULE name="BitOr"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="BitOr"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="BitOr" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="BitOr"/>
+                <TOKEN name="Char124"/>
+                <RULE name="BitXor"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="BitXor"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="BitXor" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="BitXor"/>
+                <TOKEN name="Char94"/>
+                <RULE name="BitAnd"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="BitAnd"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="BitAnd" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="BitAnd"/>
+                <TOKEN name="Char38"/>
+                <RULE name="Equality"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Equality"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Equality" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Comparison"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Equality"/>
+                <RULE name="OpEq"/>
+                <RULE name="Comparison"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Comparison" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Term"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Comparison"/>
+                <RULE name="OpCmp"/>
+                <RULE name="Term"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Term" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Factor"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Term"/>
+                <RULE name="OpTerm"/>
+                <RULE name="Factor"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Factor" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Unary"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Factor"/>
+                <RULE name="OpFac"/>
+                <RULE name="Unary"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Unary" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Primary"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="OpUn"/>
+                <RULE name="Unary"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Primary" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Math"/>
+                <TOKEN name="Char40"/>
+                <RULE name="Expression"/>
+                <TOKEN name="Char41"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char40"/>
+                <RULE name="Expression"/>
+                <TOKEN name="Char41"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="UnNumber"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Keyword"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="OpEq" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char33Char61"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char61Char61"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="OpCmp" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char60"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char60Char61"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char62"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char62Char61"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="OpTerm" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char43"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char45"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="OpFac" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char37"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char42"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char47"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="OpUn" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char33"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char45"/>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Calc" color="#FFE1FF">
@@ -439,484 +540,112 @@
                 <RULE name="Keyword"/>
                 <RULE name="Assign"/>
                 <RULE name="Expression"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="Expression" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char40"/>
-                <RULE name="Expression"/>
-                <TOKEN name="Char41"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Expr"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Expression"/>
-                <RULE name="Op"/>
-                <RULE name="ExpressionRight"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="ExpressionRight" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char40"/>
-                <RULE name="Expression"/>
-                <TOKEN name="Char41"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Expr"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="Expr" color="#FFE1FF">
-            <RIGHTSIDE>
-                <RULE name="OptionalSign"/>
-                <RULE name="Math"/>
-                <TOKEN name="Char40"/>
-                <RULE name="Expression"/>
-                <TOKEN name="Char41"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="OptionalSign"/>
-                <RULE name="Keyword"/>
-                <CODE>
-                    $$ = $1 + $2;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Number"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="Op" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char37"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char38"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char42"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char47"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char94"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char124"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="OpPM"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="OpPM" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char43"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char45"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Assign" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="Char42Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char43Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char45Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char47Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Math" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="ABS"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ACOS"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ASIN"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="COS"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="EXP"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="INT"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="LOG"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="LOG10"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="LOG2"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="RANDOM"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="SIGN"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="SIN"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="SQRT"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="TAN"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Flow" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="IfWhilePatch"/>
-                <TOKEN name="Char123"/>
-                <RULE name="Instructions"/>
-                <TOKEN name="Char125"/>
                 <TOKEN name="ELSE"/>
                 <TOKEN name="Char123"/>
                 <RULE name="Instructions"/>
                 <TOKEN name="Char125"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5 + $6 + $7 + $8;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="IF"/>
-                <TOKEN name="Char40"/>
-                <RULE name="Comparison"/>
-                <TOKEN name="Char41"/>
+                <RULE name="Expression"/>
                 <TOKEN name="Char123"/>
                 <RULE name="Instructions"/>
                 <TOKEN name="Char125"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5 + $6 + $7;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="WHILE"/>
-                <TOKEN name="Char40"/>
-                <RULE name="Comparison"/>
-                <TOKEN name="Char41"/>
-                <TOKEN name="Char123"/>
-                <RULE name="Instructions"/>
-                <TOKEN name="Char125"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5 + $6 + $7;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ELSE"/>
-                <TOKEN name="Char123"/>
-                <RULE name="Instructions"/>
-                <TOKEN name="Char125"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="IF"/>
-                <RULE name="IfWhilePatch"/>
-                <TOKEN name="Char123"/>
-                <RULE name="Instructions"/>
-                <TOKEN name="Char125"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="WHILE"/>
-                <RULE name="IfWhilePatch"/>
-                <TOKEN name="Char123"/>
-                <RULE name="Instructions"/>
-                <TOKEN name="Char125"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="Comparison" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char40"/>
-                <RULE name="ComparisonNoExpr"/>
-                <TOKEN name="Char41"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <RULE name="Expression"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Comparison"/>
-                <RULE name="Cmp"/>
-                <RULE name="ComparisonRight"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="ComparisonRight" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char40"/>
-                <RULE name="ComparisonNoExpr"/>
-                <TOKEN name="Char41"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Expression"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="ComparisonNoExpr" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char40"/>
-                <RULE name="ComparisonNoExpr"/>
-                <TOKEN name="Char41"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Comparison"/>
-                <RULE name="Cmp"/>
-                <RULE name="ComparisonRight"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="Cmp" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char33Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char38Char38"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char60"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char60Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char61Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char62"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char62Char61"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char124Char124"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <TOKEN name="Char123"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="Char125"/>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Keyword" color="#FFE1FF">
@@ -924,102 +653,54 @@
                 <RULE name="Identifier"/>
                 <TOKEN name="Char46"/>
                 <RULE name="Identifier"/>
-                <CODE>
-                    $$ = $1 + $2 + $3;
-
-                </CODE>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="NULL"/>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="OptionalSign" color="#FFE1FF">
-            <RIGHTSIDE>
-                <RULE name="OpPM"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <CODE>
-                    $$ = "";
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Number" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="OptionalSign"/>
+                <RULE name="OpUn"/>
                 <TOKEN name="number"/>
-                <CODE>
-                    $$ = $1 + $2;
-
-                </CODE>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="number"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="UnNumber" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="number"/>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Identifier" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="identifier"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Math"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="File" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="file"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="String" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="string"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="IfWhilePatch" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="Char40"/>
-                <RULE name="Comparison"/>
-                <TOKEN name="Char41"/>
-                <RULE name="Cmp"/>
-                <TOKEN name="Char40"/>
-                <RULE name="Comparison"/>
-                <TOKEN name="Char41"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5 + $6 + $7;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="Char40"/>
-                <RULE name="Comparison"/>
-                <TOKEN name="Char41"/>
-                <RULE name="Cmp"/>
-                <RULE name="IfWhilePatch"/>
-                <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
-
-                </CODE>
+                <CODE/>
             </RIGHTSIDE>
         </RULE>
     </RULES>
