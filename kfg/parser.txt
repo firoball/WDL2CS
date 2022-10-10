@@ -2,7 +2,7 @@ Start -> Sections
 
 
 Sections -> Section Sections | EPSILON
-Section -> SimpleItem | ComplexItem | Define | Include | Predefined | Preprocessor
+Section -> SimpleItem | ComplexItem | Asset | Define | Include | Predefined | Preprocessor
 
 Preprocessor -> IFDEF Identifier ; PreprocessorSection | IFNDEF Identifier ; PreprocessorSection 
 PreprocessorSection -> Sections ENDIF; | Sections IFELSE; Sections ENDIF;
@@ -16,20 +16,31 @@ Include -> INCLUDE File ;
 Predefined -> Identifier PredefinedParameter ;
 PredefinedParameter -> Number | File | String | Keyword
 
-SimpleItem -> Identifier Parameters ;
+Asset -> BasicAsset AssetId Sep File ; | BitmapAsset AssetId Sep File ; | BitmapAsset AssetId Sep File Sep Integer , Integer , Integer , Integer ; | FontAsset
+BasicAsset -> MODEL | SOUND | MUSIC | FLIC
+BitmapAsset -> BMAP | OVLY
+FontAsset -> FONT AssetId Sep File Sep Integer , Integer ; | FONT AssetId Sep File Sep Integer , Integer , Integer , Integer , Integer , Integer ;
+AssetRef -> BasicAsset | BitmapAsset | BMAPS | OVLYS | FONT
+
+SimpleItem -> Identifier ObjectId Sep ParameterList ; 
+%TODO: clashes with Predefined Rule - introduce Object (similar to Asset)
+%| Identifier ObjectId ;
 
 %TODO: support RULES{} which is a group of RULE statements (a = b;)
-ComplexItem -> Identifier Identifier Sep { Instructions }
-Instructions -> Instruction ; Instructions | Identifier : Instructions | Flow Instructions | PreprocInst Instructions | EPSILON
-Instruction -> Identifier | Parameters | Calc
+ComplexItem -> Identifier ObjectId Sep { Instructions }
+Instructions -> Instruction ; Instructions | Identifier : Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
+%TODO: This is a hotfix only. Needs to be resolved once Object and Object.Properties are in place
+Instructions -> AssetRef : Instructions
 
-Parameters -> Identifier ParameterList
-ParameterList -> Parameter Sep ParameterList | Parameter
+Instruction -> Identifier | Identifier Sep ParameterList | Rule | AssetRef Sep AssetIdList
+
+ParameterList -> Parameter Sep ParameterList | Parameter Sep
 Parameter -> Number | Keyword | File | String
+AssetIdList -> AssetIdNull Sep AssetIdList | AssetIdNull Sep
+AssetIdNull -> AssetId | NULL
 
 %Compatibility patches - WDL parser allowed syntax violating the specification
 %WDL parser allows leaving/adding commas
-Parameters -> Identifier , ParameterList
 Sep -> , | EPSILON
 
 Expression -> LogicOr
@@ -51,7 +62,8 @@ OpTerm -> + | -
 OpFac -> / | * | %
 OpUn -> ! | - | +
 
-Calc -> Identifier Keyword OpAssign Expression
+%WDL parser allowed RULEs without assignment
+Rule -> RULE Keyword OpAssign Expression | RULE Expression
 OpAssign -> = | += | -= | *= | /=
 Math -> SIN | COS | TAN | ASIN | ACOS | SQRT | SIGN | ABS | INT | EXP | LOG | LOG10 | LOG2 | RANDOM
 
@@ -59,14 +71,22 @@ Math -> SIN | COS | TAN | ASIN | ACOS | SQRT | SIGN | ABS | INT | EXP | LOG | LO
 %Flow -> IF Expression{ Instructions } | IF Expression { Instructions } ELSE { Instructions } | WHILE Expression { Instructions }
 Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expression { Instructions }
 
-Keyword -> Identifier | Identifier . Identifier | NULL
-Number -> OpUn number | number
-UnNumber -> number
+%this needs cleanup. ObjectId needs to be allowed here, but clashes currently with Identifier, therefore AssetRef is added only
+%Split ACTION from all other Objects, and introduce Property Type for Objects for avoiding ambiguity
+%Keyword -> Identifier | Identifier . Identifier | NULL
+Keyword -> ObjectId | ObjectId . Identifier | NULL | ObjectId . AssetRef
+Number -> Integer | Fixed
+UnNumber -> integer | fixed
+Integer -> OpUn integer | integer
+Fixed -> OpUn fixed | fixed
 
-%Math function identifiers are ambiguous in original WDL syntax. can be value/variable as well as math function
-Identifier -> identifier | Math 
+%Math function identifiers are ambiguous in original WDL syntax. can be object parameter/action instruction as well as math function
+Identifier -> identifier | Math
 %Note: Identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
 %Note: Identifiers support dot-separated slot index, e.g. LAYERS.1. Needs to be captured with regex and taken care of by code generator
+AssetId -> identifier | integer
+%WDL allows usage of reserved keywords as object identifiers
+ObjectId -> identifier | AssetRef | Math
 
 %Complex Regex terminals must be added at end of token list
 File -> file

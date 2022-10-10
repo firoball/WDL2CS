@@ -11,9 +11,19 @@
         <READ value="," token="Char44" color="#E1FFFF"/>
         <READ value="(?i)UNDEF" token="UNDEF" color="#E1FFFF"/>
         <READ value="(?i)INCLUDE" token="INCLUDE" color="#E1FFFF"/>
+        <READ value="(?i)FLIC" token="FLIC" color="#E1FFFF"/>
+        <READ value="(?i)MODEL" token="MODEL" color="#E1FFFF"/>
+        <READ value="(?i)MUSIC" token="MUSIC" color="#E1FFFF"/>
+        <READ value="(?i)SOUND" token="SOUND" color="#E1FFFF"/>
+        <READ value="(?i)BMAP" token="BMAP" color="#E1FFFF"/>
+        <READ value="(?i)OVLY" token="OVLY" color="#E1FFFF"/>
+        <READ value="(?i)FONT" token="FONT" color="#E1FFFF"/>
+        <READ value="(?i)BMAPS" token="BMAPS" color="#E1FFFF"/>
+        <READ value="(?i)OVLYS" token="OVLYS" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
         <READ value="\}([\t\s]*;+)?" token="Char125" color="#E1FFFF"/>
         <READ value=":" token="Char58" color="#E1FFFF"/>
+        <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
         <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
         <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
         <READ value="\|" token="Char124" color="#E1FFFF"/>
@@ -33,6 +43,7 @@
         <READ value="\*" token="Char42" color="#E1FFFF"/>
         <READ value="/" token="Char47" color="#E1FFFF"/>
         <READ value="!" token="Char33" color="#E1FFFF"/>
+        <READ value="(?i)RULE" token="RULE" color="#E1FFFF"/>
         <READ value="\*[\s\t]*=" token="Char42Char61" color="#E1FFFF"/>
         <READ value="\+[\s\t]*=" token="Char43Char61" color="#E1FFFF"/>
         <READ value="\-[\s\t]*=" token="Char45Char61" color="#E1FFFF"/>
@@ -52,12 +63,12 @@
         <READ value="(?i)SIN" token="SIN" color="#E1FFFF"/>
         <READ value="(?i)SQRT" token="SQRT" color="#E1FFFF"/>
         <READ value="(?i)TAN" token="TAN" color="#E1FFFF"/>
-        <READ value="(?i)IF" token="IF" color="#E1FFFF"/>
         <READ value="(?i)ELSE" token="ELSE" color="#E1FFFF"/>
+        <READ value="(?i)IF" token="IF" color="#E1FFFF"/>
         <READ value="(?i)WHILE" token="WHILE" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
-        <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
-        <READ value="([0-9]*[.])?[0-9]+" token="number" color="#E1FFFF"/>
+        <READ value="[0-9]+" token="integer" color="#E1FFFF"/>
+		<READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
         <READ value="[A-Za-z0-9][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
         <READ value="&lt;[\s]?[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+[\s]?&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
@@ -95,6 +106,10 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <RULE name="Define"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <RULE name="SimpleItem"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -103,7 +118,7 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Define"/>
+                <RULE name="Asset"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -223,10 +238,134 @@
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
+        <RULE name="Asset" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="BitmapAsset"/>
+                <RULE name="AssetId"/>
+                <RULE name="Sep"/>
+                <RULE name="File"/>
+                <RULE name="Sep"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char59"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="BitmapAsset"/>
+                <RULE name="AssetId"/>
+                <RULE name="Sep"/>
+                <RULE name="File"/>
+                <TOKEN name="Char59"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="BasicAsset"/>
+                <RULE name="AssetId"/>
+                <RULE name="Sep"/>
+                <RULE name="File"/>
+                <TOKEN name="Char59"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="FontAsset"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="BasicAsset" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="FLIC"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="MODEL"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="MUSIC"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="SOUND"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="BitmapAsset" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="BMAP"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="OVLY"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="FontAsset" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="FONT"/>
+                <RULE name="AssetId"/>
+                <RULE name="Sep"/>
+                <RULE name="File"/>
+                <RULE name="Sep"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char59"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="FONT"/>
+                <RULE name="AssetId"/>
+                <RULE name="Sep"/>
+                <RULE name="File"/>
+                <RULE name="Sep"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char44"/>
+                <RULE name="Integer"/>
+                <TOKEN name="Char59"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="AssetRef" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="BMAPS"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="FONT"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="OVLYS"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="BitmapAsset"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="BasicAsset"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
         <RULE name="SimpleItem" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
-                <RULE name="Parameters"/>
+                <RULE name="ObjectId"/>
+                <RULE name="Sep"/>
+                <RULE name="ParameterList"/>
                 <TOKEN name="Char59"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -234,7 +373,7 @@
         <RULE name="ComplexItem" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
-                <RULE name="Identifier"/>
+                <RULE name="ObjectId"/>
                 <RULE name="Sep"/>
                 <TOKEN name="Char123"/>
                 <RULE name="Instructions"/>
@@ -243,6 +382,19 @@
             </RIGHTSIDE>
         </RULE>
         <RULE name="Instructions" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="Char123"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="Char125"/>
+                <RULE name="Instructions"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="AssetRef"/>
+                <TOKEN name="Char58"/>
+                <RULE name="Instructions"/>
+                <CODE/>
+            </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
                 <TOKEN name="Char58"/>
@@ -271,27 +423,22 @@
         </RULE>
         <RULE name="Instruction" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Calc"/>
+                <RULE name="Rule"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Parameters"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Identifier"/>
-                <CODE/>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="Parameters" color="#FFE1FF">
-            <RIGHTSIDE>
-                <RULE name="Identifier"/>
-                <TOKEN name="Char44"/>
-                <RULE name="ParameterList"/>
+                <RULE name="AssetRef"/>
+                <RULE name="Sep"/>
+                <RULE name="AssetIdList"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Identifier"/>
+                <RULE name="Sep"/>
                 <RULE name="ParameterList"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -299,6 +446,7 @@
         <RULE name="ParameterList" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="Parameter"/>
+                <RULE name="Sep"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
@@ -323,6 +471,29 @@
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Keyword"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="AssetIdList" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="AssetIdNull"/>
+                <RULE name="Sep"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="AssetIdNull"/>
+                <RULE name="Sep"/>
+                <RULE name="AssetIdList"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="AssetIdNull" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="NULL"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="AssetId"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -549,9 +720,14 @@
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Calc" color="#FFE1FF">
+        <RULE name="Rule" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Identifier"/>
+                <TOKEN name="RULE"/>
+                <RULE name="Expression"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="RULE"/>
                 <RULE name="Keyword"/>
                 <RULE name="OpAssign"/>
                 <RULE name="Expression"/>
@@ -665,7 +841,13 @@
         </RULE>
         <RULE name="Keyword" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Identifier"/>
+                <RULE name="ObjectId"/>
+                <TOKEN name="Char46"/>
+                <RULE name="AssetRef"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="ObjectId"/>
                 <TOKEN name="Char46"/>
                 <RULE name="Identifier"/>
                 <CODE/>
@@ -675,24 +857,49 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Identifier"/>
+                <RULE name="ObjectId"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="Number" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="OpUn"/>
-                <TOKEN name="number"/>
+                <RULE name="Fixed"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="number"/>
+                <RULE name="Integer"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
         <RULE name="UnNumber" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="number"/>
+                <TOKEN name="fixed"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="integer"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Integer" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="OpUn"/>
+                <TOKEN name="integer"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="integer"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Fixed" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="OpUn"/>
+                <TOKEN name="fixed"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="fixed"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -703,6 +910,30 @@
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Math"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="AssetId" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="identifier"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="integer"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="ObjectId" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="identifier"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Math"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="AssetRef"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>

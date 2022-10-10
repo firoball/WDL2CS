@@ -25,11 +25,11 @@ namespace VCCCompiler
                 int yynerrs = 0;
                 int yyerrflag = 0;
                 int yysp = 0;
-                int yymaxdepth = 1024;
+                int yymaxdepth = 10000;
                 int yyflag = 0;
                 int yyfnone   = 0;
-                int[] yys = new int[1024];
-                string[] yyv = new string[1024];
+                int[] yys = new int[10000];
+                string[] yyv = new string[10000];
 
                 string yyval = "";
 
@@ -190,7 +190,7 @@ namespace VCCCompiler
                         parse:
 
                                 yysp++;
-                        if (yysp>yymaxdepth)
+                        if (yysp>=yymaxdepth)
                         {
                                 yyerror("yyparse stack overflow");
                                 goto abort;
