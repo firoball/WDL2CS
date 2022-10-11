@@ -56,10 +56,24 @@ IGNORE
         <READ value="(?i)FONT" token="FONT" color="#E1FFFF"/>
         <READ value="(?i)BMAPS" token="BMAPS" color="#E1FFFF"/>
         <READ value="(?i)OVLYS" token="OVLYS" color="#E1FFFF"/>
+        <READ value="(?i)PAN_MAP" token="PANChar95MAP" color="#E1FFFF"/>
+        <READ value="(?i)ACTION" token="ACTION" color="#E1FFFF"/>
+        <READ value="(?i)ACTOR" token="ACTOR" color="#E1FFFF"/>
+        <READ value="(?i)OVERLAY" token="OVERLAY" color="#E1FFFF"/>
+        <READ value="(?i)PALETTE" token="PALETTE" color="#E1FFFF"/>
+        <READ value="(?i)PANEL" token="PANEL" color="#E1FFFF"/>
+        <READ value="(?i)REGION" token="REGION" color="#E1FFFF"/>
+        <READ value="(?i)SKILL" token="SKILL" color="#E1FFFF"/>
+        <READ value="(?i)STRING" token="STRING" color="#E1FFFF"/>
+        <READ value="(?i)SYNONYM" token="SYNONYM" color="#E1FFFF"/>
+        <READ value="(?i)TEXT" token="TEXT" color="#E1FFFF"/>
+        <READ value="(?i)TEXTURE" token="TEXTURE" color="#E1FFFF"/>
+        <READ value="(?i)THING" token="THING" color="#E1FFFF"/>
+        <READ value="(?i)WALL" token="WALL" color="#E1FFFF"/>
+        <READ value="(?i)WAY" token="WAY" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
         <READ value="\}([\t\s]*;+)?" token="Char125" color="#E1FFFF"/>
         <READ value=":" token="Char58" color="#E1FFFF"/>
-        <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
         <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
         <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
         <READ value="\|" token="Char124" color="#E1FFFF"/>
@@ -103,7 +117,9 @@ IGNORE
         <READ value="(?i)IF" token="IF" color="#E1FFFF"/>
         <READ value="(?i)WHILE" token="WHILE" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
+        <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
         <READ value="[0-9]+" token="integer" color="#E1FFFF"/>
+		<READ value="(?i)(ABSPOS|AUTORANGE|BASE|BEHIND|BERKELEY|BLUR|CANDELABER|CAREFULLY|CEIL_ASCEND|CEIL_DESCEND|CEIL_LIFTED|CENTER_X|CENTER_Y|CLIP|CLUSTER|CONDENSED|CURTAIN|DIAPHANOUS|FAR|FENCE|FLAG1|FLAG2|FLAG3|FLAG4|FLAG5|FLAG6|FLAG7|FLAG8|FLAT|FLOOR_ASCEND|FLOOR_DESCEND|FLOOR_LIFTED|FRAGILE|GHOST|GROUND|HARD|HERE|IMMATERIAL|IMPASSABLE|INVISIBLE|LIBER|LIFTED|LIGHTMAP|MOVED|NARROW|NO_CLIP|ONESHOT|PASSABLE|PLAY|PORTCULLIS|REFRESH|RELPOS|SAVE|SAVE_ALL|SEEN|SENSITIVE|SHADOW|SKY|SLOOP|STICKY|TRANSPARENT|VISIBLE|WIRE)" token="flag" color="#E1FFFF"/>
 		<READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
         <READ value="[A-Za-z0-9][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
         <READ value="&lt;[\s]?[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+[\s]?&gt;" token="file" color="#E1FFFF"/>

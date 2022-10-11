@@ -2,7 +2,7 @@ Start -> Sections
 
 
 Sections -> Section Sections | EPSILON
-Section -> SimpleItem | ComplexItem | Asset | Define | Include | Predefined | Preprocessor
+Section -> ObjectDef | Asset | Define | Include | Predefined | Preprocessor
 
 Preprocessor -> IFDEF Identifier ; PreprocessorSection | IFNDEF Identifier ; PreprocessorSection 
 PreprocessorSection -> Sections ENDIF; | Sections IFELSE; Sections ENDIF;
@@ -20,24 +20,20 @@ Asset -> BasicAsset AssetId Sep File ; | BitmapAsset AssetId Sep File ; | Bitmap
 BasicAsset -> MODEL | SOUND | MUSIC | FLIC
 BitmapAsset -> BMAP | OVLY
 FontAsset -> FONT AssetId Sep File Sep Integer , Integer ; | FONT AssetId Sep File Sep Integer , Integer , Integer , Integer , Integer , Integer ;
-AssetRef -> BasicAsset | BitmapAsset | BMAPS | OVLYS | FONT
-
-SimpleItem -> Identifier ObjectId Sep ParameterList ; 
-%TODO: clashes with Predefined Rule - introduce Object (similar to Asset)
-%| Identifier ObjectId ;
+AssetRef -> BasicAsset | BitmapAsset | BMAPS | OVLYS | FONT | PAN_MAP
 
 %TODO: support RULES{} which is a group of RULE statements (a = b;)
-ComplexItem -> Identifier ObjectId Sep { Instructions }
-Instructions -> Instruction ; Instructions | Identifier : Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
-%TODO: This is a hotfix only. Needs to be resolved once Object and Object.Properties are in place
-Instructions -> AssetRef : Instructions
+ObjectDef -> Object ObjectId ; | Object ObjectId Sep ParameterList ; | Object ObjectId Sep { Instructions }
+Object -> ACTION | ACTOR | OVERLAY | PANEL | PALETTE | REGION | SKILL | STRING | SYNONYM | TEXT | TEXTURE | THING | WALL | WAY
 
-Instruction -> Identifier | Identifier Sep ParameterList | Rule | AssetRef Sep AssetIdList
+Instructions -> Instruction ; Instructions | GotoMarker : Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
+
+Instruction -> ObjectProperty | ObjectProperty Sep ParameterList | Rule
 
 ParameterList -> Parameter Sep ParameterList | Parameter Sep
 Parameter -> Number | Keyword | File | String
-AssetIdList -> AssetIdNull Sep AssetIdList | AssetIdNull Sep
-AssetIdNull -> AssetId | NULL
+%AssetIdList -> AssetIdNull Sep AssetIdList | AssetIdNull Sep
+%AssetIdNull -> AssetId | NULL
 
 %Compatibility patches - WDL parser allowed syntax violating the specification
 %WDL parser allows leaving/adding commas
@@ -73,24 +69,26 @@ Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expressio
 
 %this needs cleanup. ObjectId needs to be allowed here, but clashes currently with Identifier, therefore AssetRef is added only
 %Split ACTION from all other Objects, and introduce Property Type for Objects for avoiding ambiguity
-%Keyword -> Identifier | Identifier . Identifier | NULL
-Keyword -> ObjectId | ObjectId . Identifier | NULL | ObjectId . AssetRef
+Keyword -> Object | ObjectId | ObjectId . ObjectProperty | NULL
+Flag -> flag
 Number -> Integer | Fixed
 UnNumber -> integer | fixed
 Integer -> OpUn integer | integer
 Fixed -> OpUn fixed | fixed
+Identifier -> identifier
 
-%Math function identifiers are ambiguous in original WDL syntax. can be object parameter/action instruction as well as math function
-Identifier -> identifier | Math
-%Note: Identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
-%Note: Identifiers support dot-separated slot index, e.g. LAYERS.1. Needs to be captured with regex and taken care of by code generator
+%Note: Asset identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
+%Note: List identifiers support dot-separated slot index, e.g. LAYERS.1. Needs to be captured with regex and taken care of by code generator
 AssetId -> identifier | integer
 %WDL allows usage of reserved keywords as object identifiers
-ObjectId -> identifier | AssetRef | Math
+ObjectId -> identifier | AssetRef | Math | Flag
+ObjectProperty -> ObjectId | Object
+GotoMarker -> ObjectId
 
 %Complex Regex terminals must be added at end of token list
 File -> file
 String -> string
+
 
 %Regex patches - Odd behavior captured with regex and needs to be taken care of by code generator
 %Combined assign operators += etc. may have spaces inbetween. 

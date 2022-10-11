@@ -20,10 +20,24 @@
         <READ value="(?i)FONT" token="FONT" color="#E1FFFF"/>
         <READ value="(?i)BMAPS" token="BMAPS" color="#E1FFFF"/>
         <READ value="(?i)OVLYS" token="OVLYS" color="#E1FFFF"/>
+        <READ value="(?i)PAN_MAP" token="PANChar95MAP" color="#E1FFFF"/>
+        <READ value="(?i)ACTION" token="ACTION" color="#E1FFFF"/>
+        <READ value="(?i)ACTOR" token="ACTOR" color="#E1FFFF"/>
+        <READ value="(?i)OVERLAY" token="OVERLAY" color="#E1FFFF"/>
+        <READ value="(?i)PALETTE" token="PALETTE" color="#E1FFFF"/>
+        <READ value="(?i)PANEL" token="PANEL" color="#E1FFFF"/>
+        <READ value="(?i)REGION" token="REGION" color="#E1FFFF"/>
+        <READ value="(?i)SKILL" token="SKILL" color="#E1FFFF"/>
+        <READ value="(?i)STRING" token="STRING" color="#E1FFFF"/>
+        <READ value="(?i)SYNONYM" token="SYNONYM" color="#E1FFFF"/>
+        <READ value="(?i)TEXT" token="TEXT" color="#E1FFFF"/>
+        <READ value="(?i)TEXTURE" token="TEXTURE" color="#E1FFFF"/>
+        <READ value="(?i)THING" token="THING" color="#E1FFFF"/>
+        <READ value="(?i)WALL" token="WALL" color="#E1FFFF"/>
+        <READ value="(?i)WAY" token="WAY" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
         <READ value="\}([\t\s]*;+)?" token="Char125" color="#E1FFFF"/>
         <READ value=":" token="Char58" color="#E1FFFF"/>
-        <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
         <READ value="\|\|" token="Char124Char124" color="#E1FFFF"/>
         <READ value="&amp;&amp;" token="Char38Char38" color="#E1FFFF"/>
         <READ value="\|" token="Char124" color="#E1FFFF"/>
@@ -67,7 +81,9 @@
         <READ value="(?i)IF" token="IF" color="#E1FFFF"/>
         <READ value="(?i)WHILE" token="WHILE" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
+        <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
         <READ value="[0-9]+" token="integer" color="#E1FFFF"/>
+		<READ value="(?i)(ABSPOS|AUTORANGE|BASE|BEHIND|BERKELEY|BLUR|CANDELABER|CAREFULLY|CEIL_ASCEND|CEIL_DESCEND|CEIL_LIFTED|CENTER_X|CENTER_Y|CLIP|CLUSTER|CONDENSED|CURTAIN|DIAPHANOUS|FAR|FENCE|FLAG1|FLAG2|FLAG3|FLAG4|FLAG5|FLAG6|FLAG7|FLAG8|FLAT|FLOOR_ASCEND|FLOOR_DESCEND|FLOOR_LIFTED|FRAGILE|GHOST|GROUND|HARD|HERE|IMMATERIAL|IMPASSABLE|INVISIBLE|LIBER|LIFTED|LIGHTMAP|MOVED|NARROW|NO_CLIP|ONESHOT|PASSABLE|PLAY|PORTCULLIS|REFRESH|RELPOS|SAVE|SAVE_ALL|SEEN|SENSITIVE|SHADOW|SKY|SLOOP|STICKY|TRANSPARENT|VISIBLE|WIRE)" token="flag" color="#E1FFFF"/>
 		<READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
         <READ value="[A-Za-z0-9][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
         <READ value="&lt;[\s]?[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+[\s]?&gt;" token="file" color="#E1FFFF"/>
@@ -106,19 +122,15 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Define"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="SimpleItem"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ComplexItem"/>
+                <RULE name="ObjectDef"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Asset"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Define"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -352,6 +364,10 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <TOKEN name="PANChar95MAP"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <RULE name="BitmapAsset"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -360,24 +376,86 @@
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="SimpleItem" color="#FFE1FF">
+        <RULE name="ObjectDef" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Identifier"/>
+                <RULE name="Object"/>
+                <RULE name="ObjectId"/>
+                <RULE name="Sep"/>
+                <TOKEN name="Char123"/>
+                <RULE name="Instructions"/>
+                <TOKEN name="Char125"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Object"/>
                 <RULE name="ObjectId"/>
                 <RULE name="Sep"/>
                 <RULE name="ParameterList"/>
                 <TOKEN name="Char59"/>
                 <CODE/>
             </RIGHTSIDE>
-        </RULE>
-        <RULE name="ComplexItem" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Identifier"/>
+                <RULE name="Object"/>
                 <RULE name="ObjectId"/>
-                <RULE name="Sep"/>
-                <TOKEN name="Char123"/>
-                <RULE name="Instructions"/>
-                <TOKEN name="Char125"/>
+                <TOKEN name="Char59"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Object" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="ACTION"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="ACTOR"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="OVERLAY"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="PALETTE"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="PANEL"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="REGION"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="SKILL"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="STRING"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="SYNONYM"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="TEXT"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="TEXTURE"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="THING"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="WALL"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="WAY"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -390,13 +468,7 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="AssetRef"/>
-                <TOKEN name="Char58"/>
-                <RULE name="Instructions"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Identifier"/>
+                <RULE name="GotoMarker"/>
                 <TOKEN name="Char58"/>
                 <RULE name="Instructions"/>
                 <CODE/>
@@ -408,12 +480,12 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Flow"/>
+                <RULE name="PreprocInst"/>
                 <RULE name="Instructions"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="PreprocInst"/>
+                <RULE name="Flow"/>
                 <RULE name="Instructions"/>
                 <CODE/>
             </RIGHTSIDE>
@@ -427,19 +499,13 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="AssetRef"/>
-                <RULE name="Sep"/>
-                <RULE name="AssetIdList"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Identifier"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Identifier"/>
+                <RULE name="ObjectProperty"/>
                 <RULE name="Sep"/>
                 <RULE name="ParameterList"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="ObjectProperty"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -471,29 +537,6 @@
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Keyword"/>
-                <CODE/>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="AssetIdList" color="#FFE1FF">
-            <RIGHTSIDE>
-                <RULE name="AssetIdNull"/>
-                <RULE name="Sep"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="AssetIdNull"/>
-                <RULE name="Sep"/>
-                <RULE name="AssetIdList"/>
-                <CODE/>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="AssetIdNull" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="NULL"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="AssetId"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -843,13 +886,7 @@
             <RIGHTSIDE>
                 <RULE name="ObjectId"/>
                 <TOKEN name="Char46"/>
-                <RULE name="AssetRef"/>
-                <CODE/>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <TOKEN name="Char46"/>
-                <RULE name="Identifier"/>
+                <RULE name="ObjectProperty"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
@@ -857,7 +894,17 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <RULE name="Object"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <RULE name="ObjectId"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="Flag" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="flag"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
@@ -908,10 +955,6 @@
                 <TOKEN name="identifier"/>
                 <CODE/>
             </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Math"/>
-                <CODE/>
-            </RIGHTSIDE>
         </RULE>
         <RULE name="AssetId" color="#FFE1FF">
             <RIGHTSIDE>
@@ -929,11 +972,31 @@
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <RULE name="Flag"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <RULE name="Math"/>
                 <CODE/>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="AssetRef"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="ObjectProperty" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Object"/>
+                <CODE/>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="ObjectId"/>
+                <CODE/>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="GotoMarker" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="ObjectId"/>
                 <CODE/>
             </RIGHTSIDE>
         </RULE>
