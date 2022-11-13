@@ -31,8 +31,9 @@ PropertyDef -> Property Sep PropertyValueList
 PropertyValueList -> PropertyValue Sep PropertyValueList | PropertyValue Sep 
 PropertyValue -> Number | ObjectId | ObjectId . Property | Object | Function | File | String | NULL
 
-FunctionDef -> Function ObjectId Sep { Instructions }
+FunctionDef -> Function FunctionId Sep { Instructions }
 Function -> function
+%TODO: Goto markers may also be terminated by ; instead of :
 Instructions -> Instruction ; Instructions | GotoMarker : Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
 Instruction -> Command | Command Sep ParameterList | Rule
 
@@ -75,6 +76,7 @@ Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expressio
 %This is required in order to avoid shift/reduce conflicts in generated transpiler code
 Keyword -> Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Event | NULL
 Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag
+%TODO: Properties must also allow redefinitions (= identifier)
 Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
 Command -> CommandAsId | ambig_math_command | ELSE
 %commands can also be used as object identifiers. Define reduced CommandAsId subset for ObjectId rule in order to avoid shift/reduce conflicts.
@@ -94,8 +96,10 @@ Skill -> skill | ambig_skill_property
 
 Synonym -> synonym | ambig_synonym_flag | ambig_global_synonym_property
 %WDL allows usage of reserved keywords as object identifiers (list is derived from test runs on a collection of WDL files)
+%Changing this can easily cause more shift/reduce conflicts
 ObjectId -> identifier | AssetRef | Math | flag | Skill | property | CommandAsId | global
-GotoMarker -> ObjectId
+FunctionId -> ObjectId | ObjectRef
+GotoMarker -> ObjectId | synonym
 
 %Complex Regex terminals must be added at end of token list
 File -> file
