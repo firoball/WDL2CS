@@ -14,7 +14,7 @@ Define -> DEFINE Identifier , Parameter ; | DEFINE Identifier ; | UNDEF Identifi
 Include -> INCLUDE File ;
 
 GlobalDef -> Global GlobalParameter ; | Event ObjectIdList ;
-Global -> global | ambig_global_property
+Global -> global | ambig_global_property | ambig_global_synonym_property
 Event -> event | ambig_event_property
 ObjectIdList -> ObjectId Sep ObjectIdList | ObjectId Sep
 GlobalParameter -> Number | File | String | Identifier
@@ -75,8 +75,10 @@ Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expressio
 %This is required in order to avoid shift/reduce conflicts in generated transpiler code
 Keyword -> Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Event | NULL
 Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag
-Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_synonym_property | ambig_global_property | ambig_math_skill_property
-Command -> command | ambig_math_command | ambig_command_flag | ELSE
+Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
+Command -> CommandAsId | ambig_math_command | ELSE
+%commands can also be used as object identifiers. Define reduced CommandAsId subset for ObjectId rule in order to avoid shift/reduce conflicts.
+CommandAsId -> command | ambig_command_flag | ambig_command_property 
 Number -> Integer | Fixed
 UnNumber -> integer | fixed
 Integer -> OpUn integer | integer
@@ -85,13 +87,14 @@ Identifier -> identifier
 List -> list
 
 %Note: Asset identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
-AssetId -> identifier | integer
+%AssetId -> identifier | integer
+AssetId -> ObjectId | integer
 Skill -> skill | ambig_skill_property 
 %| ambig_math_skill_property - implicitly via Math (avoid shift/reduce conflicts)
 
-Synonym -> synonym | ambig_synonym_flag | ambig_synonym_property
-%WDL allows usage of reserved keywords as object identifiers
-ObjectId -> identifier | AssetRef | Math | flag | Skill | property | ambig_command_flag | command
+Synonym -> synonym | ambig_synonym_flag | ambig_global_synonym_property
+%WDL allows usage of reserved keywords as object identifiers (list is derived from test runs on a collection of WDL files)
+ObjectId -> identifier | AssetRef | Math | flag | Skill | property | CommandAsId | global
 GotoMarker -> ObjectId
 
 %Complex Regex terminals must be added at end of token list
@@ -102,11 +105,12 @@ String -> string
 %ambig_event_property
 %ambig_skill_property
 %ambig_global_property
-%ambig_synonym_property
+%ambig_global_synonym_property
 %ambig_synonym_flag
 %ambig_object_flag
 %ambig_math_command
 %ambig_math_skill_property
+%ambig_command_property
 
 %Regex patches - Odd behavior captured with regex and needs to be taken care of by code generator
 %Combined assign operators += etc. may have spaces inbetween. 
