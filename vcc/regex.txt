@@ -1,76 +1,12 @@
-Char124
-\|
-
-Char42Char61
-\*[\s\t]*=
-
-Char43Char61
-\+[\s\t]*=
-
-Char45Char61
-\-[\s\t]*=
-
-Char47Char61
-/[\s\t]*=
-
-Char124Char124
-\|\|
-
-number
-([0-9]*[.])?[0-9]+
-[+-]?([0-9]*[.])?[0-9]+
-
-identifier
-[A-Za-z][A-Za-z0-9_]*(\.[1-9][0-9]?)?
-[A-Za-z][A-Za-z0-9_]*
-
-file
-<[^<;:" ]+>
-<[^<;:" ]+\.[^<;:" ]+>
-<[^</*?"\\:>\|]+$>
-<.*>
-
-string
-"(.|[\r\n])*?"
-(?<=")(.|[\r\n])*?(?=")
-".*"
-
-IGNORE
-[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)
-
         <READ value="(?i)IFDEF" token="IFDEF" color="#E1FFFF"/>
         <READ value="(,[\s\t]*)?;+" token="Char59" color="#E1FFFF"/>
         <READ value="(?i)IFNDEF" token="IFNDEF" color="#E1FFFF"/>
-        <READ value="(?i)IFELSE;" token="IFELSEChar59" color="#E1FFFF"/>
-        <READ value="(?i)ENDIF;" token="ENDIFChar59" color="#E1FFFF"/>
+        <READ value="(?i)IFELSE" token="IFELSE" color="#E1FFFF"/>
+        <READ value="(?i)ENDIF" token="ENDIF" color="#E1FFFF"/>
         <READ value="(?i)DEFINE" token="DEFINE" color="#E1FFFF"/>
         <READ value="," token="Char44" color="#E1FFFF"/>
         <READ value="(?i)UNDEF" token="UNDEF" color="#E1FFFF"/>
         <READ value="(?i)INCLUDE" token="INCLUDE" color="#E1FFFF"/>
-        <READ value="(?i)FLIC" token="FLIC" color="#E1FFFF"/>
-        <READ value="(?i)MODEL" token="MODEL" color="#E1FFFF"/>
-        <READ value="(?i)MUSIC" token="MUSIC" color="#E1FFFF"/>
-        <READ value="(?i)SOUND" token="SOUND" color="#E1FFFF"/>
-        <READ value="(?i)BMAP" token="BMAP" color="#E1FFFF"/>
-        <READ value="(?i)OVLY" token="OVLY" color="#E1FFFF"/>
-        <READ value="(?i)FONT" token="FONT" color="#E1FFFF"/>
-        <READ value="(?i)BMAPS" token="BMAPS" color="#E1FFFF"/>
-        <READ value="(?i)OVLYS" token="OVLYS" color="#E1FFFF"/>
-        <READ value="(?i)PAN_MAP" token="PANChar95MAP" color="#E1FFFF"/>
-        <READ value="(?i)ACTION" token="ACTION" color="#E1FFFF"/>
-        <READ value="(?i)ACTOR" token="ACTOR" color="#E1FFFF"/>
-        <READ value="(?i)OVERLAY" token="OVERLAY" color="#E1FFFF"/>
-        <READ value="(?i)PALETTE" token="PALETTE" color="#E1FFFF"/>
-        <READ value="(?i)PANEL" token="PANEL" color="#E1FFFF"/>
-        <READ value="(?i)REGION" token="REGION" color="#E1FFFF"/>
-        <READ value="(?i)SKILL" token="SKILL" color="#E1FFFF"/>
-        <READ value="(?i)STRING" token="STRING" color="#E1FFFF"/>
-        <READ value="(?i)SYNONYM" token="SYNONYM" color="#E1FFFF"/>
-        <READ value="(?i)TEXT" token="TEXT" color="#E1FFFF"/>
-        <READ value="(?i)TEXTURE" token="TEXTURE" color="#E1FFFF"/>
-        <READ value="(?i)THING" token="THING" color="#E1FFFF"/>
-        <READ value="(?i)WALL" token="WALL" color="#E1FFFF"/>
-        <READ value="(?i)WAY" token="WAY" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
         <READ value="\}([\t\s]*;+)?" token="Char125" color="#E1FFFF"/>
         <READ value=":" token="Char58" color="#E1FFFF"/>
@@ -99,30 +35,35 @@ IGNORE
         <READ value="\-[\s\t]*=" token="Char45Char61" color="#E1FFFF"/>
         <READ value="/[\s\t]*=" token="Char47Char61" color="#E1FFFF"/>
         <READ value="=" token="Char61" color="#E1FFFF"/>
-        <READ value="(?i)ABS" token="ABS" color="#E1FFFF"/>
-        <READ value="(?i)ACOS" token="ACOS" color="#E1FFFF"/>
-        <READ value="(?i)ASIN" token="ASIN" color="#E1FFFF"/>
-        <READ value="(?i)COS" token="COS" color="#E1FFFF"/>
-        <READ value="(?i)EXP" token="EXP" color="#E1FFFF"/>
-        <READ value="(?i)INT" token="INT" color="#E1FFFF"/>
-        <READ value="(?i)LOG" token="LOG" color="#E1FFFF"/>
-        <READ value="(?i)LOG10" token="LOG10" color="#E1FFFF"/>
-        <READ value="(?i)LOG2" token="LOG2" color="#E1FFFF"/>
-        <READ value="(?i)RANDOM" token="RANDOM" color="#E1FFFF"/>
-        <READ value="(?i)SIGN" token="SIGN" color="#E1FFFF"/>
-        <READ value="(?i)SIN" token="SIN" color="#E1FFFF"/>
-        <READ value="(?i)SQRT" token="SQRT" color="#E1FFFF"/>
-        <READ value="(?i)TAN" token="TAN" color="#E1FFFF"/>
         <READ value="(?i)ELSE" token="ELSE" color="#E1FFFF"/>
         <READ value="(?i)IF" token="IF" color="#E1FFFF"/>
         <READ value="(?i)WHILE" token="WHILE" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
         <READ value="(?i)NULL" token="NULL" color="#E1FFFF"/>
+        <READ value="(?i)(IF_MIDDLE|IF_ANYKEY|IF_EQUALS|IF_PERIOD|IF_BRACKL|IF_BRACKR|IF_START|IF_RIGHT|IF_KLICK|IF_MSTOP|IF_SPACE|IF_PAUSE|IF_COMMA|IF_SEMIC|IF_SLASH|EACH_SEC|MESSAGES|IF_LOAD|IF_LEFT|IF_CTRL|IF_BKSP|IF_PGUP|IF_PGDN|IF_HOME|IF_BKSL|IF_ESC|IF_TAB|IF_ALT|IF_CUU|IF_CUD|IF_CUR|IF_CUL|IF_END|IF_INS|IF_DEL|IF_CAR|IF_CAL|PANELS|LAYERS|(IF_F(1[0-2]|[1-9]))|IF_[0-9A-Z])" token="event" color="#E1FFFF"/>
+        <READ value="(?i)(VIDEO|NEXUS|LIGHT_ANGLE|IBANK|DRUMBANK|MIDI_PITCH|BIND|MAPFILE|SAVEDIR|PATH|DITHER)" token="global" color="#E1FFFF"/>
+        <READ value="(?i)(MODEL|SOUND|MUSIC|FLIC|BMAP|OVLY|FONT)" token="asset" color="#E1FFFF"/>
+        <READ value="(?i)(OVERLAY|PANEL|PALETTE|REGION|SKILL|STRING|SYNONYM|TEXTURE|TEXT|VIEW|WALL|WAY)" token="object" color="#E1FFFF"/>
+        <READ value="(?i)(ACTION|RULES)" token="function" color="#E1FFFF"/>
+        <READ value="(?i)(ACOS|COS|TAN|SIGN|ABS|INT|EXP|LOG10|LOG2|LOG)" token="math" color="#E1FFFF"/>
+        <READ value="(?i)(FLOOR_DESCEND|CEIL_DESCEND|FLOOR_ASCEND|FLOOR_LIFTED|CEIL_ASCEND|CEIL_LIFTED|TRANSPARENT|CANDELABER|DIAPHANOUS|IMMATERIAL|IMPASSABLE|PORTCULLIS|AUTORANGE|CAREFULLY|CONDENSED|FLAG[1-8]|INVISIBLE|SENSITIVE|BERKELEY|CENTER_X|CENTER_Y|LIGHTMAP|PASSABLE|SAVE_ALL|CLUSTER|CURTAIN|FRAGILE|NO_CLIP|ONESHOT|REFRESH|VISIBLE|ABSPOS|BEHIND|GROUND|LIFTED|NARROW|RELPOS|SHADOW|STICKY|FENCE|GHOST|LIBER|MOVED|SLOOP|BASE|BLUR|CLIP|FLAT|HARD|HERE|PLAY|SEEN|WIRE|FAR|SKY)" token="flag" color="#E1FFFF"/>
+        <READ value="(?i)(FLOOR_OFFS_X|FLOOR_OFFS_Y|CEIL_OFFS_X|CEIL_OFFS_Y|FLOOR_ANGLE|IF_RELEASE|SKILL[1-8]|EACH_CYCLE|CEIL_ANGLE|IF_ARRIVED|TARGET_MAP|MAP_COLOR|FLOOR_TEX|REL_ANGLE|OFFSET_X|OFFSET_Y|SCALE_XY|RADIANCE|IF_TOUCH|IF_KLICK|POSITION|DISTANCE|CEIL_TEX|IF_LEAVE|IF_ARISE|WAYPOINT|TARGET_X|TARGET_Y|REL_DIST|PALFILE|SCALE_X|SCALE_Y|SCYCLES|IF_NEAR|IF_DIVE|PAN_MAP|VSLIDER|HSLIDER|PICTURE|STRINGS|DEFAULT|CYCLES|MIRROR|ALBEDO|SVDIST|ATTACH|LENGTH|SIZE_X|SIZE_Y|IF_FAR|GENIUS|TARGET|HEIGHT|VSPEED|ASPEED|BUTTON|DIGITS|ASPECT|INDEX|RANGE|FLAGS|SIDES|FRAME|TITLE|DELAY|SDIST|POS_X|POS_Y|TOUCH|CYCLE|BELOW|ANGLE|SPEED|BMAPS|OVLYS|LAYER|RIGHT|SVOL|DIST|SIDE|VBAR|HBAR|MASK|LEFT|TYPE|TOP|VAL|MIN|MAX|X1|Y1|Z1|X2|Y2|Z2|X|Y|Z)" token="property" color="#E1FFFF"/>
+        <READ value="(?i)(PLAY_SOUNDFILE|PLAY_SONG_ONCE|PLAY_FLICFILE|NEXT_MY_THERE|PRINT_STRING|PRINT_VALUE|PLAY_SOUND|STOP_SOUND|SET_STRING|SCREENSHOT|NEXT_THERE|ADD_STRING|RANDOMIZE|PLAY_SONG|PLAY_FLIC|STOP_FLIC|SAVE_INFO|LOAD_INFO|SAVE_DEMO|PLAY_DEMO|STOP_DEMO|EXCLUSIVE|PRINTFILE|SET_SKILL|TO_STRING|IF_NEQUAL|IF_ABOVE|IF_BELOW|IF_EQUAL|FADE_PAL|MIDI_COM|SET_INFO|SET_ALL|PLAY_CD|OUTPORT|SETMIDI|GETMIDI|EXPLODE|NEXT_MY|IF_MIN|IF_MAX|BRANCH|INPORT|FREEZE|LOCATE|ROTATE|ACCEL|WAITT|INKEY|PLACE|SHOOT|SHAKE|SHIFT|LEVEL|ADDT|SUBT|SKIP|GOTO|CALL|WAIT|BEEP|FIND|DROP|PUSH|LIFT|TILT|LOAD|EXIT|SET|ADD|SUB|AND|END|MAP)" token="command" color="#E1FFFF"/>
+        <READ value="(?i)((EACH_TICK|EACH_SEC|PANELS|LAYERS|MESSAGES)\.(1[0-6]|[1-9]))" token="list" color="#E1FFFF"/>
+        <READ value="(?i)(ACTOR_IMPACT_VX|ACTOR_IMPACT_VY|ACTOR_IMPACT_VZ|ACTOR_FLOOR_HGT|ACTIVE_OBJTICKS|ACTOR_CEIL_HGT|ACTIVE_TARGETS|CHANNEL_[0-7]|PLAYER_LAST_X|PLAYER_LAST_Y|SCREEN_WIDTH|COLOR_PLAYER|COLOR_ACTORS|COLOR_THINGS|COLOR_BORDER|MOUSE_MOVING|PLAYER_LIGHT|PLAYER_WIDTH|PLAYER_CLIMB|SHOOT_SECTOR|PLAYER_ANGLE|PLAYER_SPEED|ACCELERATION|PLAYER_DEPTH|MOUSE_MIDDLE|FORCE_STRAFE|ACTIVE_NEXUS|MOTION_BLUR|RENDER_MODE|MAP_EDGE_X1|MAP_EDGE_X2|MAP_EDGE_Y1|MAP_EDGE_Y2|COLOR_WALLS|PANEL_LAYER|MOUSE_ANGLE|TOUCH_STATE|PLAYER_SIZE|WALK_PERIOD|WAVE_PERIOD|PSOUND_TONE|PLAYER_VROT|PLAYER_TILT|SHOOT_RANGE|HIT_MINDIST|SHOOT_ANGLE|SKIP_FRAMES|ACTOR_CLIMB|ACTOR_WIDTH|THING_WIDTH|IMPACT_VROT|SLOPE_AHEAD|DELTA_ANGLE|MOUSE_RIGHT|FORCE_AHEAD|SHIFT_SENSE|MOUSE_SENSE|MAP_CENTERX|MAP_CENTERY|CDAUDIO_VOL|SCREEN_HGT|SKY_OFFS_X|SKY_OFFS_Y|THING_DIST|ACTOR_DIST|MAP_OFFS_X|MAP_OFFS_Y|TEXT_LAYER|MOUSE_MODE|TOUCH_MODE|MOUSE_CALM|MOUSE_TIME|TOUCH_DIST|JOYSTICK_X|JOYSTICK_Y|LIGHT_DIST|PSOUND_VOL|PLAYER_ARC|PLAYER_SIN|PLAYER_COS|PLAYER_HGT|SLOPE_SIDE|MOVE_ANGLE|FLIC_FRAME|MOUSE_LEFT|KEY_EQUALS|KEY_PERIOD|KEY_BRACKL|KEY_BRACKR|FORCE_TILE|DEBUG_MODE|BLUR_MODE|MOVE_MODE|MAP_SCALE|MAP_LAYER|SOUND_VOL|MUSIC_VOL|DARK_DIST|WALK_TIME|PLAYER_VX|PLAYER_VY|PLAYER_VZ|SHOOT_FAC|IMPACT_VX|IMPACT_VY|IMPACT_VZ|BOUNCE_VX|BOUNCE_VY|TIME_CORR|KEY_SHIFT|KEY_SPACE|KEY_PAUSE|KEY_MINUS|KEY_ENTER|KEY_COMMA|KEY_SEMIC|KEY_SLASH|FORCE_ROT|KEY_SENSE|JOY_SENSE|LOAD_MODE|SCREEN_X|SCREEN_Y|CLIPPING|MAP_MAXX|MAP_MINX|MAP_MAXY|MAP_MINY|MAP_MODE|MICKEY_X|MICKEY_Y|FRICTION|HIT_DIST|PLAYER_X|PLAYER_Y|PLAYER_Z|REMOTE_0|REMOTE_1|TIME_FAC|CD_TRACK|KEY_CTRL|KEY_BKSP|KEY_PGUP|KEY_PGDN|KEY_HOME|KEY_PLUS|KEY_BKSL|FORCE_UP|MAX_DIST|MAP_ROT|MOUSE_X|MOUSE_Y|CHANNEL|INERTIA|SHOOT_X|SHOOT_Y|SLOPE_X|SLOPE_Y|KEY_ANY|KEY_ESC|KEY_TAB|KEY_ALT|KEY_CUU|KEY_CUD|KEY_CUR|KEY_CUL|KEY_END|KEY_INS|KEY_DEL|KEY_CAR|KEY_CAL|ACTIONS|STR_LEN|ASPECT|HIT_X|HIT_Y|TICKS|STEPS|JOY_4|ERROR|WALK|WAVE|NODE|SECS|(KEY_F(1[0-2]|[1-9]))|KEY[A-Z0-9])" token="skill" color="#E1FFFF"/>
+        <READ value="(?i)(THERE|MY|HIT|TOUCH_TEXT|TOUCHED|TOUCH_TEX|TOUCH_REG|COMMAND_LINE)" token="synonym" color="#E1FFFF"/>
+        <READ value="(?i)CLIP_DIST" token="ambigChar95globalChar95property" color="#E1FFFF"/>
+        <READ value="(?i)(EACH_TICK|IF_ENTER|IF_HIT)" token="ambigChar95eventChar95property" color="#E1FFFF"/>
+        <READ value="(?i)(THING|ACTOR)" token="ambigChar95objectChar95flag" color="#E1FFFF"/>
+        <READ value="(?i)(SIN|ASIN|SQRT)" token="ambigChar95mathChar95command" color="#E1FFFF"/>
+        <READ value="(?i)RANDOM" token="ambigChar95mathChar95skillChar95property" color="#E1FFFF"/>
+        <READ value="(?i)HERE" token="ambigChar95synonymChar95flag" color="#E1FFFF"/>
+        <READ value="(?i)(FLOOR_HGT|CEIL_HGT|AMBIENT|RESULT)" token="ambigChar95skillChar95property" color="#E1FFFF"/>
+        <READ value="(?i)SAVE" token="ambigChar95commandChar95flag" color="#E1FFFF"/>
+        <READ value="(?i)MSPRITE" token="ambigChar95synonymChar95property" color="#E1FFFF"/>		
         <READ value="[0-9]+" token="integer" color="#E1FFFF"/>
-		<READ value="(?i)(ABSPOS|AUTORANGE|BASE|BEHIND|BERKELEY|BLUR|CANDELABER|CAREFULLY|CEIL_ASCEND|CEIL_DESCEND|CEIL_LIFTED|CENTER_X|CENTER_Y|CLIP|CLUSTER|CONDENSED|CURTAIN|DIAPHANOUS|FAR|FENCE|FLAG1|FLAG2|FLAG3|FLAG4|FLAG5|FLAG6|FLAG7|FLAG8|FLAT|FLOOR_ASCEND|FLOOR_DESCEND|FLOOR_LIFTED|FRAGILE|GHOST|GROUND|HARD|HERE|IMMATERIAL|IMPASSABLE|INVISIBLE|LIBER|LIFTED|LIGHTMAP|MOVED|NARROW|NO_CLIP|ONESHOT|PASSABLE|PLAY|PORTCULLIS|REFRESH|RELPOS|SAVE|SAVE_ALL|SEEN|SENSITIVE|SHADOW|SKY|SLOOP|STICKY|TRANSPARENT|VISIBLE|WIRE)" token="flag" color="#E1FFFF"/>
-		<READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
+        <READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
         <READ value="[A-Za-z0-9][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
         <READ value="&lt;[\s]?[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+[\s]?&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
         <READ value="[\r\n\t\s]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
-

@@ -1,39 +1,43 @@
 Start -> Sections
 
-
 Sections -> Section Sections | EPSILON
-Section -> ObjectDef | Asset | Define | Include | Predefined | Preprocessor
+Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor
 
-Preprocessor -> IFDEF Identifier ; PreprocessorSection | IFNDEF Identifier ; PreprocessorSection 
-PreprocessorSection -> Sections ENDIF; | Sections IFELSE; Sections ENDIF;
-PreprocInst -> IFDEF Identifier ; PreprocInstSection | IFNDEF Identifier ; PreprocInstSection 
-PreprocInstSection -> Instructions ENDIF; | Instructions IFELSE; Instructions ENDIF;
+Preprocessor -> IFDEF Identifier ; PreprocessorSection ; | IFNDEF Identifier ; PreprocessorSection ;
+PreprocessorSection -> Sections ENDIF | Sections IFELSE ; Sections ENDIF
+PreprocInst -> IFDEF Identifier ; PreprocInstSection ; | IFNDEF Identifier ; PreprocInstSection ;
+PreprocInstSection -> Instructions ENDIF | Instructions IFELSE ; Instructions ENDIF
+PreprocProp -> IFDEF Identifier ; PreprocPropSection ; | IFNDEF Identifier ; PreprocPropSection ;
+PreprocPropSection -> PropertyDefs ENDIF | PropertyDefs IFELSE ; PropertyDefs ENDIF
 
 Define -> DEFINE Identifier , Parameter ; | DEFINE Identifier ; | UNDEF Identifier ;
 Include -> INCLUDE File ;
 
-%TODO name this properly
-Predefined -> Identifier PredefinedParameter ;
-PredefinedParameter -> Number | File | String | Keyword
+GlobalDef -> Global GlobalParameter ; | Event ObjectIdList ;
+Global -> global | ambig_global_property
+Event -> event | ambig_event_property
+ObjectIdList -> ObjectId Sep ObjectIdList | ObjectId Sep
+GlobalParameter -> Number | File | String | Identifier
 
-Asset -> BasicAsset AssetId Sep File ; | BitmapAsset AssetId Sep File ; | BitmapAsset AssetId Sep File Sep Integer , Integer , Integer , Integer ; | FontAsset
-BasicAsset -> MODEL | SOUND | MUSIC | FLIC
-BitmapAsset -> BMAP | OVLY
-FontAsset -> FONT AssetId Sep File Sep Integer , Integer ; | FONT AssetId Sep File Sep Integer , Integer , Integer , Integer , Integer , Integer ;
-AssetRef -> BasicAsset | BitmapAsset | BMAPS | OVLYS | FONT | PAN_MAP
+AssetDef -> AssetRef AssetId Sep File Sep AssetParams ;
+AssetParams -> Integer | Integer , AssetParams | EPSILON 
+AssetRef -> asset
 
-%TODO: support RULES{} which is a group of RULE statements (a = b;)
-ObjectDef -> Object ObjectId ; | Object ObjectId Sep ParameterList ; | Object ObjectId Sep { Instructions }
-Object -> ACTION | ACTOR | OVERLAY | PANEL | PALETTE | REGION | SKILL | STRING | SYNONYM | TEXT | TEXTURE | THING | WALL | WAY
+ObjectDef -> Object ObjectId ; | Object ObjectId Sep { PropertyDefs } | Object ObjectId Sep String ;
+ObjectRef -> object
+Object -> ObjectRef | ambig_object_flag 
+PropertyDefs -> PropertyDef ; PropertyDefs | PreprocProp PropertyDefs | EPSILON
+PropertyDef -> Property Sep PropertyValueList
+PropertyValueList -> PropertyValue Sep PropertyValueList | PropertyValue Sep 
+PropertyValue -> Number | ObjectId | ObjectId . Property | Object | Function | File | String | NULL
 
+FunctionDef -> Function ObjectId Sep { Instructions }
+Function -> function
 Instructions -> Instruction ; Instructions | GotoMarker : Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
-
-Instruction -> ObjectProperty | ObjectProperty Sep ParameterList | Rule
+Instruction -> Command | Command Sep ParameterList | Rule
 
 ParameterList -> Parameter Sep ParameterList | Parameter Sep
-Parameter -> Number | Keyword | File | String
-%AssetIdList -> AssetIdNull Sep AssetIdList | AssetIdNull Sep
-%AssetIdNull -> AssetId | NULL
+Parameter -> Number | Keyword | File | String | List
 
 %Compatibility patches - WDL parser allowed syntax violating the specification
 %WDL parser allows leaving/adding commas
@@ -56,39 +60,53 @@ OpEq -> == | !=
 OpCmp -> <= | >= | < | > 
 OpTerm -> + | -
 OpFac -> / | * | %
-OpUn -> ! | - | +
+OpUn -> - | + | !
 
 %WDL parser allowed RULEs without assignment
-Rule -> RULE Keyword OpAssign Expression | RULE Expression
+Rule -> RULE Keyword OpAssign Expression | RULE Expression | Keyword OpAssign Expression
 OpAssign -> = | += | -= | *= | /=
-Math -> SIN | COS | TAN | ASIN | ACOS | SQRT | SIGN | ABS | INT | EXP | LOG | LOG10 | LOG2 | RANDOM
+Math -> math | ambig_math_command | ambig_math_skill_property
 
 %WDL parser accepts isolated ELSE ... Needs to be taken care of by code generator
 %Flow -> IF Expression{ Instructions } | IF Expression { Instructions } ELSE { Instructions } | WHILE Expression { Instructions }
 Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expression { Instructions }
 
-%this needs cleanup. ObjectId needs to be allowed here, but clashes currently with Identifier, therefore AssetRef is added only
-%Split ACTION from all other Objects, and introduce Property Type for Objects for avoiding ambiguity
-Keyword -> Object | ObjectId | ObjectId . ObjectProperty | NULL
-Flag -> flag
+%Due to parallel grammar pathes caused by ambiguous identifiers, some expected relations are not added here - they already exist implicitly
+%This is required in order to avoid shift/reduce conflicts in generated transpiler code
+Keyword -> Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Event | NULL
+Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag
+Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_synonym_property | ambig_global_property | ambig_math_skill_property
+Command -> command | ambig_math_command | ambig_command_flag | ELSE
 Number -> Integer | Fixed
 UnNumber -> integer | fixed
 Integer -> OpUn integer | integer
 Fixed -> OpUn fixed | fixed
 Identifier -> identifier
+List -> list
 
 %Note: Asset identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
-%Note: List identifiers support dot-separated slot index, e.g. LAYERS.1. Needs to be captured with regex and taken care of by code generator
 AssetId -> identifier | integer
+Skill -> skill | ambig_skill_property 
+%| ambig_math_skill_property - implicitly via Math (avoid shift/reduce conflicts)
+
+Synonym -> synonym | ambig_synonym_flag | ambig_synonym_property
 %WDL allows usage of reserved keywords as object identifiers
-ObjectId -> identifier | AssetRef | Math | Flag
-ObjectProperty -> ObjectId | Object
+ObjectId -> identifier | AssetRef | Math | flag | Skill | property | ambig_command_flag | command
 GotoMarker -> ObjectId
 
 %Complex Regex terminals must be added at end of token list
 File -> file
 String -> string
 
+%Ambiguous keyword lists - used in case some keywords are used multiple times in different contexts
+%ambig_event_property
+%ambig_skill_property
+%ambig_global_property
+%ambig_synonym_property
+%ambig_synonym_flag
+%ambig_object_flag
+%ambig_math_command
+%ambig_math_skill_property
 
 %Regex patches - Odd behavior captured with regex and needs to be taken care of by code generator
 %Combined assign operators += etc. may have spaces inbetween. 
