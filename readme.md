@@ -53,7 +53,7 @@ Following steps are only required when `vcc\yacc_opt.ctpl` is used for building 
 * Locate _FindToken_ function in `code\parser.cs`.
 * Copy all `if (Regex.IsMatch(..){..}` statements into a new file in **Notepad++**. Make sure order remains as generated.
 * Run the **WDL2CS** macro (see _preparation_ chapter) and copy the result to clipboard.
-* Locate line _#warning Place tList and rList init in MyCompiler(){} (...)_ in `code\parser.cs`.
+* Locate line `#warning Place tList and rList init in MyCompiler(){} (...)` in `code\parser.cs`.
 * Replace with previously copied content and save.
 * Run `csc parser.cs` from `code`folder. `code\parser.exe` should be compiled without error.
 
