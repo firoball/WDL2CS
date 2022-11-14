@@ -42,7 +42,7 @@ The transpiler turned out to be very slow, which was a major roadblock. It showe
 * Save `vcc\parser_vcc.xml`.
 * Open `vcc\parser_vcc.xml` in text editor of choice.
 * Apply any new regular expressions to `vcc\regex.txt` or `vcc\regex_opt.txt` (optimized, more complex regex).
-* Copy contents of `vcc\regex.txt` or `vcc\regex_opt.txt` to `vcc\parser_vcc.xml` between _<scanner>..</scanner>_ tags.
+* Copy contents of `vcc\regex.txt` or `vcc\regex_opt.txt` to `vcc\parser_vcc.xml` between `<scanner>..</scanner>` tags.
 * Save `vcc\parser_vcc.xml` and reload file in **VCC**.
 * Hit **Create Compiler** and save generated code to `code\parser.cs`. **VCC** will automatically compile `code\parser.exe`
 
