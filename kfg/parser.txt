@@ -3,14 +3,16 @@ Start -> Sections
 Sections -> Section Sections | EPSILON
 Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor
 
-Preprocessor -> IFDEF Identifier ; PreprocessorSection ; | IFNDEF Identifier ; PreprocessorSection ;
+Preprocessor -> IFDEF DefIdentifier ; PreprocessorSection ; | IFNDEF DefIdentifier ; PreprocessorSection ;
 PreprocessorSection -> Sections ENDIF | Sections IFELSE ; Sections ENDIF
-PreprocInst -> IFDEF Identifier ; PreprocInstSection ; | IFNDEF Identifier ; PreprocInstSection ;
+PreprocInst -> IFDEF DefIdentifier ; PreprocInstSection ; | IFNDEF DefIdentifier ; PreprocInstSection ;
 PreprocInstSection -> Instructions ENDIF | Instructions IFELSE ; Instructions ENDIF
-PreprocProp -> IFDEF Identifier ; PreprocPropSection ; | IFNDEF Identifier ; PreprocPropSection ;
+PreprocProp -> IFDEF DefIdentifier ; PreprocPropSection ; | IFNDEF DefIdentifier ; PreprocPropSection ;
 PreprocPropSection -> PropertyDefs ENDIF | PropertyDefs IFELSE ; PropertyDefs ENDIF
 
-Define -> DEFINE Identifier , Parameter ; | DEFINE Identifier ; | UNDEF Identifier ;
+Define -> DEFINE DefIdentifier , Parameter ; | DEFINE DefIdentifier ; | UNDEF DefIdentifier ;
+%Allow ambiguity between predefined skills and defines. WDL allowed it.
+DefIdentifier -> Identifier | Skill
 Include -> INCLUDE File ;
 
 GlobalDef -> Global GlobalParameter ; | Event ObjectIdList ;
@@ -29,19 +31,18 @@ Object -> ObjectRef | ambig_object_flag
 PropertyDefs -> PropertyDef ; PropertyDefs | PreprocProp PropertyDefs | EPSILON
 PropertyDef -> Property Sep PropertyValueList
 PropertyValueList -> PropertyValue Sep PropertyValueList | PropertyValue Sep 
-PropertyValue -> Number | ObjectId | ObjectId . Property | Object | Function | File | String | NULL
+PropertyValue -> Number | Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Function | File | String | NULL
 
 FunctionDef -> Function FunctionId Sep { Instructions }
 Function -> function
-%TODO: Goto markers may also be terminated by ; instead of :
-Instructions -> Instruction ; Instructions | GotoMarker : Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
+%Compatibility patch - Goto markers may also be terminated by ; instead of : (use ifddentifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
+Instructions -> Instruction ; Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
 Instruction -> Command | Command Sep ParameterList | Rule
 
 ParameterList -> Parameter Sep ParameterList | Parameter Sep
 Parameter -> Number | Keyword | File | String | List
 
-%Compatibility patches - WDL parser allowed syntax violating the specification
-%WDL parser allows leaving/adding commas
+%Compatibility patch - WDL parser allows leaving/adding commas
 Sep -> , | EPSILON
 
 Expression -> LogicOr
@@ -68,7 +69,7 @@ Rule -> RULE Keyword OpAssign Expression | RULE Expression | Keyword OpAssign Ex
 OpAssign -> = | += | -= | *= | /=
 Math -> math | ambig_math_command | ambig_math_skill_property
 
-%WDL parser accepts isolated ELSE ... Needs to be taken care of by code generator
+%Compatibility patch - WDL parser accepts isolated ELSE ... Needs to be taken care of by code generator
 %Flow -> IF Expression{ Instructions } | IF Expression { Instructions } ELSE { Instructions } | WHILE Expression { Instructions }
 Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expression { Instructions }
 
@@ -76,8 +77,9 @@ Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expressio
 %This is required in order to avoid shift/reduce conflicts in generated transpiler code
 Keyword -> Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Event | NULL
 Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag
-%TODO: Properties must also allow redefinitions (= identifier)
-Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
+%Properties must also allow redefinitions (= identifier)
+%Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
+Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property | Identifier
 Command -> CommandAsId | ambig_math_command | ELSE
 %commands can also be used as object identifiers. Define reduced CommandAsId subset for ObjectId rule in order to avoid shift/reduce conflicts.
 CommandAsId -> command | ambig_command_flag | ambig_command_property 
