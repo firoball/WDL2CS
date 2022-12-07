@@ -1,0 +1,15 @@
+Need to be handled specifically in generator
+
+Button
+Digits
+Flags
+Hbar
+Hslider
+Picture
+Range
+Scale_xy
+Skill1-8?
+Target?
+Vbar
+Vslider
+Window

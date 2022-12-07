@@ -65,7 +65,7 @@
         <READ value="(?i)HERE" token="ambigChar95synonymChar95flag" color="#E1FFFF"/>
         <READ value="(?i)(FLOOR_HGT|CEIL_HGT|AMBIENT|RESULT)" token="ambigChar95skillChar95property" color="#E1FFFF"/>
         <READ value="(?i)SAVE" token="ambigChar95commandChar95flag" color="#E1FFFF"/>
-        <READ value="(?i)MSPRITE" token="ambigChar95globalChar95synonymChar95property" color="#E1FFFF"/>		
+        <READ value="(?i)MSPRITE" token="ambigChar95globalChar95synonymChar95property" color="#E1FFFF"/>
         <READ value="(?i)DO" token="ambigChar95commandChar95property" color="#E1FFFF"/>
         <READ value="[0-9]+" token="integer" color="#E1FFFF"/>
         <READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
@@ -83,7 +83,7 @@
                 <RULE name="Sections"/>
                 <CODE>
                     $$ = $1;
-//Output.WriteLine($$);
+Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
@@ -108,28 +108,32 @@
             <RIGHTSIDE>
                 <RULE name="Include"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="GlobalDef"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Preprocessor"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Define"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -143,14 +147,16 @@
             <RIGHTSIDE>
                 <RULE name="FunctionDef"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="AssetDef"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -513,7 +519,8 @@
                 <RULE name="PropertyDefs"/>
                 <TOKEN name="Char125"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5 + $6;
+                    //$$ = $1 + $2 + $3 + $4 + $5 + $6;
+$$ = Objects.BuildObject($1, $2, 0);
 
                 </CODE>
             </RIGHTSIDE>
@@ -524,7 +531,8 @@
                 <RULE name="String"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -533,7 +541,8 @@
                 <RULE name="ObjectId"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -551,14 +560,14 @@
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95objectChar95flag"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatObject($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectRef"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatObject($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -594,7 +603,9 @@
                 <RULE name="Sep"/>
                 <RULE name="PropertyValueList"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+Objects.AddProperty($1);
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -604,7 +615,8 @@
                 <RULE name="PropertyValue"/>
                 <RULE name="Sep"/>
                 <CODE>
-                    $$ = $1 + $2;
+                    Objects.AddPropertyValue($1);
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -613,7 +625,8 @@
                 <RULE name="Sep"/>
                 <RULE name="PropertyValueList"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    Objects.AddPropertyValue($1);
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -658,7 +671,7 @@
             <RIGHTSIDE>
                 <TOKEN name="NULL"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatNull();
 
                 </CODE>
             </RIGHTSIDE>
@@ -700,7 +713,7 @@
             <RIGHTSIDE>
                 <RULE name="Synonym"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1423,28 +1436,28 @@
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95commandChar95flag"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95objectChar95flag"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95synonymChar95flag"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="flag"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1453,70 +1466,70 @@
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95commandChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95eventChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95mathChar95skillChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95skillChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectRef"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="AssetRef"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1571,14 +1584,14 @@
             <RIGHTSIDE>
                 <RULE name="Fixed"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Integer"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1671,14 +1684,14 @@
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95skillChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="skill"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1710,49 +1723,49 @@
             <RIGHTSIDE>
                 <TOKEN name="flag"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="global"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="identifier"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="CommandAsId"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="AssetRef"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Math"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1800,7 +1813,7 @@
             <RIGHTSIDE>
                 <TOKEN name="file"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatFile($1);
 
                 </CODE>
             </RIGHTSIDE>

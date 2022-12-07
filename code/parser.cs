@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using WDL2CS;
 
 namespace VCCCompiler
 {
@@ -154,7 +155,8 @@ namespace VCCCompiler
 				tList.Add(t_string);
 				rList.Add(new Regex("^(\"(.|[\\r\\n])*?\")"));
 				tList.Add(t_ignore);
-				rList.Add(new Regex("^([\\r\\n\\t\\s]|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))"));			}
+				rList.Add(new Regex("^([\\r\\n\\t\\s]|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))"));
+							}
                 YYARec[] yya;
                 YYARec[] yyg;
                 YYRRec[] yyr;
@@ -353,7 +355,7 @@ namespace VCCCompiler
                                 ////////////////////////////////////////////////////////////////
 							case    1 : 
          yyval = yyv[yysp-0];
-         //Output.WriteLine(yyval);
+         Output.WriteLine(yyval);
          
        break;
 							case    2 : 
@@ -365,19 +367,23 @@ namespace VCCCompiler
          
        break;
 							case    4 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = "";
          
        break;
 							case    5 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = "";
          
        break;
 							case    6 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = "";
          
        break;
 							case    7 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = "";
          
        break;
 							case    8 : 
@@ -385,11 +391,13 @@ namespace VCCCompiler
          
        break;
 							case    9 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = "";
          
        break;
 							case   10 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = "";
          
        break;
 							case   11 : 
@@ -537,15 +545,18 @@ namespace VCCCompiler
          
        break;
 							case   47 : 
-         yyval = yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Objects.BuildObject(yyv[yysp-5], yyv[yysp-4], 0);
          
        break;
 							case   48 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = "";
          
        break;
 							case   49 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = "";
          
        break;
 							case   50 : 
@@ -553,11 +564,11 @@ namespace VCCCompiler
          
        break;
 							case   51 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatObject(yyv[yysp-0]);
          
        break;
 							case   52 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatObject(yyv[yysp-0]);
          
        break;
 							case   53 : 
@@ -573,15 +584,19 @@ namespace VCCCompiler
          
        break;
 							case   56 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         Objects.AddProperty(yyv[yysp-2]);
+         yyval = "";
          
        break;
 							case   57 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         Objects.AddPropertyValue(yyv[yysp-1]);
+         yyval = "";
          
        break;
 							case   58 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         Objects.AddPropertyValue(yyv[yysp-2]);
+         yyval = "";
          
        break;
 							case   59 : 
@@ -601,7 +616,7 @@ namespace VCCCompiler
          
        break;
 							case   63 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatNull();
          
        break;
 							case   64 : 
@@ -625,7 +640,7 @@ namespace VCCCompiler
          
        break;
 							case   69 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case   70 : 
@@ -965,59 +980,59 @@ namespace VCCCompiler
          
        break;
 							case  154 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  155 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  156 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  157 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  158 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  159 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  160 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  161 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  162 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  163 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  164 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  165 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  166 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  167 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  168 : 
@@ -1045,11 +1060,11 @@ namespace VCCCompiler
          
        break;
 							case  174 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatNumber(yyv[yysp-0]);
          
        break;
 							case  175 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatNumber(yyv[yysp-0]);
          
        break;
 							case  176 : 
@@ -1093,11 +1108,11 @@ namespace VCCCompiler
          
        break;
 							case  186 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case  187 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case  188 : 
@@ -1113,31 +1128,31 @@ namespace VCCCompiler
          
        break;
 							case  191 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  192 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  193 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  194 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  195 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  196 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  197 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  198 : 
@@ -1161,7 +1176,7 @@ namespace VCCCompiler
          
        break;
 							case  203 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatFile(yyv[yysp-0]);
          
        break;
 							case  204 : 
