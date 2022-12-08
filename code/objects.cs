@@ -8,7 +8,9 @@ namespace WDL2CS
 {
     class Objects
     {
-        private static string s_indent = string.Empty;
+        private static Dictionary<string, Dictionary<string, string>> s_objects = new Dictionary<string, Dictionary<string, string>>();
+
+        private static string s_indent = "\t\t";
         private static string s_ranges = string.Empty;
         private static string s_type = string.Empty;
         private static List<string> s_controls = new List<string>();
@@ -19,32 +21,115 @@ namespace WDL2CS
 
         private static readonly string s_nl = Environment.NewLine;
 
-        public static string BuildObject(string type, string name, int indent)
+        static Objects()
         {
-            string o;
-            s_indent = string.Empty;
-            for (int i = 0; i < indent; i++)
+            s_objects.Add("Synonym", new Dictionary<string, string>());
+            s_objects.Add("Skill", new Dictionary<string, string>());
+            s_objects.Add("Palette", new Dictionary<string, string>());
+            s_objects.Add("Texture", new Dictionary<string, string>());
+            s_objects.Add("Wall", new Dictionary<string, string>());
+            s_objects.Add("Region", new Dictionary<string, string>());
+            s_objects.Add("Thing", new Dictionary<string, string>());
+            s_objects.Add("Actor", new Dictionary<string, string>());
+            s_objects.Add("Way", new Dictionary<string, string>());
+            s_objects.Add("Text", new Dictionary<string, string>());
+            s_objects.Add("Overlay", new Dictionary<string, string>());
+            s_objects.Add("Panel", new Dictionary<string, string>());
+            s_objects.Add("View", new Dictionary<string, string>());
+        }
+
+        public static string BuildObjects()
+        {
+            string o = string.Empty;
+
+            //generate declarations
+            foreach (KeyValuePair<string, Dictionary<string, string>> objs in s_objects)
             {
-                s_indent += "\t";
+                string type = objs.Key;
+                switch (objs.Key)
+                {
+                    case "Skill":
+                        foreach (KeyValuePair<string, string> obj in objs.Value)
+                        {
+                            //Global skills don't need an extra declaration
+                            if (string.Compare("Globals.", 0, obj.Key, 0, 8, true) != 0)
+                            {
+                                o += s_indent + "public " + type + " " + obj.Key + ";" + s_nl;
+                            }
+                        }
+                        break;
+
+                    default:
+                        foreach (KeyValuePair<string, string> obj in objs.Value)
+                        {
+                            o += s_indent + "public " + type + " " + obj.Key + ";" + s_nl;
+                        }
+                        break;
+                }
             }
-            //type = Format(type);
-            //Global identifiers must be overwritten instead of just created
-            if (string.Compare("Globals.", 0, name, 0, 8, true) == 0)
+            o += s_nl;
+
+            //generate definitions
+            foreach (KeyValuePair<string, Dictionary<string, string>> objs in s_objects)
             {
-                o = s_indent + name + " = new " + type + "()" + s_nl;
+                string type = objs.Key;
+                foreach (KeyValuePair<string, string> obj in objs.Value)
+                {
+                    if (!string.IsNullOrEmpty(obj.Value))
+                    {
+                        o += s_indent + obj.Key + " = new " + type + "()" + s_nl;
+                        o += s_indent + "{" + s_nl;
+                        o += obj.Value;
+                        o += s_indent + "};" + s_nl;
+                    }
+                }
+            }
+            o += s_nl;
+
+            return o;
+        }
+
+        public static void AddObject(string type, string name)
+        {
+            string o = string.Empty;
+
+            //Synonyms are just plain variables in C#
+            if (string.Compare(type, "Synonym", true) == 0)
+            {
+                string prop = "Type";
+                if (s_properties.Contains(prop))
+                {
+                    int i = s_properties.IndexOf(prop);
+                    //o = s_indent + "public " + s_propertyValues[i][0] + " " + name + ";" + s_nl;
+                    //return o;
+                    type = Formatter.FormatObject(s_propertyValues[i][0]);
+                    //"Action" keyword is reserved in C# -> use "Function" instead
+                    if (string.Compare(type, "Action", true) == 0)
+                        type =  "Function";
+                }
             }
             else
             {
-                o = s_indent + type + " " + name + " = new " + type + "()" + s_nl;
-            }
-            o += s_indent + "{" + s_nl;
 
-            //handle property definitions
-            for (int i = 0; i < s_properties.Count; i++)
-            {
-                BuildProperty(type, s_properties[i], s_propertyValues[i]);
-            }
+                //Global identifiers must be overwritten instead of just created
+                /*
+                            if (string.Compare("Globals.", 0, name, 0, 8, true) == 0)
+                            {
+                                o = s_indent + name + " = new " + type + "()" + s_nl;
+                            }
+                            else
+                            {
+                                o = s_indent + type + " " + name + " = new " + type + "()" + s_nl;
+                            }
+                */
+                //o += s_indent + "{" + s_nl;
 
+                //handle property definitions
+                for (int i = 0; i < s_properties.Count; i++)
+                {
+                    BuildProperty(type, s_properties[i], s_propertyValues[i]);
+                }
+            }
             //handle panel control definitions
             if (s_controls.Count > 0)
             {
@@ -63,20 +148,31 @@ namespace WDL2CS
             {
                 o += s_indent + "\t" + s + ", " + s_nl;
             }
-            o += s_indent + "};" + s_nl;
+            //o += s_indent + "};" + s_nl;
 
+            //move object into object lists
+            Dictionary<string, string> obj;
+            if (s_objects.TryGetValue(type, out obj))
+            {
+                if (obj.ContainsKey(name))
+                    Console.WriteLine("OBJECTS ignore double definition: " + name);
+                else
+                    obj.Add(name, o);
+            }
+
+            //Clean up
             s_formattedProperties.Clear();
             s_controls.Clear();
             s_properties.Clear();
             s_ranges = string.Empty;
             s_type = string.Empty;
-            foreach(List<string> values in s_propertyValues)
+            foreach (List<string> values in s_propertyValues)
             {
                 values.Clear();
             }
             s_propertyValues.Clear();
 
-            return o;
+            //return o;
         }
 
         private static void BuildControls()
@@ -103,7 +199,6 @@ namespace WDL2CS
             {
                 case "Type":
                     p += Formatter.FormatSkillType(values[0]);
-                    s_formattedProperties.Add(p);
                     break;
 
                 case "Skill1":
@@ -201,7 +296,7 @@ namespace WDL2CS
             s_values.Clear();
         }
 
-        public static void AddProperty (string property)
+        public static void AddProperty(string property)
         {
             string p = string.Empty;
             bool allowMerge = false;
@@ -224,7 +319,7 @@ namespace WDL2CS
             }
 
             //Eliminate double definitions of properties only where their values can be merged
-            if(allowMerge && s_properties.Contains(p))
+            if (allowMerge && s_properties.Contains(p))
             {
                 int i = s_properties.IndexOf(p);
                 s_propertyValues[i].AddRange(s_values);

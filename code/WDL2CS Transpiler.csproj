@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="formatter.cs" />
+    <Compile Include="Include.cs" />
     <Compile Include="objects.cs" />
     <Compile Include="parser.cs" />
   </ItemGroup>

@@ -82,7 +82,8 @@
             <RIGHTSIDE>
                 <RULE name="Sections"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = Objects.BuildObjects();
 Output.WriteLine($$);
 
                 </CODE>
@@ -349,7 +350,8 @@ $$ = "";
                 <RULE name="File"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = Include.Process($2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -520,7 +522,8 @@ $$ = "";
                 <TOKEN name="Char125"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5 + $6;
-$$ = Objects.BuildObject($1, $2, 0);
+Objects.AddObject($1, $2);
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using WDL2CS;
 
@@ -16,147 +17,147 @@ namespace VCCCompiler
 			List<Regex> rList = new List<Regex>();
 			MyCompiler()
 			{
-				tList.Add(t_IFDEF);
-				rList.Add(new Regex("^((?i)IFDEF)"));
-				tList.Add(t_Char59);
-				rList.Add(new Regex("^((,[\\s\\t]*)?;+)"));
-				tList.Add(t_IFNDEF);
-				rList.Add(new Regex("^((?i)IFNDEF)"));
-				tList.Add(t_IFELSE);
-				rList.Add(new Regex("^((?i)IFELSE)"));
-				tList.Add(t_ENDIF);
-				rList.Add(new Regex("^((?i)ENDIF)"));
-				tList.Add(t_DEFINE);
-				rList.Add(new Regex("^((?i)DEFINE)"));
-				tList.Add(t_Char44);
-				rList.Add(new Regex("^(,)"));
-				tList.Add(t_UNDEF);
-				rList.Add(new Regex("^((?i)UNDEF)"));
-				tList.Add(t_INCLUDE);
-				rList.Add(new Regex("^((?i)INCLUDE)"));
-				tList.Add(t_Char123);
-				rList.Add(new Regex("^(\\{)"));
-				tList.Add(t_Char125);
-				rList.Add(new Regex("^(\\}([\\t\\s]*;+)?)"));
-				tList.Add(t_Char58);
-				rList.Add(new Regex("^(:)"));
-				tList.Add(t_Char124Char124);
-				rList.Add(new Regex("^(\\|\\|)"));
-				tList.Add(t_Char38Char38);
-				rList.Add(new Regex("^(&&)"));
-				tList.Add(t_Char124);
-				rList.Add(new Regex("^(\\|)"));
-				tList.Add(t_Char94);
-				rList.Add(new Regex("^(\\^)"));
-				tList.Add(t_Char38);
-				rList.Add(new Regex("^(&)"));
-				tList.Add(t_Char40);
-				rList.Add(new Regex("^(\\()"));
-				tList.Add(t_Char41);
-				rList.Add(new Regex("^(\\))"));
-				tList.Add(t_Char33Char61);
-				rList.Add(new Regex("^(!=)"));
-				tList.Add(t_Char61Char61);
-				rList.Add(new Regex("^(==)"));
-				tList.Add(t_Char60);
-				rList.Add(new Regex("^(<)"));
-				tList.Add(t_Char60Char61);
-				rList.Add(new Regex("^(<=)"));
-				tList.Add(t_Char62);
-				rList.Add(new Regex("^(>)"));
-				tList.Add(t_Char62Char61);
-				rList.Add(new Regex("^(>=)"));
-				tList.Add(t_Char43);
-				rList.Add(new Regex("^(\\+)"));
-				tList.Add(t_Char45);
-				rList.Add(new Regex("^(\\-)"));
-				tList.Add(t_Char37);
-				rList.Add(new Regex("^(%)"));
-				tList.Add(t_Char42);
-				rList.Add(new Regex("^(\\*)"));
-				tList.Add(t_Char47);
-				rList.Add(new Regex("^(/)"));
-				tList.Add(t_Char33);
-				rList.Add(new Regex("^(!)"));
-				tList.Add(t_RULE);
-				rList.Add(new Regex("^((?i)RULE)"));
-				tList.Add(t_Char42Char61);
-				rList.Add(new Regex("^(\\*[\\s\\t]*=)"));
-				tList.Add(t_Char43Char61);
-				rList.Add(new Regex("^(\\+[\\s\\t]*=)"));
-				tList.Add(t_Char45Char61);
-				rList.Add(new Regex("^(\\-[\\s\\t]*=)"));
-				tList.Add(t_Char47Char61);
-				rList.Add(new Regex("^(/[\\s\\t]*=)"));
-				tList.Add(t_Char61);
-				rList.Add(new Regex("^(=)"));
-				tList.Add(t_ELSE);
-				rList.Add(new Regex("^((?i)ELSE)"));
-				tList.Add(t_IF);
-				rList.Add(new Regex("^((?i)IF)"));
-				tList.Add(t_WHILE);
-				rList.Add(new Regex("^((?i)WHILE)"));
-				tList.Add(t_Char46);
-				rList.Add(new Regex("^(\\.)"));
-				tList.Add(t_NULL);
-				rList.Add(new Regex("^((?i)NULL)"));
-				tList.Add(t_event);
-				rList.Add(new Regex("^((?i)(EACH_SEC|IF_(ALT|ANYKEY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|EQUALS|ESC|HOME|INS|LEFT|LOAD|MIDDLE|MINUS|MSTOP|PAUSE|PERIOD|PGDN|PGUP|PLUS|RIGHT|SEMIC|SLASH|SPACE|START|SZ|TAB|F(1[0-2]|[1-9])|[0-9A-Z])|LAYERS|MESSAGES|PANELS))"));
-				tList.Add(t_global);
-				rList.Add(new Regex("^((?i)(VIDEO|NEXUS|LIGHT_ANGLE|IBANK|DRUMBANK|MIDI_PITCH|BIND|MAPFILE|SAVEDIR|PATH|DITHER))"));
-				tList.Add(t_asset);
-				rList.Add(new Regex("^((?i)(MODEL|SOUND|MUSIC|FLIC|BMAP|OVLY|FONT))"));
-				tList.Add(t_object);
-				rList.Add(new Regex("^((?i)(OVERLAY|PANEL|PALETTE|REGION|SKILL|STRING|SYNONYM|TEXTURE|TEXT|VIEW|WALL|WAY))"));
-				tList.Add(t_function);
-				rList.Add(new Regex("^((?i)(ACTION|RULES))"));
-				tList.Add(t_math);
-				rList.Add(new Regex("^((?i)(ACOS|COS|TAN|SIGN|INT|EXP|LOG10|LOG2|LOG))"));
-				tList.Add(t_flag);
-				rList.Add(new Regex("^((?i)(FLOOR_DESCEND|CEIL_DESCEND|FLOOR_ASCEND|FLOOR_LIFTED|CEIL_ASCEND|CEIL_LIFTED|TRANSPARENT|CANDELABER|DIAPHANOUS|IMMATERIAL|IMPASSABLE|PORTCULLIS|AUTORANGE|CAREFULLY|CONDENSED|FLAG[1-8]|INVISIBLE|SENSITIVE|BERKELEY|CENTER_X|CENTER_Y|LIGHTMAP|PASSABLE|SAVE_ALL|CLUSTER|CURTAIN|FRAGILE|NO_CLIP|ONESHOT|REFRESH|VISIBLE|ABSPOS|BEHIND|GROUND|LIFTED|MASTER|NARROW|RELPOS|SHADOW|STICKY|FENCE|GHOST|LIBER|MOVED|SLOOP|BASE|BLUR|CLIP|FLAT|HARD|PLAY|SEEN|WIRE|FAR|SKY))"));
-				tList.Add(t_property);
-				rList.Add(new Regex("^((?i)(ALBEDO|ANGLE|ASPECT|ASPEED|ATTACH|BELOW|BMAPS|BUTTON|CEIL_(ANGLE|OFFS_[X-Y]|TEX)|CYCLES|CYCLE|DEFAULT|DELAY|DIGITS|DISTANCE|DIST|EACH_CYCLE_C|EACH_CYCLE|FLAGS|FLOOR_(ANGLE|OFFS_[X-Y]|TEX)|FRAME|GENIUS|HBAR|HEIGHT|HSLIDER|IF_(ARISE|ARRIVED|DIVE|FAR|LEAVE|NEAR|RELEASE|TOUCH)|INDEX|LAYER|LEFT|LENGTH|MAP_COLOR|MASK|MAX|MIN|MIRROR|OFFSET_[X-Y]|OVLYS|PALFILE|PAN_MAP|PICTURE|POSITION|POS_[X-Y]|RADIANCE|RANGE|REL_(ANGLE|DIST)|RIGHT|SCALE_(XY|X|Y)|SCYCLES|SCYCLE|SDIST|SIDES|SIDE|SIZE_[X-Y]|SKILL[1-8]|SPEED|STRINGS|SVDIST|SVOL|TARGET_(MAP|X|Y)|TARGET|TEXTURE[1-4]|THING_HGT|TITLE|TOP|TOUCH|TYPE|VAL|VBAR|VSLIDER|VSPEED|WAYPOINT|[X-Z][1-2]|[X-Z]))"));
-				tList.Add(t_command);
-				rList.Add(new Regex("^((?i)(ACCEL|ADD_STRING|ADDT|ADD|AND|BEEP|BRANCH|BREAK|CALL|DROP|END|EXCLUSIVE|EXEC_RULES|EXIT|EXPLODE|FADE_PAL|FIND|FREEZE|GETMIDI|GOTO|IF_(ABOVE|BELOW|EQUAL|MAX|MIN|NEQUAL)|INKEY|INPORT|LEVEL|LIFT|LOAD_INFO|LOAD|LOCATE|MAP|MIDI_COM|NEXT_(MY_THERE|MY|THERE)|NOP|OUTPORT|PLACE|PLAY_(CD|DEMO|FLICFILE|FLIC|SONG_ONCE|SONG|SOUNDFILE|SOUND)|PRINTFILE|PRINT_(STRING|VALUE)|PUSH|RANDOMIZE|ROTATE|SAVE_(DEMO|INFO)|SCAN|SCREENSHOT|SETMIDI|SET_(ALL|INFO|SKILL|STRING)|SET|SHAKE|SHIFT|SHOOT|SKIP|STOP_(DEMO|FLIC|SOUND)|SUBT|SUB|TILT|TO_STRING|WAITT|WAIT_TICKS|WAIT))"));
-				tList.Add(t_list);
-				rList.Add(new Regex("^((?i)((EACH_TICK|EACH_SEC|PANELS|LAYERS|MESSAGES)\\.(1[0-6]|[1-9])))"));
-				tList.Add(t_skill);
-				rList.Add(new Regex("^((?i)(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRICTION|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS_[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|NODE|PANEL_LAYER|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(CORR|FAC)|TOUCH_(DIST|MODE|STATE)|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE))"));
-				tList.Add(t_synonym);
-				rList.Add(new Regex("^((?i)(THERE|MY|HIT|TOUCH_TEXT|TOUCHED|TOUCH_TEX|TOUCH_REG|COMMAND_LINE))"));
-				tList.Add(t_ambigChar95globalChar95property);
-				rList.Add(new Regex("^((?i)CLIP_DIST)"));
-				tList.Add(t_ambigChar95eventChar95property);
-				rList.Add(new Regex("^((?i)(EACH_TICK|IF_ENTER|IF_HIT|IF_KLICK))"));
-				tList.Add(t_ambigChar95objectChar95flag);
-				rList.Add(new Regex("^((?i)(THING|ACTOR))"));
-				tList.Add(t_ambigChar95mathChar95command);
-				rList.Add(new Regex("^((?i)(SIN|ASIN|SQRT|ABS))"));
-				tList.Add(t_ambigChar95mathChar95skillChar95property);
-				rList.Add(new Regex("^((?i)RANDOM)"));
-				tList.Add(t_ambigChar95synonymChar95flag);
-				rList.Add(new Regex("^((?i)HERE)"));
-				tList.Add(t_ambigChar95skillChar95property);
-				rList.Add(new Regex("^((?i)(FLOOR_HGT|CEIL_HGT|AMBIENT|RESULT))"));
-				tList.Add(t_ambigChar95commandChar95flag);
-				rList.Add(new Regex("^((?i)SAVE)"));
-				tList.Add(t_ambigChar95globalChar95synonymChar95property);
-				rList.Add(new Regex("^((?i)MSPRITE)"));
-				tList.Add(t_ambigChar95commandChar95property);
-				rList.Add(new Regex("^((?i)DO)"));
-				tList.Add(t_integer);
-				rList.Add(new Regex("^([0-9]+)"));
-				tList.Add(t_fixed);
-				rList.Add(new Regex("^(([0-9]*\\.[0-9]+)|([0-9]+\\.[0-9]*))"));
-				tList.Add(t_identifier);
-				rList.Add(new Regex("^([A-Za-z0-9][A-Za-z0-9_]*(\\.[1-9][0-9]?)?)"));
-				tList.Add(t_file);
-				rList.Add(new Regex("^(<[\\s]?[^<;:\" ]+\\.[^<;:\" ]+[\\s]?>)"));
-				tList.Add(t_string);
-				rList.Add(new Regex("^(\"(.|[\\r\\n])*?\")"));
-				tList.Add(t_ignore);
-				rList.Add(new Regex("^([\\r\\n\\t\\s]|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))"));
-							}
+            tList.Add(t_IFDEF);
+            rList.Add(new Regex("^((?i)IFDEF)"));
+            tList.Add(t_Char59);
+            rList.Add(new Regex("^((,[\\s\\t]*)?;+)"));
+            tList.Add(t_IFNDEF);
+            rList.Add(new Regex("^((?i)IFNDEF)"));
+            tList.Add(t_IFELSE);
+            rList.Add(new Regex("^((?i)IFELSE)"));
+            tList.Add(t_ENDIF);
+            rList.Add(new Regex("^((?i)ENDIF)"));
+            tList.Add(t_DEFINE);
+            rList.Add(new Regex("^((?i)DEFINE)"));
+            tList.Add(t_Char44);
+            rList.Add(new Regex("^(,)"));
+            tList.Add(t_UNDEF);
+            rList.Add(new Regex("^((?i)UNDEF)"));
+            tList.Add(t_INCLUDE);
+            rList.Add(new Regex("^((?i)INCLUDE)"));
+            tList.Add(t_Char123);
+            rList.Add(new Regex("^(\\{)"));
+            tList.Add(t_Char125);
+            rList.Add(new Regex("^(\\}([\\t\\s]*;+)?)"));
+            tList.Add(t_Char58);
+            rList.Add(new Regex("^(:)"));
+            tList.Add(t_Char124Char124);
+            rList.Add(new Regex("^(\\|\\|)"));
+            tList.Add(t_Char38Char38);
+            rList.Add(new Regex("^(&&)"));
+            tList.Add(t_Char124);
+            rList.Add(new Regex("^(\\|)"));
+            tList.Add(t_Char94);
+            rList.Add(new Regex("^(\\^)"));
+            tList.Add(t_Char38);
+            rList.Add(new Regex("^(&)"));
+            tList.Add(t_Char40);
+            rList.Add(new Regex("^(\\()"));
+            tList.Add(t_Char41);
+            rList.Add(new Regex("^(\\))"));
+            tList.Add(t_Char33Char61);
+            rList.Add(new Regex("^(!=)"));
+            tList.Add(t_Char61Char61);
+            rList.Add(new Regex("^(==)"));
+            tList.Add(t_Char60);
+            rList.Add(new Regex("^(<)"));
+            tList.Add(t_Char60Char61);
+            rList.Add(new Regex("^(<=)"));
+            tList.Add(t_Char62);
+            rList.Add(new Regex("^(>)"));
+            tList.Add(t_Char62Char61);
+            rList.Add(new Regex("^(>=)"));
+            tList.Add(t_Char43);
+            rList.Add(new Regex("^(\\+)"));
+            tList.Add(t_Char45);
+            rList.Add(new Regex("^(\\-)"));
+            tList.Add(t_Char37);
+            rList.Add(new Regex("^(%)"));
+            tList.Add(t_Char42);
+            rList.Add(new Regex("^(\\*)"));
+            tList.Add(t_Char47);
+            rList.Add(new Regex("^(/)"));
+            tList.Add(t_Char33);
+            rList.Add(new Regex("^(!)"));
+            tList.Add(t_RULE);
+            rList.Add(new Regex("^((?i)RULE)"));
+            tList.Add(t_Char42Char61);
+            rList.Add(new Regex("^(\\*[\\s\\t]*=)"));
+            tList.Add(t_Char43Char61);
+            rList.Add(new Regex("^(\\+[\\s\\t]*=)"));
+            tList.Add(t_Char45Char61);
+            rList.Add(new Regex("^(\\-[\\s\\t]*=)"));
+            tList.Add(t_Char47Char61);
+            rList.Add(new Regex("^(/[\\s\\t]*=)"));
+            tList.Add(t_Char61);
+            rList.Add(new Regex("^(=)"));
+            tList.Add(t_ELSE);
+            rList.Add(new Regex("^((?i)ELSE)"));
+            tList.Add(t_IF);
+            rList.Add(new Regex("^((?i)IF)"));
+            tList.Add(t_WHILE);
+            rList.Add(new Regex("^((?i)WHILE)"));
+            tList.Add(t_Char46);
+            rList.Add(new Regex("^(\\.)"));
+            tList.Add(t_NULL);
+            rList.Add(new Regex("^((?i)NULL)"));
+            tList.Add(t_event);
+            rList.Add(new Regex("^((?i)(EACH_SEC|IF_(ALT|ANYKEY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|EQUALS|ESC|HOME|INS|LEFT|LOAD|MIDDLE|MINUS|MSTOP|PAUSE|PERIOD|PGDN|PGUP|PLUS|RIGHT|SEMIC|SLASH|SPACE|START|SZ|TAB|F(1[0-2]|[1-9])|[0-9A-Z])|LAYERS|MESSAGES|PANELS))"));
+            tList.Add(t_global);
+            rList.Add(new Regex("^((?i)(VIDEO|NEXUS|LIGHT_ANGLE|IBANK|DRUMBANK|MIDI_PITCH|BIND|MAPFILE|SAVEDIR|PATH|DITHER))"));
+            tList.Add(t_asset);
+            rList.Add(new Regex("^((?i)(MODEL|SOUND|MUSIC|FLIC|BMAP|OVLY|FONT))"));
+            tList.Add(t_object);
+            rList.Add(new Regex("^((?i)(OVERLAY|PANEL|PALETTE|REGION|SKILL|STRING|SYNONYM|TEXTURE|TEXT|VIEW|WALL|WAY))"));
+            tList.Add(t_function);
+            rList.Add(new Regex("^((?i)(ACTION|RULES))"));
+            tList.Add(t_math);
+            rList.Add(new Regex("^((?i)(ACOS|COS|TAN|SIGN|INT|EXP|LOG10|LOG2|LOG))"));
+            tList.Add(t_flag);
+            rList.Add(new Regex("^((?i)(FLOOR_DESCEND|CEIL_DESCEND|FLOOR_ASCEND|FLOOR_LIFTED|CEIL_ASCEND|CEIL_LIFTED|TRANSPARENT|CANDELABER|DIAPHANOUS|IMMATERIAL|IMPASSABLE|PORTCULLIS|AUTORANGE|CAREFULLY|CONDENSED|FLAG[1-8]|INVISIBLE|SENSITIVE|BERKELEY|CENTER_X|CENTER_Y|LIGHTMAP|PASSABLE|SAVE_ALL|CLUSTER|CURTAIN|FRAGILE|NO_CLIP|ONESHOT|REFRESH|VISIBLE|ABSPOS|BEHIND|GROUND|LIFTED|MASTER|NARROW|RELPOS|SHADOW|STICKY|FENCE|GHOST|LIBER|MOVED|SLOOP|BASE|BLUR|CLIP|FLAT|HARD|PLAY|SEEN|WIRE|FAR|SKY))"));
+            tList.Add(t_property);
+            rList.Add(new Regex("^((?i)(ALBEDO|ANGLE|ASPECT|ASPEED|ATTACH|BELOW|BMAPS|BUTTON|CEIL_(ANGLE|OFFS_[X-Y]|TEX)|CYCLES|CYCLE|DEFAULT|DELAY|DIGITS|DISTANCE|DIST|EACH_CYCLE_C|EACH_CYCLE|FLAGS|FLOOR_(ANGLE|OFFS_[X-Y]|TEX)|FRAME|GENIUS|HBAR|HEIGHT|HSLIDER|IF_(ARISE|ARRIVED|DIVE|FAR|LEAVE|NEAR|RELEASE|TOUCH)|INDEX|LAYER|LEFT|LENGTH|MAP_COLOR|MASK|MAX|MIN|MIRROR|OFFSET_[X-Y]|OVLYS|PALFILE|PAN_MAP|PICTURE|POSITION|POS_[X-Y]|RADIANCE|RANGE|REL_(ANGLE|DIST)|RIGHT|SCALE_(XY|X|Y)|SCYCLES|SCYCLE|SDIST|SIDES|SIDE|SIZE_[X-Y]|SKILL[1-8]|SPEED|STRINGS|SVDIST|SVOL|TARGET_(MAP|X|Y)|TARGET|TEXTURE[1-4]|THING_HGT|TITLE|TOP|TOUCH|TYPE|VAL|VBAR|VSLIDER|VSPEED|WAYPOINT|[X-Z][1-2]|[X-Z]))"));
+            tList.Add(t_command);
+            rList.Add(new Regex("^((?i)(ACCEL|ADD_STRING|ADDT|ADD|AND|BEEP|BRANCH|BREAK|CALL|DROP|END|EXCLUSIVE|EXEC_RULES|EXIT|EXPLODE|FADE_PAL|FIND|FREEZE|GETMIDI|GOTO|IF_(ABOVE|BELOW|EQUAL|MAX|MIN|NEQUAL)|INKEY|INPORT|LEVEL|LIFT|LOAD_INFO|LOAD|LOCATE|MAP|MIDI_COM|NEXT_(MY_THERE|MY|THERE)|NOP|OUTPORT|PLACE|PLAY_(CD|DEMO|FLICFILE|FLIC|SONG_ONCE|SONG|SOUNDFILE|SOUND)|PRINTFILE|PRINT_(STRING|VALUE)|PUSH|RANDOMIZE|ROTATE|SAVE_(DEMO|INFO)|SCAN|SCREENSHOT|SETMIDI|SET_(ALL|INFO|SKILL|STRING)|SET|SHAKE|SHIFT|SHOOT|SKIP|STOP_(DEMO|FLIC|SOUND)|SUBT|SUB|TILT|TO_STRING|WAITT|WAIT_TICKS|WAIT))"));
+            tList.Add(t_list);
+            rList.Add(new Regex("^((?i)((EACH_TICK|EACH_SEC|PANELS|LAYERS|MESSAGES)\\.(1[0-6]|[1-9])))"));
+            tList.Add(t_skill);
+            rList.Add(new Regex("^((?i)(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRICTION|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS_[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|NODE|PANEL_LAYER|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(CORR|FAC)|TOUCH_(DIST|MODE|STATE)|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE))"));
+            tList.Add(t_synonym);
+            rList.Add(new Regex("^((?i)(THERE|MY|HIT|TOUCH_TEXT|TOUCHED|TOUCH_TEX|TOUCH_REG|COMMAND_LINE))"));
+            tList.Add(t_ambigChar95globalChar95property);
+            rList.Add(new Regex("^((?i)CLIP_DIST)"));
+            tList.Add(t_ambigChar95eventChar95property);
+            rList.Add(new Regex("^((?i)(EACH_TICK|IF_ENTER|IF_HIT|IF_KLICK))"));
+            tList.Add(t_ambigChar95objectChar95flag);
+            rList.Add(new Regex("^((?i)(THING|ACTOR))"));
+            tList.Add(t_ambigChar95mathChar95command);
+            rList.Add(new Regex("^((?i)(SIN|ASIN|SQRT|ABS))"));
+            tList.Add(t_ambigChar95mathChar95skillChar95property);
+            rList.Add(new Regex("^((?i)RANDOM)"));
+            tList.Add(t_ambigChar95synonymChar95flag);
+            rList.Add(new Regex("^((?i)HERE)"));
+            tList.Add(t_ambigChar95skillChar95property);
+            rList.Add(new Regex("^((?i)(FLOOR_HGT|CEIL_HGT|AMBIENT|RESULT))"));
+            tList.Add(t_ambigChar95commandChar95flag);
+            rList.Add(new Regex("^((?i)SAVE)"));
+            tList.Add(t_ambigChar95globalChar95synonymChar95property);
+            rList.Add(new Regex("^((?i)MSPRITE)"));
+            tList.Add(t_ambigChar95commandChar95property);
+            rList.Add(new Regex("^((?i)DO)"));
+            tList.Add(t_integer);
+            rList.Add(new Regex("^([0-9]+)"));
+            tList.Add(t_fixed);
+            rList.Add(new Regex("^(([0-9]*\\.[0-9]+)|([0-9]+\\.[0-9]*))"));
+            tList.Add(t_identifier);
+            rList.Add(new Regex("^([A-Za-z0-9][A-Za-z0-9_]*(\\.[1-9][0-9]?)?)"));
+            tList.Add(t_file);
+            rList.Add(new Regex("^(<[\\s]?[^<;:\" ]+\\.[^<;:\" ]+[\\s]?>)"));
+            tList.Add(t_string);
+            rList.Add(new Regex("^(\"(.|[\\r\\n])*?\")"));
+            tList.Add(t_ignore);
+            rList.Add(new Regex("^([\\r\\n\\t\\s]|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))"));
+        }
                 YYARec[] yya;
                 YYARec[] yyg;
                 YYRRec[] yyr;
@@ -181,7 +182,8 @@ namespace VCCCompiler
                 string yyval = "";
 
                 FileStream OutputStream;
-                StreamWriter Output;
+                //StreamWriter Output;
+                TextWriter Output;
 
                 class YYARec
                 {
@@ -354,7 +356,8 @@ namespace VCCCompiler
                                 /// YYAction code:
                                 ////////////////////////////////////////////////////////////////
 							case    1 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = Objects.BuildObjects();
          Output.WriteLine(yyval);
          
        break;
@@ -469,7 +472,8 @@ namespace VCCCompiler
          
        break;
 							case   28 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Include.Process(yyv[yysp-1]);
          
        break;
 							case   29 : 
@@ -546,7 +550,8 @@ namespace VCCCompiler
        break;
 							case   47 : 
          //yyval = yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Objects.BuildObject(yyv[yysp-5], yyv[yysp-4], 0);
+         Objects.AddObject(yyv[yysp-5], yyv[yysp-4]);
+         yyval = "";
          
        break;
 							case   48 : 
@@ -6206,6 +6211,25 @@ namespace VCCCompiler
 				}
 			}
 			return ret;
+		}
+		public static string SubScanner(string file)
+		{
+			StreamReader in_s = File.OpenText(file);
+			string inputstream = in_s.ReadToEnd();
+			in_s.Close();
+
+			MyCompiler compiler = new MyCompiler();
+			StringBuilder sb = new StringBuilder();
+			compiler.Output = new StringWriter(sb);
+			if (!compiler.ScannerOpt(inputstream))
+				return string.Empty;
+			compiler.InitTables();
+			if (!compiler.yyparse())
+				return string.Empty;
+
+			if (compiler.Output != null)
+				compiler.Output.Close();
+			return sb.ToString();
 		}
 		////////////////////////////////////////////////////////////////
 		/// Scanner
