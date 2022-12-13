@@ -357,7 +357,7 @@ namespace VCCCompiler
                                 ////////////////////////////////////////////////////////////////
 							case    1 : 
          //yyval = yyv[yysp-0];
-         yyval = Objects.BuildObjects();
+         yyval = Assets.BuildAssets() + Objects.BuildObjects();
          Output.WriteLine(yyval);
          
        break;
@@ -528,16 +528,19 @@ namespace VCCCompiler
          yyval = yyv[yysp-0];
          
        break;
-							case   42 : 
-         yyval = yyv[yysp-6] + yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+							case   42 :
+         //yyval = yyv[yysp-6] + yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = "";
+         Assets.AddAsset(yyv[yysp-6], yyv[yysp-5], yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   43 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Formatter.FormatNumber(yyv[yysp-2]) + ", " + yyv[yysp-0];
          
        break;
 							case   44 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatNumber(yyv[yysp-0]);
          
        break;
 							case   45 : 
@@ -545,7 +548,7 @@ namespace VCCCompiler
          
        break;
 							case   46 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatObject(yyv[yysp-0]);
          
        break;
 							case   47 : 

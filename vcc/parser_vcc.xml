@@ -83,7 +83,7 @@
                 <RULE name="Sections"/>
                 <CODE>
                     //$$ = $1;
-$$ = Objects.BuildObjects();
+$$ = Assets.BuildAssets() + Objects.BuildObjects();
 Output.WriteLine($$);
 
                 </CODE>
@@ -474,7 +474,9 @@ $$ = Include.Process($2);
                 <RULE name="AssetParams"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5 + $6 + $7;
+                    //$$ = $1 + $2 + $3 + $4 + $5 + $6 + $7;
+$$ = "";
+Assets.AddAsset($1, $2, $4, $6);
 
                 </CODE>
             </RIGHTSIDE>
@@ -485,14 +487,15 @@ $$ = Include.Process($2);
                 <TOKEN name="Char44"/>
                 <RULE name="AssetParams"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = Formatter.FormatNumber($1) + ", " + $3;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Integer"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -507,7 +510,7 @@ $$ = Include.Process($2);
             <RIGHTSIDE>
                 <TOKEN name="asset"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatObject($1);
 
                 </CODE>
             </RIGHTSIDE>

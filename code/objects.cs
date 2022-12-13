@@ -258,7 +258,12 @@ namespace WDL2CS
 
                 case "Bmap":
                 case "Bmaps":
-                    p = "Bmaps = new Bmap[] {" + GetValues(values, ", ") + "}";
+                    p = "Bmaps = new [] {" + GetValues(values, ", ") + "}";
+                    s_formattedProperties.Add(p);
+                    break;
+
+                case "Ovlys":
+                    p = "Ovlys = new [] {" + GetValues(values, ", ") + "}";
                     s_formattedProperties.Add(p);
                     break;
 
