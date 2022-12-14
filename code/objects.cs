@@ -24,6 +24,7 @@ namespace WDL2CS
         static Objects()
         {
             s_objects.Add("Synonym", new Dictionary<string, string>());
+            s_objects.Add("String", new Dictionary<string, string>());
             s_objects.Add("Skill", new Dictionary<string, string>());
             s_objects.Add("Palette", new Dictionary<string, string>());
             s_objects.Add("Texture", new Dictionary<string, string>());
@@ -41,6 +42,7 @@ namespace WDL2CS
         public static string BuildObjects()
         {
             string o = string.Empty;
+            string scope = "public ";
 
             //generate declarations
             foreach (KeyValuePair<string, Dictionary<string, string>> objs in s_objects)
@@ -54,15 +56,25 @@ namespace WDL2CS
                             //Global skills don't need an extra declaration
                             if (string.Compare("Globals.", 0, obj.Key, 0, 8, true) != 0)
                             {
-                                o += s_indent + "public " + type + " " + obj.Key + ";" + s_nl;
+                                o += s_indent + scope + type + " " + obj.Key + ";" + s_nl;
                             }
+                        }
+                        break;
+
+                    case "String":
+                        foreach (KeyValuePair<string, string> obj in objs.Value)
+                        {
+                            o += s_indent + scope + "string " + obj.Key;
+                            if (!string.IsNullOrEmpty(obj.Value))
+                                o += " = " + obj.Value;
+                            o += ";" + s_nl;
                         }
                         break;
 
                     default:
                         foreach (KeyValuePair<string, string> obj in objs.Value)
                         {
-                            o += s_indent + "public " + type + " " + obj.Key + ";" + s_nl;
+                            o += s_indent + scope + type + " " + obj.Key + ";" + s_nl;
                         }
                         break;
                 }
@@ -75,7 +87,8 @@ namespace WDL2CS
                 string type = objs.Key;
                 foreach (KeyValuePair<string, string> obj in objs.Value)
                 {
-                    if (!string.IsNullOrEmpty(obj.Value))
+                    //Ways never have properties, but need to be instantiated nonetheless
+                    if (!string.IsNullOrEmpty(obj.Value) || string.Compare(type, "Way", true) == 0)
                     {
                         o += s_indent + obj.Key + " = new " + type + "()" + s_nl;
                         o += s_indent + "{" + s_nl;
@@ -87,6 +100,20 @@ namespace WDL2CS
             o += s_nl;
 
             return o;
+        }
+
+        public static void AddObject(string type, string name, string text)
+        {
+            //move object into object lists
+            Dictionary<string, string> obj;
+            if (s_objects.TryGetValue(type, out obj))
+            {
+                if (obj.ContainsKey(name))
+                    Console.WriteLine("OBJECTS ignore double definition: " + name);
+                else
+                    obj.Add(name, text);
+            }
+
         }
 
         public static void AddObject(string type, string name)
@@ -110,19 +137,6 @@ namespace WDL2CS
             }
             else
             {
-
-                //Global identifiers must be overwritten instead of just created
-                /*
-                            if (string.Compare("Globals.", 0, name, 0, 8, true) == 0)
-                            {
-                                o = s_indent + name + " = new " + type + "()" + s_nl;
-                            }
-                            else
-                            {
-                                o = s_indent + type + " " + name + " = new " + type + "()" + s_nl;
-                            }
-                */
-                //o += s_indent + "{" + s_nl;
 
                 //handle property definitions
                 for (int i = 0; i < s_properties.Count; i++)

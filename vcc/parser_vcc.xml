@@ -83,7 +83,7 @@
                 <RULE name="Sections"/>
                 <CODE>
                     //$$ = $1;
-$$ = Assets.BuildAssets() + Objects.BuildObjects();
+$$ = Globals.BuildGlobals() + Assets.BuildAssets() + Objects.BuildObjects();
 Output.WriteLine($$);
 
                 </CODE>
@@ -371,7 +371,9 @@ $$ = Include.Process($2);
                 <RULE name="GlobalParameter"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+Globals.AddGlobal($1, $2);
+$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -380,21 +382,21 @@ $$ = Include.Process($2);
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="global"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -538,6 +540,7 @@ $$ = "";
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5;
+Objects.AddObject($1, $2, $4);
 $$ = "";
 
                 </CODE>
@@ -548,6 +551,7 @@ $$ = "";
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
+Objects.AddObject($1, $2);
 $$ = "";
 
                 </CODE>
@@ -1828,7 +1832,7 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="string"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatString($1);
 
                 </CODE>
             </RIGHTSIDE>

@@ -357,7 +357,7 @@ namespace VCCCompiler
                                 ////////////////////////////////////////////////////////////////
 							case    1 : 
          //yyval = yyv[yysp-0];
-         yyval = Assets.BuildAssets() + Objects.BuildObjects();
+         yyval = Globals.BuildGlobals() + Assets.BuildAssets() + Objects.BuildObjects();
          Output.WriteLine(yyval);
          
        break;
@@ -481,19 +481,21 @@ namespace VCCCompiler
          
        break;
 							case   30 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         Globals.AddGlobal(yyv[yysp-2], yyv[yysp-1]);
+         yyval = "";
          
        break;
 							case   31 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case   32 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case   33 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case   34 : 
@@ -528,7 +530,7 @@ namespace VCCCompiler
          yyval = yyv[yysp-0];
          
        break;
-							case   42 :
+							case   42 : 
          //yyval = yyv[yysp-6] + yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
          yyval = "";
          Assets.AddAsset(yyv[yysp-6], yyv[yysp-5], yyv[yysp-3], yyv[yysp-1]);
@@ -559,11 +561,13 @@ namespace VCCCompiler
        break;
 							case   48 : 
          //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         Objects.AddObject(yyv[yysp-4], yyv[yysp-3], yyv[yysp-1]);
          yyval = "";
          
        break;
 							case   49 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         Objects.AddObject(yyv[yysp-2], yyv[yysp-1]);
          yyval = "";
          
        break;
@@ -1188,7 +1192,7 @@ namespace VCCCompiler
          
        break;
 							case  204 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatString(yyv[yysp-0]);
          
        break;
                                 default : return;

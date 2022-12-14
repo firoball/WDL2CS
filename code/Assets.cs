@@ -27,6 +27,7 @@ namespace WDL2CS
         public static string BuildAssets()
         {
             string o = string.Empty;
+            string scope = "public ";
 
             //generate declarations
             foreach (KeyValuePair<string, Dictionary<string, string>> assets in s_assets)
@@ -34,7 +35,7 @@ namespace WDL2CS
                 string type = assets.Key;
                 foreach (KeyValuePair<string, string> asset in assets.Value)
                 {
-                    o += s_indent + "public " + type + " " + asset.Key + ";" + s_nl;
+                    o += s_indent + scope + type + " " + asset.Key + ";" + s_nl;
                 }
             }
             o += s_nl;

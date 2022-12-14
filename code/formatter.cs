@@ -9,6 +9,13 @@ namespace WDL2CS
 {
     class Formatter
     {
+        public static string FormatString(string s)
+        {
+            //convert escaping of quotation marks
+            s = s.Replace("\\\"", "\"\"");
+            return "@" + s;
+        }
+
         public static string FormatFile(string s)
         {
             s = s.ToLower();
