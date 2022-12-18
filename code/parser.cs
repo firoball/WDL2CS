@@ -452,7 +452,9 @@ namespace VCCCompiler
          
        break;
 							case   23 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = "";
+         Defines.AddTransform(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   24 : 
@@ -499,11 +501,11 @@ namespace VCCCompiler
          
        break;
 							case   34 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatEvent(yyv[yysp-0]);
          
        break;
 							case   35 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatEvent(yyv[yysp-0]);
          
        break;
 							case   36 : 
@@ -652,7 +654,7 @@ namespace VCCCompiler
          
        break;
 							case   69 : 
-         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
+         yyval = yyv[yysp-0];//"/*PropertyValueSynonym*/"+Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case   70 : 
@@ -972,7 +974,7 @@ namespace VCCCompiler
          
        break;
 							case  149 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatNull();
          
        break;
 							case  150 : 
@@ -1104,7 +1106,7 @@ namespace VCCCompiler
          
        break;
 							case  182 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  183 : 
@@ -1128,15 +1130,15 @@ namespace VCCCompiler
          
        break;
 							case  188 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case  189 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case  190 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatGlobal(yyv[yysp-0]);
          
        break;
 							case  191 : 

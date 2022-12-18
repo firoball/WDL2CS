@@ -7,7 +7,7 @@ namespace WDL2CS
 {
     class Assets
     {
-        private static string s_indent = "\t\t";
+        private static readonly string s_indent = "\t\t";
         private static Dictionary<string, Dictionary<string, string>> s_assets = new Dictionary<string, Dictionary<string, string>>();
 
         private static readonly string s_nl = Environment.NewLine;
@@ -61,11 +61,10 @@ namespace WDL2CS
                 p += ", " + parameters;
 
             //move asset into asset lists
-            Dictionary<string, string> asset;
-            if (s_assets.TryGetValue(type, out asset))
+            if (s_assets.TryGetValue(type, out Dictionary<string, string> asset))
             {
                 if (asset.ContainsKey(name))
-                    Console.WriteLine("ASSETS ignore double definition: " + name);
+                    Console.WriteLine("(W) ASSETS ignore double definition: " + name);
                 else
                     asset.Add(name, p);
             }

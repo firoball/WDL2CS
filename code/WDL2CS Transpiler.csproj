@@ -44,11 +44,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets.cs" />
-    <Compile Include="formatter.cs" />
+    <Compile Include="Defines.cs" />
+    <Compile Include="Formatter.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Include.cs" />
-    <Compile Include="objects.cs" />
-    <Compile Include="parser.cs" />
+    <Compile Include="Objects.cs" />
+    <Compile Include="Parser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -7,7 +7,7 @@ namespace WDL2CS
 {
     class Globals
     {
-        private static string s_indent = "\t\t";
+        private static readonly string s_indent = "\t\t";
         static Dictionary<string, string> s_globals = new Dictionary<string, string>();
 
         private static readonly string s_nl = Environment.NewLine;
@@ -29,23 +29,23 @@ namespace WDL2CS
         public static void AddGlobal(string name, string value)
         {
             //Patch for video mode definition
-            if (string.Compare(name, "Video", true) != 0)
+            if (name.Contains("Video"))
                 value = "\"" + value + "\"";
 
             //ignore Bind and Path statements
             switch (name)
             {
                 case "Bind":
-                    Console.WriteLine("GLOBALS ignore BIND definition: " + value);
+                    Console.WriteLine("(I) GLOBALS ignore BIND definition: " + value);
                     break;
 
                 case "Path":
-                    Console.WriteLine("GLOBALS ignore PATH definition: " + value);
+                    Console.WriteLine("(I) GLOBALS ignore PATH definition: " + value);
                     break;
 
                 default:
                     if (s_globals.ContainsKey(name))
-                        Console.WriteLine("GLOBALS ignore double definition: " + name);
+                        Console.WriteLine("(W) GLOBALS ignore double definition: " + name);
                     else
                         s_globals.Add(name, value);
                     break;

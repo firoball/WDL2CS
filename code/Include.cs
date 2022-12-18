@@ -14,12 +14,12 @@ namespace WDL2CS
             file = file.Replace("\"", string.Empty);
             if (File.Exists(file))
             {
-                Console.WriteLine("INCLUDE FOUND: " + file);
+                Console.WriteLine("(I) INCLUDE found: " + file);
                 return MyCompiler.SubScanner(file);
             }
             else
             {
-                Console.WriteLine("INCLUDE MISSING: " + file);
+                Console.WriteLine("(W) INCLUDE missing: " + file);
                 return string.Empty;
             }
         }

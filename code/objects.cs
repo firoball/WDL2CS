@@ -10,7 +10,7 @@ namespace WDL2CS
     {
         private static Dictionary<string, Dictionary<string, string>> s_objects = new Dictionary<string, Dictionary<string, string>>();
 
-        private static string s_indent = "\t\t";
+        private static readonly string s_indent = "\t\t";
         private static string s_ranges = string.Empty;
         private static string s_type = string.Empty;
         private static List<string> s_controls = new List<string>();
@@ -48,7 +48,7 @@ namespace WDL2CS
             foreach (KeyValuePair<string, Dictionary<string, string>> objs in s_objects)
             {
                 string type = objs.Key;
-                switch (objs.Key)
+                switch (type)
                 {
                     case "Skill":
                         foreach (KeyValuePair<string, string> obj in objs.Value)
@@ -85,16 +85,25 @@ namespace WDL2CS
             foreach (KeyValuePair<string, Dictionary<string, string>> objs in s_objects)
             {
                 string type = objs.Key;
-                foreach (KeyValuePair<string, string> obj in objs.Value)
+                switch (type)
                 {
-                    //Ways never have properties, but need to be instantiated nonetheless
-                    if (!string.IsNullOrEmpty(obj.Value) || string.Compare(type, "Way", true) == 0)
-                    {
-                        o += s_indent + obj.Key + " = new " + type + "()" + s_nl;
-                        o += s_indent + "{" + s_nl;
-                        o += obj.Value;
-                        o += s_indent + "};" + s_nl;
-                    }
+                    case "String":
+                        break;
+
+                    default:
+                        foreach (KeyValuePair<string, string> obj in objs.Value)
+                        {
+                            //Ways never have properties, but need to be instantiated nonetheless
+                            //Strings don't need definitions, skip them
+                            if (!string.IsNullOrEmpty(obj.Value) || string.Compare(type, "Way", true) == 0)
+                            {
+                                o += s_indent + obj.Key + " = new " + type + "()" + s_nl;
+                                o += s_indent + "{" + s_nl;
+                                o += obj.Value;
+                                o += s_indent + "};" + s_nl;
+                            }
+                        }
+                        break;
                 }
             }
             o += s_nl;
@@ -105,11 +114,10 @@ namespace WDL2CS
         public static void AddObject(string type, string name, string text)
         {
             //move object into object lists
-            Dictionary<string, string> obj;
-            if (s_objects.TryGetValue(type, out obj))
+            if (s_objects.TryGetValue(type, out Dictionary<string, string> obj))
             {
                 if (obj.ContainsKey(name))
-                    Console.WriteLine("OBJECTS ignore double definition: " + name);
+                    Console.WriteLine("(W) OBJECTS ignore double definition: " + name);
                 else
                     obj.Add(name, text);
             }
@@ -165,11 +173,10 @@ namespace WDL2CS
             //o += s_indent + "};" + s_nl;
 
             //move object into object lists
-            Dictionary<string, string> obj;
-            if (s_objects.TryGetValue(type, out obj))
+            if (s_objects.TryGetValue(type, out Dictionary<string, string> obj))
             {
                 if (obj.ContainsKey(name))
-                    Console.WriteLine("OBJECTS ignore double definition: " + name);
+                    Console.WriteLine("(W) OBJECTS ignore double definition of object: " + name);
                 else
                     obj.Add(name, o);
             }
@@ -191,7 +198,7 @@ namespace WDL2CS
 
         private static void BuildControls()
         {
-            string c = "Controls = new[]" + s_nl + s_indent + "\t{ " + s_nl;
+            string c = "Controls = new UIControl[]" + s_nl + s_indent + "\t{ " + s_nl;
             for (int i = 0; i < s_controls.Count; i++)
             {
                 c += s_indent + "\t\t" + s_controls[i];
@@ -248,7 +255,7 @@ namespace WDL2CS
                     break;
 
                 case "Button":
-                    s_controls.Add("new " + property + "(" + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3] + ", () => { return " + values[4] + "; }, () => { return " + values[5] + "; } )");
+                    s_controls.Add("new " + property + "(" + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3] + ", " + values[4] + ", " + values[5] + ")");
                     break;
 
                 case "Flags":
@@ -337,11 +344,18 @@ namespace WDL2CS
                     break;
             }
 
-            //Eliminate double definitions of properties only where their values can be merged
-            if (allowMerge && s_properties.Contains(p))
+            if (s_properties.Contains(p))
             {
-                int i = s_properties.IndexOf(p);
-                s_propertyValues[i].AddRange(s_values);
+                //Eliminate double definitions of properties only where their values can be merged
+                if (allowMerge)
+                {
+                    int i = s_properties.IndexOf(p);
+                    s_propertyValues[i].AddRange(s_values);
+                }
+                else
+                {
+                    Console.WriteLine("(W) OBJECTS ignore double definition of property: " + property);
+                }
             }
             else
             {

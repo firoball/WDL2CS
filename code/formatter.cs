@@ -34,7 +34,7 @@ namespace WDL2CS
             s = s.ToLower();
             char[] a = s.ToCharArray();
             a[0] = char.ToUpper(a[0]);
-            return new string(a);
+            return Defines.CheckTransform(new string(a));
         }
 
         public static string FormatObject(string s)
@@ -42,7 +42,15 @@ namespace WDL2CS
             s = s.ToLower();
             char[] a = s.ToCharArray();
             a[0] = char.ToUpper(a[0]);
-            return new string(a);
+            return Defines.CheckTransform(new string(a));
+        }
+
+        public static string FormatEvent(string s)
+        {
+            s = s.ToLower();
+            char[] a = s.ToCharArray();
+            a[0] = char.ToUpper(a[0]);
+            return Defines.CheckTransform(new string(a));
         }
 
         public static string FormatProperty(string s)
@@ -50,7 +58,7 @@ namespace WDL2CS
             s = s.ToLower();
             char[] a = s.ToCharArray();
             a[0] = char.ToUpper(a[0]);
-            return new string(a);
+            return Defines.CheckTransform(new string(a));
         }
 
         public static string FormatNumber(string s)
@@ -69,7 +77,7 @@ namespace WDL2CS
             CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
             if (!provider.IsValidIdentifier(s))
                 s += "__";
-            return s;
+            return Defines.CheckTransform(s);
         }
 
         public static string FormatGlobal(string s)

@@ -305,7 +305,9 @@ $$ = "";
                 <RULE name="Parameter"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = "";
+Defines.AddTransform($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -405,14 +407,14 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95eventChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatEvent($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="event"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatEvent($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -647,7 +649,7 @@ $$ = "";
                 <TOKEN name="Char46"/>
                 <RULE name="Flag"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + "." + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -656,7 +658,7 @@ $$ = "";
                 <TOKEN name="Char46"/>
                 <RULE name="Property"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + "." + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -665,7 +667,7 @@ $$ = "";
                 <TOKEN name="Char46"/>
                 <RULE name="Flag"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + "." + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -674,7 +676,7 @@ $$ = "";
                 <TOKEN name="Char46"/>
                 <RULE name="Property"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + "." + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -723,7 +725,7 @@ $$ = "";
             <RIGHTSIDE>
                 <RULE name="Synonym"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1279,35 +1281,35 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="Char42Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "*=";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char43Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "+=";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char45Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "-=";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char47Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "/=";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "=";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1409,7 +1411,7 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="NULL"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatNull();
 
                 </CODE>
             </RIGHTSIDE>
@@ -1660,7 +1662,7 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="identifier"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1710,21 +1712,21 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95synonymChar95flag"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="synonym"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
