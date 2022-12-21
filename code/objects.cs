@@ -39,6 +39,21 @@ namespace WDL2CS
             s_objects.Add("View", new Dictionary<string, string>());
         }
 
+        public static bool IsSkill(string name)
+        {
+            if (s_objects.TryGetValue("Skill", out Dictionary<string, string> skills))
+            {
+                //Console.WriteLine("DFEBUG IsSkill: " + name);
+                //foreach (string s in skills.Keys)
+                //{
+                //    Console.WriteLine(":: " + s);
+
+                //}
+                return skills.ContainsKey(name);
+            }
+            return false;
+        }
+
         public static string BuildObjects()
         {
             string o = string.Empty;
@@ -71,6 +86,14 @@ namespace WDL2CS
                         }
                         break;
 
+                    case "Synonym":
+                        //Synonyms carry full definition in obj.Value - only add indent and scope
+                        foreach (KeyValuePair<string, string> obj in objs.Value)
+                        {
+                            o += s_indent + scope + obj.Value + ";" + s_nl;
+                        }
+                        break;
+
                     default:
                         foreach (KeyValuePair<string, string> obj in objs.Value)
                         {
@@ -87,6 +110,8 @@ namespace WDL2CS
                 string type = objs.Key;
                 switch (type)
                 {
+                    //Snyonyms and strings don't require extra definition, they are handled at definition
+                    case "Synonym":
                     case "String":
                         break;
 
@@ -128,20 +153,35 @@ namespace WDL2CS
         {
             string o = string.Empty;
 
-            //Synonyms are just plain variables in C#
+            //Synonyms are just plain variables in C# - special case
             if (string.Compare(type, "Synonym", true) == 0)
             {
-                string prop = "Type";
+                string prop;
+                string synType = string.Empty;
+                int i;
+
+                //workaround build synonym definition in property
+                //Type declares datatype of Synonym
+                prop = "Type";
                 if (s_properties.Contains(prop))
                 {
-                    int i = s_properties.IndexOf(prop);
-                    //o = s_indent + "public " + s_propertyValues[i][0] + " " + name + ";" + s_nl;
-                    //return o;
-                    type = Formatter.FormatObject(s_propertyValues[i][0]);
-                    //"Action" keyword is reserved in C# -> use "Function" instead
-                    if (string.Compare(type, "Action", true) == 0)
-                        type =  "Function";
+                    i = s_properties.IndexOf(prop);
+                    synType = Formatter.FormatObject(s_propertyValues[i][0]);
+                    //"Action" keyword is reserved in C# -> use "Function" instead (mandatory)
+                    if (string.Compare(synType, "Action", true) == 0)
+                        synType = "Function";
+
+                    o += synType + " " + name;
+
+                    //Default declares default assignment of Synonym (optional)
+                    prop = "Default";
+                    if (s_properties.Contains(prop))
+                    {
+                        i = s_properties.IndexOf(prop);
+                        o += " = " + Formatter.FormatObject(s_propertyValues[i][0]);
+                    }
                 }
+                //Console.WriteLine("Synonym: " + o);
             }
             else
             {
@@ -151,26 +191,26 @@ namespace WDL2CS
                 {
                     BuildProperty(type, s_properties[i], s_propertyValues[i]);
                 }
-            }
-            //handle panel control definitions
-            if (s_controls.Count > 0)
-            {
-                BuildControls();
-            }
+            
+                //handle panel control definitions
+                if (s_controls.Count > 0)
+                {
+                    BuildControls();
+                }
 
-            //handle range definitions
-            if (!string.IsNullOrEmpty(s_ranges))
-            {
-                string p = "Range = new[,] {" + s_ranges + "}";
-                s_formattedProperties.Add(p);
-            }
+                //handle range definitions
+                if (!string.IsNullOrEmpty(s_ranges))
+                {
+                    string p = "Range = new[,] {" + s_ranges + "}";
+                    s_formattedProperties.Add(p);
+                }
 
-            s_formattedProperties.Sort();
-            foreach (string s in s_formattedProperties)
-            {
-                o += s_indent + "\t" + s + ", " + s_nl;
+                s_formattedProperties.Sort();
+                foreach (string s in s_formattedProperties)
+                {
+                    o += s_indent + "\t" + s + ", " + s_nl;
+                }
             }
-            //o += s_indent + "};" + s_nl;
 
             //move object into object lists
             if (s_objects.TryGetValue(type, out Dictionary<string, string> obj))
@@ -192,8 +232,6 @@ namespace WDL2CS
                 values.Clear();
             }
             s_propertyValues.Clear();
-
-            //return o;
         }
 
         private static void BuildControls()

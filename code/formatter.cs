@@ -55,10 +55,20 @@ namespace WDL2CS
 
         public static string FormatProperty(string s)
         {
+            //if (string.IsNullOrEmpty(s))
+                //return "ThisIsADebugText"; //string.Empty;
             s = s.ToLower();
             char[] a = s.ToCharArray();
             a[0] = char.ToUpper(a[0]);
             return Defines.CheckTransform(new string(a));
+        }
+
+        public static string FormatCommand(string s)
+        {
+            s = s.ToLower();
+            char[] a = s.ToCharArray();
+            a[0] = char.ToUpper(a[0]);
+            return Defines.CheckTransform(new string(a)); //transform required here?
         }
 
         public static string FormatNumber(string s)
@@ -82,7 +92,9 @@ namespace WDL2CS
 
         public static string FormatGlobal(string s)
         {
-            return "Globals." + FormatProperty(s);
+            string a =  "Globals." + FormatProperty(s);
+            return Defines.CheckTransform(a);
+
         }
 
         public static string FormatFlag(string s)
@@ -93,6 +105,33 @@ namespace WDL2CS
         public static string FormatSkillType(string s)
         {
             return "SkillType." + FormatProperty(s);
+        }
+
+        public static string FormatMath(string s)
+        {
+            return "MathV." + FormatProperty(s);
+        }
+
+        public static string FormatGoto(string s)
+        {
+            return s.ToLower() + ":";
+        }
+
+        public static string FormatTargetSkill(string target)
+        {
+            //C# does not allow overlaoding of = operator, therefore auto-assignment to Skill.Val is not possible
+            //Work around by generating explicit assignment after identifying target as Skill
+            if ((string.Compare("Globals.", 0, target, 0, 8, true) == 0) || Objects.IsSkill(target))
+                target += ".Val";
+
+            return target;
+        }
+
+        public static string FormatExpression(string target, string op, string expression)
+        {
+            if (string.Compare(op, " = ") == 0)
+                target = FormatTargetSkill(target);
+            return target + op + expression;
         }
     }
 }

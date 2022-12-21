@@ -43,6 +43,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions.cs" />
     <Compile Include="Assets.cs" />
     <Compile Include="Defines.cs" />
     <Compile Include="Formatter.cs" />

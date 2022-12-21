@@ -746,7 +746,8 @@ $$ = "";
                 <RULE name="Instructions"/>
                 <TOKEN name="Char125"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5 + $6;
+                    //$$ = $1 + $2 + $3 + $4 + $5 + $6;
+Actions.AddAction($2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -785,7 +786,8 @@ $$ = "";
                 <TOKEN name="Char58"/>
                 <RULE name="Instructions"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = ""; //Build Goto here?
 
                 </CODE>
             </RIGHTSIDE>
@@ -794,7 +796,9 @@ $$ = "";
                 <TOKEN name="Char59"/>
                 <RULE name="Instructions"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = ""; //Build Instruction here?
+//Actions.AddInstruction($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -825,7 +829,9 @@ $$ = "";
             <RIGHTSIDE>
                 <RULE name="Rule"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = "";
+Actions.AddExpression($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -834,14 +840,18 @@ $$ = "";
                 <RULE name="Sep"/>
                 <RULE name="ParameterList"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = "";
+Actions.AddInstruction($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Command"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = "";
+Actions.AddInstruction($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -851,7 +861,9 @@ $$ = "";
                 <RULE name="Parameter"/>
                 <RULE name="Sep"/>
                 <CODE>
-                    $$ = $1 + $2;
+                    //$$ = $1 + $2;
+$$ = "";
+Actions.AddInstructionParameter($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -861,6 +873,8 @@ $$ = "";
                 <RULE name="ParameterList"/>
                 <CODE>
                     $$ = $1 + $2 + $3;
+$$ = "";
+Actions.AddInstructionParameter($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -871,12 +885,14 @@ $$ = "";
                 <CODE>
                     $$ = $1;
 
+
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="List"/>
                 <CODE>
                     $$ = $1;
+
 
                 </CODE>
             </RIGHTSIDE>
@@ -892,12 +908,14 @@ $$ = "";
                 <CODE>
                     $$ = $1;
 
+
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Keyword"/>
                 <CODE>
                     $$ = $1;
+
 
                 </CODE>
             </RIGHTSIDE>
@@ -932,7 +950,7 @@ $$ = "";
                 <TOKEN name="Char124Char124"/>
                 <RULE name="LogicAnd"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + " || " + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -950,7 +968,7 @@ $$ = "";
                 <TOKEN name="Char38Char38"/>
                 <RULE name="BitOr"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + " &amp;&amp; " + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -968,7 +986,7 @@ $$ = "";
                 <TOKEN name="Char124"/>
                 <RULE name="BitXor"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + " | " + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -986,7 +1004,7 @@ $$ = "";
                 <TOKEN name="Char94"/>
                 <RULE name="BitAnd"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + " ^ " + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1004,7 +1022,7 @@ $$ = "";
                 <TOKEN name="Char38"/>
                 <RULE name="Equality"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + " &amp; " + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1047,7 +1065,7 @@ $$ = "";
                 <RULE name="OpCmp"/>
                 <RULE name="Term"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + " == " + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1112,7 +1130,7 @@ $$ = "";
                 <RULE name="Expression"/>
                 <TOKEN name="Char41"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4;
+                    $$ = Formatter.FormatMath($1) + "(" + $3 + ")";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1121,7 +1139,7 @@ $$ = "";
                 <RULE name="Expression"/>
                 <TOKEN name="Char41"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = "(" + $2 + ")";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1144,14 +1162,14 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="Char33Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " != ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char61Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " == ";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1160,28 +1178,28 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="Char60"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " &lt; ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char60Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " &lt;= ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char62"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " &gt; ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char62Char61"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " &gt;= ";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1190,14 +1208,14 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="Char43"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " + ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char45"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " - ";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1206,21 +1224,21 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="Char37"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " % ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char42"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " * ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char47"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = " / ";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1229,21 +1247,21 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="Char33"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "!";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char43"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "+";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char45"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "-";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1253,7 +1271,7 @@ $$ = "";
                 <TOKEN name="RULE"/>
                 <RULE name="Expression"/>
                 <CODE>
-                    $$ = $1 + $2;
+                    $$ = /*$1 +*/ $2;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1263,7 +1281,8 @@ $$ = "";
                 <RULE name="OpAssign"/>
                 <RULE name="Expression"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4;
+                    //$$ = $1 + $2 + $3 + $4;
+$$ = Formatter.FormatExpression($2, $3, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1272,7 +1291,8 @@ $$ = "";
                 <RULE name="OpAssign"/>
                 <RULE name="Expression"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = Formatter.FormatExpression($1, $2, $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1281,35 +1301,35 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="Char42Char61"/>
                 <CODE>
-                    $$ = "*=";
+                    $$ = " *= ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char43Char61"/>
                 <CODE>
-                    $$ = "+=";
+                    $$ = " += ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char45Char61"/>
                 <CODE>
-                    $$ = "-=";
+                    $$ = " -= ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char47Char61"/>
                 <CODE>
-                    $$ = "/=";
+                    $$ = " /= ";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="Char61"/>
                 <CODE>
-                    $$ = "=";
+                    $$ = " = ";
 
                 </CODE>
             </RIGHTSIDE>
@@ -1550,21 +1570,21 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="ELSE"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatCommand($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95mathChar95command"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatCommand($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="CommandAsId"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatCommand($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1809,14 +1829,14 @@ $$ = "";
             <RIGHTSIDE>
                 <TOKEN name="synonym"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGoto($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectId"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGoto($1);
 
                 </CODE>
             </RIGHTSIDE>
