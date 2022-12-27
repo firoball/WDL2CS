@@ -39,16 +39,11 @@ namespace WDL2CS
             s_objects.Add("View", new Dictionary<string, string>());
         }
 
-        public static bool IsSkill(string name)
+        public static bool Is(string obj, string name)
         {
-            if (s_objects.TryGetValue("Skill", out Dictionary<string, string> skills))
+            if (s_objects.TryGetValue(obj, out Dictionary<string, string> skills))
             {
-                //Console.WriteLine("DFEBUG IsSkill: " + name);
-                //foreach (string s in skills.Keys)
-                //{
-                //    Console.WriteLine(":: " + s);
 
-                //}
                 return skills.ContainsKey(name);
             }
             return false;
@@ -364,6 +359,7 @@ namespace WDL2CS
         {
             string p = string.Empty;
             bool allowMerge = false;
+            bool allowMultiple = false;
 
             //Apply patches for undocumented WDL syntax
             switch (property)
@@ -374,6 +370,19 @@ namespace WDL2CS
 
                 case "Flags":
                     allowMerge = true;
+                    p = property;
+                    break;
+
+                case "Digits":
+                case "Hbar":
+                case "Vbar":
+                case "Hslider":
+                case "Vslider":
+                case "Picture":
+                case "Window":
+                case "Button":
+                case "Range":
+                    allowMultiple = true;
                     p = property;
                     break;
 
@@ -389,6 +398,11 @@ namespace WDL2CS
                 {
                     int i = s_properties.IndexOf(p);
                     s_propertyValues[i].AddRange(s_values);
+                }
+                else if (allowMultiple)
+                {
+                    s_properties.Add(p);
+                    s_propertyValues.Add(s_values);
                 }
                 else
                 {

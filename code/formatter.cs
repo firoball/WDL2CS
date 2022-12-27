@@ -1,6 +1,5 @@
 ﻿using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -86,7 +85,7 @@ namespace WDL2CS
             //patch all identifiers conflicting with C# language
             CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
             if (!provider.IsValidIdentifier(s))
-                s += "__";
+                s = "__" + s;
             return Defines.CheckTransform(s);
         }
 
@@ -112,16 +111,16 @@ namespace WDL2CS
             return "MathV." + FormatProperty(s);
         }
 
-        public static string FormatGoto(string s)
+        public static string FormatMarker(string s)
         {
             return s.ToLower() + ":";
         }
 
         public static string FormatTargetSkill(string target)
         {
-            //C# does not allow overlaoding of = operator, therefore auto-assignment to Skill.Val is not possible
+            //C# does not allow overloading of = operator, therefore auto-assignment to Skill.Val is not possible
             //Work around by generating explicit assignment after identifying target as Skill
-            if ((string.Compare("Globals.", 0, target, 0, 8, true) == 0) || Objects.IsSkill(target))
+            if ((string.Compare("Globals.", 0, target, 0, 8, true) == 0) || Objects.Is("Skill", target))
                 target += ".Val";
 
             return target;
@@ -132,6 +131,19 @@ namespace WDL2CS
             if (string.Compare(op, " = ") == 0)
                 target = FormatTargetSkill(target);
             return target + op + expression;
+        }
+
+        public static string FormatList(string list)
+        {
+            string[] parts = list.Split('.');
+            if (parts.Length == 2)
+            {
+                return FormatProperty(parts[0]) + "[" + (Convert.ToInt32(parts[1]) - 1) + "]";
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
     }
 }

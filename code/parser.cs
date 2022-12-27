@@ -420,19 +420,23 @@ namespace VCCCompiler
          
        break;
 							case   15 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreatePreProcIfCondition(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   16 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreatePreProcIfNotCondition(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   17 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreatePreProcElseCondition(yyv[yysp-1]);
          
        break;
 							case   18 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreatePreProcEndCondition(yyv[yysp-1]);
          
        break;
 							case   19 : 
@@ -663,7 +667,7 @@ namespace VCCCompiler
        break;
 							case   71 : 
          //yyval = yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         Actions.AddAction(yyv[yysp-4]);
+         Actions.AddAction(yyv[yysp-4], yyv[yysp-1]);
          
        break;
 							case   72 : 
@@ -671,22 +675,24 @@ namespace VCCCompiler
          
        break;
 							case   73 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreateMarker(yyv[yysp-2], yyv[yysp-0]);
          
        break;
 							case   74 : 
-         yyval = yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = yyv[yysp-2] + yyv[yysp-0];
          
        break;
 							case   75 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = ""; //Build Goto here?
+         yyval = Actions.CreateMarker(yyv[yysp-2], yyv[yysp-0]);
          
        break;
 							case   76 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = ""; //Build Instruction here?
-         //Actions.AddInstruction(yyv[yysp-2]);
+         yyval = yyv[yysp-2] + yyv[yysp-0];
+         
          
        break;
 							case   77 : 
@@ -702,21 +708,17 @@ namespace VCCCompiler
          
        break;
 							case   80 : 
-         //yyval = yyv[yysp-0];
-         yyval = "";
-         Actions.AddExpression(yyv[yysp-0]);
+         yyval = yyv[yysp-0];
          
        break;
 							case   81 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = "";
-         Actions.AddInstruction(yyv[yysp-2]);
+         yyval = Actions.CreateInstruction(yyv[yysp-2]);
          
        break;
 							case   82 : 
          //yyval = yyv[yysp-0];
-         yyval = "";
-         Actions.AddInstruction(yyv[yysp-0]);
+         yyval = Actions.CreateInstruction(yyv[yysp-0]);
          
        break;
 							case   83 : 
@@ -820,7 +822,7 @@ namespace VCCCompiler
          
        break;
 							case  106 : 
-         yyval = yyv[yysp-2] + " == " + yyv[yysp-0];
+         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
          
        break;
 							case  107 : 
@@ -920,17 +922,18 @@ namespace VCCCompiler
          
        break;
 							case  131 : 
-         yyval = /*yyv[yysp-1] +*/ yyv[yysp-0];
+         //yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreateExpression(yyv[yysp-0]);
          
        break;
 							case  132 : 
          //yyval = yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Formatter.FormatExpression(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]);
+         yyval = Actions.CreateExpression(Formatter.FormatExpression(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]));
          
        break;
 							case  133 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Formatter.FormatExpression(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]);
+         yyval = Actions.CreateExpression(Formatter.FormatExpression(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]));
          
        break;
 							case  134 : 
@@ -966,15 +969,18 @@ namespace VCCCompiler
          
        break;
 							case  142 : 
-         yyval = yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreateElseCondition(yyv[yysp-1]);
          
        break;
 							case  143 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreateIfCondition(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case  144 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Actions.CreateWhileCondition(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case  145 : 
@@ -1014,19 +1020,19 @@ namespace VCCCompiler
          
        break;
 							case  154 : 
-         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  155 : 
-         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  156 : 
-         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  157 : 
-         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
+         yyval = Formatter.FormatProperty(yyv[yysp-0]);
          
        break;
 							case  158 : 
@@ -1130,7 +1136,7 @@ namespace VCCCompiler
          
        break;
 							case  183 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatList(yyv[yysp-0]);
          
        break;
 							case  184 : 
@@ -1202,11 +1208,11 @@ namespace VCCCompiler
          
        break;
 							case  201 : 
-         yyval = Formatter.FormatGoto(yyv[yysp-0]);
+         yyval = yyv[yysp-0];
          
        break;
 							case  202 : 
-         yyval = Formatter.FormatGoto(yyv[yysp-0]);
+         yyval = yyv[yysp-0];
          
        break;
 							case  203 : 

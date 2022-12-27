@@ -215,7 +215,8 @@ $$ = "";
                 <RULE name="PreprocInstSection"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Actions.CreatePreProcIfCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -226,7 +227,8 @@ $$ = "";
                 <RULE name="PreprocInstSection"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Actions.CreatePreProcIfNotCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -239,7 +241,8 @@ $$ = "";
                 <RULE name="Instructions"/>
                 <TOKEN name="ENDIF"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Actions.CreatePreProcElseCondition($4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -247,7 +250,8 @@ $$ = "";
                 <RULE name="Instructions"/>
                 <TOKEN name="ENDIF"/>
                 <CODE>
-                    $$ = $1 + $2;
+                    //$$ = $1 + $2;
+$$ = Actions.CreatePreProcEndCondition($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -747,7 +751,7 @@ $$ = "";
                 <TOKEN name="Char125"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5 + $6;
-Actions.AddAction($2);
+Actions.AddAction($2, $5);
 
                 </CODE>
             </RIGHTSIDE>
@@ -767,7 +771,8 @@ Actions.AddAction($2);
                 <TOKEN name="Char59"/>
                 <RULE name="Instructions"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = Actions.CreateMarker($1, $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -777,7 +782,8 @@ Actions.AddAction($2);
                 <TOKEN name="Char125"/>
                 <RULE name="Instructions"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4;
+                    //$$ = $1 + $2 + $3 + $4;
+$$ = $2 + $4;
 
                 </CODE>
             </RIGHTSIDE>
@@ -787,7 +793,7 @@ Actions.AddAction($2);
                 <RULE name="Instructions"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-$$ = ""; //Build Goto here?
+$$ = Actions.CreateMarker($1, $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -797,8 +803,8 @@ $$ = ""; //Build Goto here?
                 <RULE name="Instructions"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-$$ = ""; //Build Instruction here?
-//Actions.AddInstruction($1);
+$$ = $1 + $3;
+
 
                 </CODE>
             </RIGHTSIDE>
@@ -829,9 +835,7 @@ $$ = ""; //Build Instruction here?
             <RIGHTSIDE>
                 <RULE name="Rule"/>
                 <CODE>
-                    //$$ = $1;
-$$ = "";
-Actions.AddExpression($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -841,8 +845,7 @@ Actions.AddExpression($1);
                 <RULE name="ParameterList"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-$$ = "";
-Actions.AddInstruction($1);
+$$ = Actions.CreateInstruction($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -850,8 +853,7 @@ Actions.AddInstruction($1);
                 <RULE name="Command"/>
                 <CODE>
                     //$$ = $1;
-$$ = "";
-Actions.AddInstruction($1);
+$$ = Actions.CreateInstruction($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1065,7 +1067,7 @@ Actions.AddInstructionParameter($1);
                 <RULE name="OpCmp"/>
                 <RULE name="Term"/>
                 <CODE>
-                    $$ = $1 + " == " + $3;
+                    $$ = $1 + $2 + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1271,7 +1273,8 @@ Actions.AddInstructionParameter($1);
                 <TOKEN name="RULE"/>
                 <RULE name="Expression"/>
                 <CODE>
-                    $$ = /*$1 +*/ $2;
+                    //$$ = $1 + $2;
+$$ = Actions.CreateExpression($2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1282,7 +1285,7 @@ Actions.AddInstructionParameter($1);
                 <RULE name="Expression"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4;
-$$ = Formatter.FormatExpression($2, $3, $4);
+$$ = Actions.CreateExpression(Formatter.FormatExpression($2, $3, $4));
 
                 </CODE>
             </RIGHTSIDE>
@@ -1292,7 +1295,7 @@ $$ = Formatter.FormatExpression($2, $3, $4);
                 <RULE name="Expression"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-$$ = Formatter.FormatExpression($1, $2, $3);
+$$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
 
                 </CODE>
             </RIGHTSIDE>
@@ -1364,7 +1367,8 @@ $$ = Formatter.FormatExpression($1, $2, $3);
                 <RULE name="Instructions"/>
                 <TOKEN name="Char125"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4;
+                    //$$ = $1 + $2 + $3 + $4;
+$$ = Actions.CreateElseCondition($3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1375,7 +1379,8 @@ $$ = Formatter.FormatExpression($1, $2, $3);
                 <RULE name="Instructions"/>
                 <TOKEN name="Char125"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Actions.CreateIfCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1386,7 +1391,8 @@ $$ = Formatter.FormatExpression($1, $2, $3);
                 <RULE name="Instructions"/>
                 <TOKEN name="Char125"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Actions.CreateWhileCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1468,28 +1474,28 @@ $$ = Formatter.FormatExpression($1, $2, $3);
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95commandChar95flag"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95objectChar95flag"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95synonymChar95flag"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="flag"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = Formatter.FormatProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1691,7 +1697,7 @@ $$ = Formatter.FormatExpression($1, $2, $3);
             <RIGHTSIDE>
                 <TOKEN name="list"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatList($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1829,14 +1835,14 @@ $$ = Formatter.FormatExpression($1, $2, $3);
             <RIGHTSIDE>
                 <TOKEN name="synonym"/>
                 <CODE>
-                    $$ = Formatter.FormatGoto($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectId"/>
                 <CODE>
-                    $$ = Formatter.FormatGoto($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
