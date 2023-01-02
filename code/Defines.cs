@@ -14,18 +14,68 @@ namespace WDL2CS
 
         private static Dictionary<string, string> s_redefines = new Dictionary<string, string>();
         //private static Stack<string> s_ifdefs = new Stack<string>();
+        private static bool s_transform = false;
+        private static string s_const = string.Empty;
+        private static string s_original = string.Empty;
 
-        public static void AddTransform(string redefine, string original)
+        public static string AddTransform(string redefine)
         {
-            if (!s_redefines.ContainsKey(redefine))
+            string s = string.Empty;
+
+            if (s_transform)
             {
-                s_redefines.Add(redefine, original);
-                Console.WriteLine("(I) DEFINES add transformation: " + redefine + ", " + original);
+                if (!s_redefines.ContainsKey(redefine))
+                {
+                    s_redefines.Add(redefine, s_original);
+                    Console.WriteLine("(I) DEFINES add transformation: " + redefine + ", " + s_original);
+                }
+                else
+                {
+                    Console.WriteLine("(W) DEFINES ignore double definition: " + redefine + ", " + s_original);
+                }
             }
             else
             {
-                Console.WriteLine("(W) DEFINES ignore double definition: " + redefine + ", " + original);
+                Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
+                s = $"{s_indent}public static const {s_const} {redefine} = {s_original};{s_nl}";
             }
+
+            //Reset settings
+            s_const = string.Empty;
+            s_transform = false;
+
+            return s;
+        }
+
+        public static void AddStringDefine(string s)
+        {
+            s_const = "string";
+            s_original = s;
+        }
+
+        public static void AddFileDefine(string s)
+        {
+            s_const = "string";
+            s_original = s;
+        }
+
+        public static void AddNumberDefine(string s)
+        {
+            s_const = "Var";
+            s_original = s;
+        }
+
+        public static void AddKeywordDefine(string s)
+        {
+            if (Objects.Is(out string obj, s))
+            {
+                s_const = obj;
+            }
+            else
+            {
+                s_transform = true;
+            }
+            s_original = s;
         }
 
         public static string AddDefine(string define)

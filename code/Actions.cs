@@ -11,6 +11,7 @@ namespace WDL2CS
 
         //private static Dictionary<string, string> s_actions = new Dictionary<string, string>();
         private static List<string> s_parameters = new List<string>();
+        private static readonly Random s_random = new Random();
 
         private static string s_indent = string.Empty;
         private static int s_indents = 2;
@@ -21,44 +22,81 @@ namespace WDL2CS
             return string.Empty;
         }
 
-        private static void CheckIndent(string s)
+        private static string UpdateIndent(string s)
         {
-            if (s[0] == '{')
+            return UpdateIndent(s, s);
+        }
+
+        private static string UpdateIndent(string s, string t)
+        {
+            if (s[0] == '#')
             {
-                UpdateIndent();
+                int i = s_indents;
+                s_indents = 0;
+                BuildIndent();
+                s_indents = i;
+            }
+            else if (s[0] == '{')
+            {
+                BuildIndent();
                 s_indents++;
             }
             else if (s[0] == '}')
             {
                 s_indents--;
-                UpdateIndent();
+                BuildIndent();
             }
             else
             {
-                UpdateIndent();
+                BuildIndent();
             }
+            return s_indent + t + s_nl;
         }
 
-        private static void UpdateIndent()
+        private static void BuildIndent()
         {
             s_indent = new string('\t', s_indents);
         }
 
-        public static void AddAction(string name, string stream)
+        public static string AddAction(string name, string stream)
         {
+            string s = string.Empty;
             //Console.WriteLine(stream);
             s_instructions = Instruction.DeserializeList(stream);
-            Console.WriteLine("public IEnumerator " + name+"()");
-            Console.WriteLine("{");
+            //Console.WriteLine("public IEnumerator " + name+"()");
+            //Console.WriteLine("{");
+            s += UpdateIndent("public IEnumerator " + name + "()");
+            s += UpdateIndent("{");
             foreach (Instruction inst in s_instructions)
             {
-                CheckIndent(inst.Command);
-                Console.WriteLine(s_indent + /*"("+inst.Count.ToString()[0]+"): " + */inst.Format());
+                s += UpdateIndent(inst.Command, inst.Format());
+                //UpdateIndent(inst.Command);
+                //Console.WriteLine(s_indent + /*"("+inst.Count.ToString()[0]+"): " + */inst.Format());
             }
-            Console.WriteLine("}");
+            s += UpdateIndent("}");
+//            Console.WriteLine("}");
 
             //Cleanup
             s_instructions.Clear();
+
+            return s;
+        }
+
+        private static string RandomMarker()
+        {
+            int size = 10;
+            var builder = new StringBuilder(size);
+
+            char offset = 'a';
+            const int lettersOffset = 26; //a..z: length = 26  
+
+            for (var i = 0; i < size; i++)
+            {
+                var @char = (char)s_random.Next(offset, offset + lettersOffset);
+                builder.Append(@char);
+            }
+
+            return builder.ToString();
         }
 
         public static string CreateMarker(string name, string stream)
@@ -159,6 +197,10 @@ namespace WDL2CS
         public static string CreateInstruction(string type)
         {
             Instruction inst = new Instruction(type, s_parameters);
+
+            //Skip instructions need to be replaced by "goto", therefore supply a randomly generated jump marker as additional paraemter
+            if (type.StartsWith("Skip"))
+                inst.Parameters.Add(RandomMarker());
 
             //Clean up
             s_parameters.Clear();

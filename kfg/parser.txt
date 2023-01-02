@@ -10,9 +10,10 @@ PreprocInstSection -> Instructions ENDIF | Instructions IFELSE ; Instructions EN
 PreprocProp -> IFDEF DefIdentifier ; PreprocPropSection ; | IFNDEF DefIdentifier ; PreprocPropSection ;
 PreprocPropSection -> PropertyDefs ENDIF | PropertyDefs IFELSE ; PropertyDefs ENDIF
 
-Define -> DEFINE DefIdentifier , Parameter ; | DEFINE DefIdentifier ; | UNDEF DefIdentifier ;
+Define -> DEFINE DefIdentifier , DefParameter ; | DEFINE DefIdentifier ; | UNDEF DefIdentifier ;
 %Allow ambiguity between predefined skills and defines. WDL allowed it.
 DefIdentifier -> Identifier | Skill
+DefParameter -> Number | Keyword | File | String | List
 Include -> INCLUDE File ;
 
 GlobalDef -> Global GlobalParameter ; | Event ObjectIdList ;

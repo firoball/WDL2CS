@@ -49,6 +49,20 @@ namespace WDL2CS
             return false;
         }
 
+        public static bool Is(out string obj, string name)
+        {
+            foreach (KeyValuePair<string, Dictionary<string, string>> kvp in s_objects)
+            {
+                if (kvp.Value.ContainsKey(name))
+                {
+                    obj = kvp.Key;
+                    return true;
+                }
+            }
+            obj = string.Empty;
+            return false;
+        }
+
         public static string BuildObjects()
         {
             string o = string.Empty;

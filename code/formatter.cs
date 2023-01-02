@@ -28,6 +28,7 @@ namespace WDL2CS
             return "null";
         }
 
+        /*
         public static string FormatFunction(string s)
         {
             s = s.ToLower();
@@ -35,7 +36,7 @@ namespace WDL2CS
             a[0] = char.ToUpper(a[0]);
             return Defines.CheckTransform(new string(a));
         }
-
+        */
         public static string FormatObject(string s)
         {
             s = s.ToLower();
@@ -46,10 +47,12 @@ namespace WDL2CS
 
         public static string FormatEvent(string s)
         {
+            /*
             s = s.ToLower();
             char[] a = s.ToCharArray();
             a[0] = char.ToUpper(a[0]);
-            return Defines.CheckTransform(new string(a));
+            return Defines.CheckTransform(new string(a));*/
+            return "Events." + FormatProperty(s);
         }
 
         public static string FormatProperty(string s)
@@ -91,8 +94,15 @@ namespace WDL2CS
 
         public static string FormatGlobal(string s)
         {
-            string a =  "Globals." + FormatProperty(s);
-            return Defines.CheckTransform(a);
+            return "Globals." + FormatProperty(s);
+            //return Defines.CheckTransform(a);
+
+        }
+
+        public static string FormatSkill(string s)
+        {
+            return "Skills." + FormatProperty(s);
+            //return Defines.CheckTransform(a);
 
         }
 
@@ -120,7 +130,7 @@ namespace WDL2CS
         {
             //C# does not allow overloading of = operator, therefore auto-assignment to Skill.Val is not possible
             //Work around by generating explicit assignment after identifying target as Skill
-            if ((string.Compare("Globals.", 0, target, 0, 8, true) == 0) || Objects.Is("Skill", target))
+            if ((target.StartsWith("Skills.") && !(target.EndsWith(".Min") || target.EndsWith(".Max"))) || Objects.Is("Skill", target))
                 target += ".Val";
 
             return target;
@@ -138,7 +148,7 @@ namespace WDL2CS
             string[] parts = list.Split('.');
             if (parts.Length == 2)
             {
-                return FormatProperty(parts[0]) + "[" + (Convert.ToInt32(parts[1]) - 1) + "]";
+                return "Globals." + FormatProperty(parts[0]) + "[" + (Convert.ToInt32(parts[1]) - 1) + "]";
             }
             else
             {
