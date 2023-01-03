@@ -8,6 +8,7 @@ namespace WDL2CS
     class Actions
     {
         private static List<Instruction> s_instructions  = new List<Instruction>();
+        private static Dictionary<int, Instruction> s_inserts = new Dictionary<int, Instruction>();
 
         //private static Dictionary<string, string> s_actions = new Dictionary<string, string>();
         private static List<string> s_parameters = new List<string>();
@@ -63,6 +64,46 @@ namespace WDL2CS
             string s = string.Empty;
             //Console.WriteLine(stream);
             s_instructions = Instruction.DeserializeList(stream);
+
+            //iterate through instructionlist from end, so that new instructions can be inserted directly
+            for (int i = s_instructions.Count - 1; i >= 0; i--)
+            {
+                //Transform "Skip" to "goto" and jump marker
+                if (s_instructions[i].Command.StartsWith("Skip"))
+                {
+                    //Console.WriteLine(name);
+                    int index = FindIndex(i, Convert.ToInt32(s_instructions[i].Parameters[0]));
+                    //Add additional parameter carrying the jump label
+                    s_instructions[i].Parameters.Add("skip" + i +"to" + index);
+                    //create new instruction for jump marker which is to be inserted
+                    Instruction marker = new Instruction(Formatter.FormatMarker(s_instructions[i].Parameters[1]), false);
+                    //instruction needs to be inserted above current one. Buffer and insert later
+                    //otherwise iteration can break on direct insertion
+                    if (index < i)
+                    {
+                        s_inserts.Add(index, marker);
+                    }
+                    else
+                    {
+                        s_instructions.Insert(index, marker);
+                    }
+                }
+
+                //add brackets for "If_..." instructions, since these are transformed to bare "if"
+                if (s_instructions[i].Command.StartsWith("If_") || 
+                    (s_instructions[i].Command.StartsWith("else") && (i < s_instructions.Count - 1) && (s_instructions[i + 1].Command[0] != '{')))
+                {
+                    s_instructions.Insert(i + 2, new Instruction("}", false));
+                    s_instructions.Insert(i + 1, new Instruction("{", false));
+                }
+
+                //check if any buffered instructions need to be inserted at current position
+                if (s_inserts.TryGetValue(i, out Instruction insert))
+                {
+                    s_instructions.Insert(i, insert);
+                }
+            }
+
             //Console.WriteLine("public IEnumerator " + name+"()");
             //Console.WriteLine("{");
             s += UpdateIndent("public IEnumerator " + name + "()");
@@ -78,8 +119,24 @@ namespace WDL2CS
 
             //Cleanup
             s_instructions.Clear();
+            s_inserts.Clear();
 
             return s;
+        }
+
+        private static int FindIndex(int startIndex, int count)
+        {
+            //Console.WriteLine(s_instructions[startIndex].Parameters[0]);
+            int progress = 0;
+            int i = startIndex;
+            while(progress != count)
+            {
+                i += Math.Sign(count);
+                if (s_instructions[i].Count)
+                    progress += Math.Sign(count);
+                //Console.WriteLine(s_instructions[i].Count + " " + progress);
+            }
+            return i + Convert.ToInt32(count > 0); //correct index by one for positive skips only
         }
 
         private static string RandomMarker()
@@ -199,8 +256,8 @@ namespace WDL2CS
             Instruction inst = new Instruction(type, s_parameters);
 
             //Skip instructions need to be replaced by "goto", therefore supply a randomly generated jump marker as additional paraemter
-            if (type.StartsWith("Skip"))
-                inst.Parameters.Add(RandomMarker());
+            //if (type.StartsWith("Skip"))
+            //    inst.Parameters.Add(RandomMarker());
 
             //Clean up
             s_parameters.Clear();
