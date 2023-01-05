@@ -71,9 +71,9 @@ Due to the limits of [AtoCC](https://atocc.de), manual patches are required in s
 
 High-level road map:
 * [x] define grammar and token regex
-* [ ] define WDL API for C# <-- __HERE__
-* [ ] add token to script generator logic
-* [ ] export C# scripts
+* [x] define WDL API for C# (separate project, in progress)
+* [ ] add token to script generator logic <-- __HERE__
+* [ ] export C# scripts <-- __HERE__
 
 
 ## Legal stuff
