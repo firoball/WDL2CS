@@ -82,8 +82,8 @@
             <RIGHTSIDE>
                 <RULE name="Sections"/>
                 <CODE>
-                    //$$ = $1;
-$$ = Globals.BuildGlobals() + Assets.BuildAssets() + Objects.BuildObjects();
+                    $$ = $1;
+//$$ = Globals.BuildGlobals(); + Assets.BuildAssets(); + Objects.BuildObjects();
 Output.WriteLine($$);
 
                 </CODE>
@@ -110,16 +110,16 @@ Output.WriteLine($$);
             <RIGHTSIDE>
                 <RULE name="Include"/>
                 <CODE>
-                    //$$ = $1;
-$$ = "";
+                    $$ = $1;
+//$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="GlobalDef"/>
                 <CODE>
-                    //$$ = $1;
-$$ = "";
+                    $$ = $1;
+//Console.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
@@ -136,32 +136,32 @@ Output.WriteLine($$);
                 <RULE name="Define"/>
                 <CODE>
                     //$$ = $1;
-$$ = "":
-Output.WriteLine($$);
+$$ = "";
+//Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectDef"/>
                 <CODE>
-                    //$$ = $1;
-$$ = "";
+                    $$ = $1;
+//Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="FunctionDef"/>
                 <CODE>
-                    //$$ = $1;
-Output.WriteLine($$);
+                    $$ = $1;
+//Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="AssetDef"/>
                 <CODE>
-                    //$$ = $1;
-$$ = "";
+                    $$ = $1;
+//Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
@@ -415,7 +415,8 @@ $$ = Include.Process($2);
                 <RULE name="ObjectIdList"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = Globals.AddEvent($1, $2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -425,8 +426,7 @@ $$ = Include.Process($2);
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-Globals.AddGlobal($1, $2);
-$$ = "";
+$$ = Globals.AddGlobal($1, $2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -476,6 +476,7 @@ $$ = "";
                 <RULE name="Sep"/>
                 <CODE>
                     $$ = $1 + $2;
+$$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -484,7 +485,7 @@ $$ = "";
                 <RULE name="Sep"/>
                 <RULE name="ObjectIdList"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    $$ = $1 + ", " + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -530,8 +531,7 @@ $$ = "";
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5 + $6 + $7;
-$$ = "";
-Assets.AddAsset($1, $2, $4, $6);
+$$ = Assets.AddAsset($1, $2, $4, $6);
 
                 </CODE>
             </RIGHTSIDE>
@@ -580,8 +580,8 @@ $$ = Formatter.FormatNumber($1) + ", " + $3;
                 <TOKEN name="Char125"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5 + $6;
-Objects.AddObject($1, $2);
-$$ = "";
+$$ = Objects.AddObject($1, $2);
+
 
                 </CODE>
             </RIGHTSIDE>
@@ -593,8 +593,7 @@ $$ = "";
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5;
-Objects.AddObject($1, $2, $4);
-$$ = "";
+$$ = Objects.AddObject($1, $2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -604,8 +603,8 @@ $$ = "";
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-Objects.AddObject($1, $2);
-$$ = "";
+$$ = Objects.AddObject($1, $2);
+
 
                 </CODE>
             </RIGHTSIDE>
@@ -1500,7 +1499,7 @@ $$ = Actions.CreateWhileCondition($2, $4);
             <RIGHTSIDE>
                 <RULE name="ObjectId"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatObjectId($1);
 
                 </CODE>
             </RIGHTSIDE>

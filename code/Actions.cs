@@ -103,10 +103,13 @@ namespace WDL2CS
                     s_instructions.Insert(i, insert);
                 }
             }
+            //always yield at end of function!
+            if (!s_instructions.Last().Command.Equals("Branch") && !s_instructions.Last().Command.Equals("End"))
+                s_instructions.Add(new Instruction("yield break;", false));
 
             //Console.WriteLine("public IEnumerator " + name+"()");
             //Console.WriteLine("{");
-            s += UpdateIndent("public IEnumerator " + name + "()");
+            s += UpdateIndent("public static IEnumerator " + name + "()");
             s += UpdateIndent("{");
             foreach (Instruction inst in s_instructions)
             {
@@ -129,6 +132,7 @@ namespace WDL2CS
             //Console.WriteLine(s_instructions[startIndex].Parameters[0]);
             int progress = 0;
             int i = startIndex;
+
             while(progress != count)
             {
                 i += Math.Sign(count);
@@ -136,7 +140,16 @@ namespace WDL2CS
                     progress += Math.Sign(count);
                 //Console.WriteLine(s_instructions[i].Count + " " + progress);
             }
-            return i + Convert.ToInt32(count > 0); //correct index by one for positive skips only
+            if (count > 0)
+            {
+                //correct index by one for positive skips only
+                i++;
+                //make sure marker is not placed before closing bracket, but moved after
+                while ((i < s_instructions.Count) && s_instructions[i].Command.StartsWith("}"))
+                    i++;
+            }
+
+            return i;
         }
 
         private static string RandomMarker()
@@ -213,7 +226,7 @@ namespace WDL2CS
         {
             string s = string.Empty;
 
-            s += new Instruction("if", expr).Serialize();
+            s += new Instruction("if", "(" + expr + ")").Serialize();
             s += new Instruction("{", false).Serialize();
             s += stream;
             s += new Instruction("}", false).Serialize();
@@ -237,7 +250,7 @@ namespace WDL2CS
         {
             string s = string.Empty;
 
-            s += new Instruction("while", expr).Serialize();
+            s += new Instruction("while", "(" + expr + ")").Serialize();
             s += new Instruction("{", false).Serialize();
             s += stream;
             s += new Instruction("}", false).Serialize();

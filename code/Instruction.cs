@@ -100,7 +100,7 @@ namespace WDL2CS
                         break;
 
                     case "Branch":
-                        o = $"Scheduler.Run({m_parameters[0]}); yield return break;";
+                        o = $"Scheduler.Run({m_parameters[0]}); yield break;";
                         break;
 
                     case "Call":
@@ -121,7 +121,7 @@ namespace WDL2CS
                         break;
 
                     case "End":
-                        o = $"yield return break;";
+                        o = $"yield break;";
                         break;
 
                     case "Exclusive":
@@ -134,9 +134,9 @@ namespace WDL2CS
 
                     case "Exit":
                         if (m_parameters.Count > 0)
-                            o = $"Environment.Exit({m_parameters[0]});";
+                            o = $"Environment.Exit({m_parameters[0]}); yield break;";
                         else
-                            o = $"Environment.Exit();";
+                            o = $"Environment.Exit(); yield break;";
                         break;
 
                     case "Explode":
@@ -326,8 +326,12 @@ namespace WDL2CS
                         break;
 
                     case "Set_all":
-                        string[] all = m_parameters[0].Split('.');
-                        o = $"foreach (var instance in {all[0]}) instance.{all[1]} = {m_parameters[1]};";
+                        int i = m_parameters[0].LastIndexOf('.');
+                        string target = i < 0 ? m_parameters[0] : m_parameters[0].Substring(0, i);
+                        string property = i < 0 ? "" : m_parameters[0].Substring(i + 1);
+                        //string[] all = m_parameters[0].Split('.',);
+                        //o = $"foreach (var instance in {all[0]}) instance.{all[1]} = {m_parameters[1]};";
+                        o = $"foreach (var instance in {target}) instance.{Formatter.FormatTargetSkill(property)} = {m_parameters[1]};";
                         break;
 
                     case "Set_skill":

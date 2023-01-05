@@ -130,7 +130,13 @@ namespace WDL2CS
         {
             //C# does not allow overloading of = operator, therefore auto-assignment to Skill.Val is not possible
             //Work around by generating explicit assignment after identifying target as Skill
-            if ((target.StartsWith("Skills.") && !(target.EndsWith(".Min") || target.EndsWith(".Max"))) || Objects.Is("Skill", target))
+            if (
+                (
+                    (target.StartsWith("Skills.") || target.Contains(".Skill")) &&
+                    !(target.EndsWith(".Min") || target.EndsWith(".Max"))
+                ) ||
+                    Objects.Is("Skill", target)
+                )
                 target += ".Val";
 
             return target;
@@ -154,6 +160,16 @@ namespace WDL2CS
             {
                 return string.Empty;
             }
+        }
+
+        public static string FormatObjectId(string obj)
+        {
+            //parser grammar needs to avoid shift/reduce conflicts
+            //due to this some specific patches for ambiguous keywords are required to be applied
+            if (string.Compare(obj, "random", true) == 0)
+                return FormatSkill(obj);
+            else
+                return obj;
         }
     }
 }

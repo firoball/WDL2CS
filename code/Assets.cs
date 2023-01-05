@@ -54,7 +54,17 @@ namespace WDL2CS
             return o;
         }
 
-        public static void AddAsset(string type, string name, string file, string parameters)
+        private static string BuildAsset(string type, string name, string pars)
+        {
+            string o = string.Empty;
+            string scope = "public static ";
+
+            o += s_indent + scope + type + " " + name + " = new " + type + "(" + pars + ");";
+
+            return o;
+        }
+
+        public static string AddAsset(string type, string name, string file, string parameters)
         {
             string p = file;
             if (!string.IsNullOrEmpty(parameters))
@@ -66,8 +76,10 @@ namespace WDL2CS
                 if (asset.ContainsKey(name))
                     Console.WriteLine("(W) ASSETS ignore double definition: " + name);
                 else
-                    asset.Add(name, p);
+                    asset.Add(name, p);//TODO: change to List with names only
             }
+
+            return BuildAsset(type, name, p);
         }
 
     }

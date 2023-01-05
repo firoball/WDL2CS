@@ -356,13 +356,13 @@ namespace VCCCompiler
                                 /// YYAction code:
                                 ////////////////////////////////////////////////////////////////
 							case    1 : 
-         //yyval = yyv[yysp-0];
-         yyval = Globals.BuildGlobals() + Assets.BuildAssets() + Objects.BuildObjects();
+         yyval = yyv[yysp-0];
+         //yyval = Globals.BuildGlobals(); + Assets.BuildAssets(); + Objects.BuildObjects();
          Output.WriteLine(yyval);
          
        break;
 							case    2 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = yyv[yysp-1] + "\n" + yyv[yysp-0];
          //Console.WriteLine(yyval);
          
        break;
@@ -371,13 +371,13 @@ namespace VCCCompiler
          
        break;
 							case    4 : 
-         //yyval = yyv[yysp-0];
-         yyval = "";
+         yyval = yyv[yysp-0];
+         //yyval = "";
          
        break;
 							case    5 : 
-         //yyval = yyv[yysp-0];
-         yyval = "";
+         yyval = yyv[yysp-0];
+         //Console.WriteLine(yyval);
          
        break;
 							case    6 : 
@@ -386,25 +386,25 @@ namespace VCCCompiler
          Output.WriteLine(yyval);
          
        break;
-							case    7 :
-                    //yyval = yyv[yysp-0];
-                    yyval = "";
-         Output.WriteLine(yyval);
+							case    7 : 
+         //yyval = yyv[yysp-0];
+         yyval = "";
+         //Output.WriteLine(yyval);
          
        break;
 							case    8 : 
-         //yyval = yyv[yysp-0];
-         yyval = "";
+         yyval = yyv[yysp-0];
+         //Output.WriteLine(yyval);
          
        break;
 							case    9 : 
-         //yyval = yyv[yysp-0];
-         Output.WriteLine(yyval);
+         yyval = yyv[yysp-0];
+         //Output.WriteLine(yyval);
          
        break;
 							case   10 : 
-         //yyval = yyv[yysp-0];
-         yyval = "";
+         yyval = yyv[yysp-0];
+         //Output.WriteLine(yyval);
          
        break;
 							case   11 : 
@@ -509,17 +509,18 @@ namespace VCCCompiler
        break;
 							case   33 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Include.Process(yyv[yysp-1]);
-         
+         yyval = "//Inc " + yyv[yysp - 1] + " START\n" + Include.Process(yyv[yysp-1]) + "\n//inc " + yyv[yysp - 1] + "END";
+
+
        break;
 							case   34 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Globals.AddEvent(yyv[yysp-2], yyv[yysp-1]);
          
        break;
 							case   35 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         Globals.AddGlobal(yyv[yysp-2], yyv[yysp-1]);
-         yyval = "";
+         yyval = Globals.AddGlobal(yyv[yysp-2], yyv[yysp-1]);
          
        break;
 							case   36 : 
@@ -544,10 +545,11 @@ namespace VCCCompiler
        break;
 							case   41 : 
          yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = yyv[yysp-1];
          
        break;
 							case   42 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = yyv[yysp-2] + ", " + yyv[yysp-0];
          
        break;
 							case   43 : 
@@ -568,8 +570,7 @@ namespace VCCCompiler
        break;
 							case   47 : 
          //yyval = yyv[yysp-6] + yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = "";
-         Assets.AddAsset(yyv[yysp-6], yyv[yysp-5], yyv[yysp-3], yyv[yysp-1]);
+         yyval = Assets.AddAsset(yyv[yysp-6], yyv[yysp-5], yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   48 : 
@@ -591,20 +592,19 @@ namespace VCCCompiler
        break;
 							case   52 : 
          //yyval = yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         Objects.AddObject(yyv[yysp-5], yyv[yysp-4]);
-         yyval = "";
+         yyval = Objects.AddObject(yyv[yysp-5], yyv[yysp-4]);
+         
          
        break;
 							case   53 : 
          //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         Objects.AddObject(yyv[yysp-4], yyv[yysp-3], yyv[yysp-1]);
-         yyval = "";
+         yyval = Objects.AddObject(yyv[yysp-4], yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   54 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         Objects.AddObject(yyv[yysp-2], yyv[yysp-1]);
-         yyval = "";
+         yyval = Objects.AddObject(yyv[yysp-2], yyv[yysp-1]);
+         
          
        break;
 							case   55 : 
@@ -1037,7 +1037,7 @@ namespace VCCCompiler
          
        break;
 							case  157 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatObjectId(yyv[yysp-0]);
          
        break;
 							case  158 : 

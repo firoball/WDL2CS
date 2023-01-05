@@ -145,7 +145,49 @@ namespace WDL2CS
             return o;
         }
 
-        public static void AddObject(string type, string name, string text)
+        private static string BuildObject(string type, string name, string props)
+        {
+            string o = string.Empty;
+            string scope = "public static ";
+
+            switch (type)
+            {
+                case "Synonym":
+                    o += s_indent + scope + props + ";";
+                    break;
+
+                case "String":
+                    o += s_indent + scope + "string " + name;
+                    if (!string.IsNullOrEmpty(props))
+                        o += " = " + props;
+                    o += ";";
+                    break;
+
+                default:
+                    //Ways never have properties, but need to be instantiated nonetheless
+                    //if (!string.IsNullOrEmpty(props) || string.Compare(type, "Way", true) == 0 || string.Compare(type, "Skill", true) == 0)
+                    {
+                        if (name.StartsWith("Skills."))
+                            o += s_indent + name + " = new " + type + "()"; //TODO: this needs to be moved to Constructor later on
+                        else
+                            o += s_indent + scope + type + " " + name + " = new " + type + "()";
+
+                        if (!string.IsNullOrEmpty(props))
+                        {
+                            o += s_nl + s_indent + "{" + s_nl;
+                            o += props;
+                            o += s_indent + "}";
+                        }
+                        o += ";";
+                    }
+                    break;
+            }
+            //o += s_nl;
+
+            return o;
+        }
+
+        public static string AddObject(string type, string name, string text)
         {
             //move object into object lists
             if (s_objects.TryGetValue(type, out Dictionary<string, string> obj))
@@ -153,12 +195,13 @@ namespace WDL2CS
                 if (obj.ContainsKey(name))
                     Console.WriteLine("(W) OBJECTS ignore double definition: " + name);
                 else
-                    obj.Add(name, text);
+                    obj.Add(name, text);//TODO: change to List with names only
             }
+            return BuildObject(type, name, text);
 
         }
 
-        public static void AddObject(string type, string name)
+        public static string AddObject(string type, string name)
         {
             string o = string.Empty;
 
@@ -178,7 +221,7 @@ namespace WDL2CS
                     synType = Formatter.FormatObject(s_propertyValues[i][0]);
                     //"Action" keyword is reserved in C# -> use "Function" instead (mandatory)
                     if (string.Compare(synType, "Action", true) == 0)
-                        synType = "Function";
+                        synType = "Func<IEnumerator>";
 
                     o += synType + " " + name;
 
@@ -227,7 +270,7 @@ namespace WDL2CS
                 if (obj.ContainsKey(name))
                     Console.WriteLine("(W) OBJECTS ignore double definition of object: " + name);
                 else
-                    obj.Add(name, o);
+                    obj.Add(name, o); //TODO: change to List with names only
             }
 
             //Clean up
@@ -241,6 +284,8 @@ namespace WDL2CS
                 values.Clear();
             }
             s_propertyValues.Clear();
+
+            return BuildObject(type, name, o);
         }
 
         private static void BuildControls()
@@ -341,6 +386,19 @@ namespace WDL2CS
                     if (string.Compare(obj, "Wall", true) != 0)
                     {
                         p += "new [] {" + GetValues(values, ", ") + "}";
+                        s_formattedProperties.Add(p);
+                    }
+                    else
+                    {
+                        goto default;
+                    }
+                    break;
+
+                case "String":
+                    //fix name ambiguity for Text objects
+                    if (string.Compare(obj, "Text", true) == 0)
+                    {
+                        p = "String_array = new [] {" + GetValues(values, ", ") + "}";
                         s_formattedProperties.Add(p);
                     }
                     else

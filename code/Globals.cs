@@ -26,7 +26,27 @@ namespace WDL2CS
             return o;
         }
 
-        public static void AddGlobal(string name, string value)
+        private static string BuildGlobal(string name, string value)
+        {
+            string o = string.Empty;
+
+            o += s_indent + name + " = " + value + ";";
+
+            return o;
+        }
+
+        //TODO: Possibly can be merged with AddGlobal()
+        public static string AddEvent(string name, string pars)
+        {
+            string o = string.Empty;
+            if (pars.Contains(','))
+                o += s_indent + name + " = new [] {" + pars + "};";
+            else
+                o += s_indent + name + " = " + pars + ";";
+            return o;
+        }
+
+        public static string AddGlobal(string name, string value)
         {
             //Patch for video mode definition
             if (name.Contains("Video"))
@@ -47,9 +67,11 @@ namespace WDL2CS
                     if (s_globals.ContainsKey(name))
                         Console.WriteLine("(W) GLOBALS ignore double definition: " + name);
                     else
-                        s_globals.Add(name, value);
+                        s_globals.Add(name, value);//TODO: change to List with names only
                     break;
             }
+
+            return BuildGlobal(name, value);
         }
     }
 }
