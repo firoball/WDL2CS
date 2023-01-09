@@ -168,7 +168,7 @@ namespace WDL2CS
                     //if (!string.IsNullOrEmpty(props) || string.Compare(type, "Way", true) == 0 || string.Compare(type, "Skill", true) == 0)
                     {
                         if (name.StartsWith("Skills."))
-                            o += s_indent + name + " = new " + type + "()"; //TODO: this needs to be moved to Constructor later on
+                            o += s_indent + "/*" + name + " = new " + type + "()"; //TODO: this needs to be moved to Constructor later on - PATCHED
                         else
                             o += s_indent + scope + type + " " + name + " = new " + type + "()";
 
@@ -179,6 +179,7 @@ namespace WDL2CS
                             o += s_indent + "}";
                         }
                         o += ";";
+                        if (name.StartsWith("Skills.")) o += "*/"; //PATCHED
                     }
                     break;
             }
@@ -221,7 +222,7 @@ namespace WDL2CS
                     synType = Formatter.FormatObject(s_propertyValues[i][0]);
                     //"Action" keyword is reserved in C# -> use "Function" instead (mandatory)
                     if (string.Compare(synType, "Action", true) == 0)
-                        synType = "Func<IEnumerator>";
+                        synType = "Function";
 
                     o += synType + " " + name;
 
@@ -414,7 +415,24 @@ namespace WDL2CS
                     p += "new [] {" + GetValues(values, ", ") + "}";
                     s_formattedProperties.Add(p);
                     break;
-
+/*
+                case "Each_tick":
+                case "Each_cycle":
+                case "If_near":
+                case "If_far":
+                case "If_hit":
+                case "If_touch":
+                case "If_release":
+                case "If_klick":
+                case "If_arrived":
+                case "If_enter":
+                case "If_leave":
+                case "If_dive":
+                case "If_arise":
+                    p += values[0];
+                    s_formattedProperties.Add(p);
+                    break;
+*/
                 default:
                     if (values.Count > 1)
                         p += "new [] {" + GetValues(values, ", ") + "}";

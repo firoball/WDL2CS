@@ -30,7 +30,8 @@ namespace WDL2CS
         {
             string o = string.Empty;
 
-            o += s_indent + name + " = " + value + ";";
+//            o += s_indent + name + " = " + value + ";";
+            o += s_indent + "//" + name + " = " + value + ";"; //PATCHED
 
             return o;
         }
@@ -40,9 +41,9 @@ namespace WDL2CS
         {
             string o = string.Empty;
             if (pars.Contains(','))
-                o += s_indent + name + " = new [] {" + pars + "};";
+                o += s_indent + "//"+name + " = new [] {" + pars + "};"; //PATCHED
             else
-                o += s_indent + name + " = " + pars + ";";
+                o += s_indent + "//" + name + " = " + pars + ";";//PATCHED
             return o;
         }
 

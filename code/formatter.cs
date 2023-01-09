@@ -28,49 +28,41 @@ namespace WDL2CS
             return "null";
         }
 
-        /*
+        
         public static string FormatFunction(string s)
         {
-            s = s.ToLower();
-            char[] a = s.ToCharArray();
-            a[0] = char.ToUpper(a[0]);
-            return Defines.CheckTransform(new string(a));
+            s = Ucfirst(s);
+            return Defines.CheckTransform(s);
         }
-        */
+        
         public static string FormatObject(string s)
         {
-            s = s.ToLower();
-            char[] a = s.ToCharArray();
-            a[0] = char.ToUpper(a[0]);
-            return Defines.CheckTransform(new string(a));
+            s = Ucfirst(s);
+            return Defines.CheckTransform(s);
         }
 
         public static string FormatEvent(string s)
         {
+            if (!string.IsNullOrEmpty(s))
+                s = FormatProperty(s);
             /*
             s = s.ToLower();
             char[] a = s.ToCharArray();
             a[0] = char.ToUpper(a[0]);
             return Defines.CheckTransform(new string(a));*/
-            return "Events." + FormatProperty(s);
+            return "Events." + s;
         }
 
         public static string FormatProperty(string s)
         {
-            //if (string.IsNullOrEmpty(s))
-                //return "ThisIsADebugText"; //string.Empty;
-            s = s.ToLower();
-            char[] a = s.ToCharArray();
-            a[0] = char.ToUpper(a[0]);
-            return Defines.CheckTransform(new string(a));
+            s = Ucfirst(s);
+            return Defines.CheckTransform(s);
         }
 
         public static string FormatCommand(string s)
         {
-            s = s.ToLower();
-            char[] a = s.ToCharArray();
-            a[0] = char.ToUpper(a[0]);
-            return Defines.CheckTransform(new string(a)); //transform required here?
+            s = Ucfirst(s);
+            return Defines.CheckTransform(s);//transform required here?
         }
 
         public static string FormatNumber(string s)
@@ -170,6 +162,18 @@ namespace WDL2CS
                 return FormatSkill(obj);
             else
                 return obj;
+        }
+
+        private static string Ucfirst(string s)
+        {
+            s = s.ToLower();
+            char[] a = s.ToCharArray();
+            int i = 0;
+            //skip leading underscores
+            while (i < a.Length && (a[i] == '_' || (a[i] >= 48 && a[i] <= 57)))
+                i++;
+            a[i] = char.ToUpper(a[i]);
+            return new string(a);
         }
     }
 }

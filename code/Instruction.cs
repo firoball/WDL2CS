@@ -60,9 +60,15 @@ namespace WDL2CS
             }
         }
 
-        public string Format()
+        public string Format(string function)
         {
             string o = string.Empty;
+            //MY, THERE patch: global --> local
+            for (int i = 0; i < m_parameters.Count; i++)
+            {
+                m_parameters[i] = m_parameters[i].Replace(Formatter.FormatGlobal("My"), "My");
+                m_parameters[i] = m_parameters[i].Replace(Formatter.FormatGlobal("There"), "There");
+            }
             try
             {
                 switch (m_command)
@@ -84,7 +90,7 @@ namespace WDL2CS
                         break;
 
                     case "Addt":
-                        o = $"{m_parameters[0]} += {m_parameters[1]} * {Formatter.FormatSkill("Time_corr")};";
+                        o = $"{m_parameters[0]} += {m_parameters[1]} * {Formatter.FormatTargetSkill(Formatter.FormatSkill("Time_corr"))};";
                         break;
 
                     case "And":
@@ -129,7 +135,7 @@ namespace WDL2CS
                         break;
 
                     case "Exec_rules":
-                        o = $"Scheduler.Run({m_parameters[0]});";
+                        o = $"Scheduler.Run(new {m_parameters[0]}());";
                         break;
 
                     case "Exit":
@@ -188,7 +194,7 @@ namespace WDL2CS
                         break;
 
                     case "Inkey":
-                        o = $"yield return Scheduler.Inkey(out {m_parameters[0]});";
+                        o = $"yield return Scheduler.Inkey({m_parameters[0]}); {m_parameters[0]} = Scheduler.Inkey_string;";
                         break;
 
                     case "Inport":
@@ -212,7 +218,10 @@ namespace WDL2CS
                         break;
 
                     case "Map":
-                        o = $"Environment.Map({m_parameters[0]});";
+                        if (m_parameters.Count > 0)
+                            o = $"Environment.Map({m_parameters[0]});";
+                        else
+                            o = $"Environment.Map();";
                         break;
 
                     case "Midi_com":
@@ -262,9 +271,9 @@ namespace WDL2CS
                     case "Play_sound":
                         if (m_parameters.Count > 2)
                         {
-                            //TODO: check for specific properties containing an object, e.g. <object>.Genius - checking for dot may lead to false positives
+                            //check for specific properties containing an object, e.g. <object>.Genius - checking for dot may lead to false positives
                             if (Objects.Is("Thing", m_parameters[2]) || Objects.Is("Actor", m_parameters[2]) || Objects.Is("Wall", m_parameters[2]) ||
-                                m_parameters[2].StartsWith("Globals.") || m_parameters[2].EndsWith(".Genius")
+                                m_parameters[2].StartsWith("Globals.") || m_parameters[2].EndsWith(".Genius") || (string.Compare(m_parameters[2], "My") == 0)
                                 )
                             {
                                 o = $"{m_parameters[2]}.Play_sound({m_parameters[0]}, {m_parameters[1]});";
@@ -322,10 +331,25 @@ namespace WDL2CS
                         break;
 
                     case "Set":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {m_parameters[1]};";
+                        //TODO: create sub function for "set" and treat all special cases
+                        //special case: function assignments to each_tick and each_sec
+                        if (m_parameters[0].StartsWith(Formatter.FormatGlobal("Each_")))
+                        {
+                            string p = Formatter.FormatFunction(m_parameters[1]);
+                            //if function assigns itself, use existing instance
+                            if (string.Compare(function, p) == 0)
+                                o = $"{m_parameters[0]} = this;";
+                            else
+                                o = $"{m_parameters[0]} = {m_parameters[1]};";
+                        }
+                        else
+                        {
+                            o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {m_parameters[1]};";
+                        }
                         break;
 
                     case "Set_all":
+                        //TODO: update to match "set"
                         int i = m_parameters[0].LastIndexOf('.');
                         string target = i < 0 ? m_parameters[0] : m_parameters[0].Substring(0, i);
                         string property = i < 0 ? "" : m_parameters[0].Substring(i + 1);
@@ -390,7 +414,7 @@ namespace WDL2CS
                         break;
 
                     case "Subt":
-                        o = $"{m_parameters[0]} -= {m_parameters[1]} * {Formatter.FormatSkill("Time_corr")};";
+                        o = $"{m_parameters[0]} -= {m_parameters[1]} * {Formatter.FormatTargetSkill(Formatter.FormatSkill("Time_corr"))};";
                         break;
 
                     case "Tilt":
@@ -402,11 +426,11 @@ namespace WDL2CS
                         break;
 
                     case "Wait":
-                        o = $"yield return Scheduler.Wait({m_parameters[0]});";
+                        o = $"yield return Wait({m_parameters[0]});";
                         break;
 
                     case "Waitt":
-                        o = $"yield return Scheduler.Waitt({m_parameters[0]});";
+                        o = $"yield return Waitt({m_parameters[0]});";
                         break;
 
                     default:
@@ -428,7 +452,8 @@ namespace WDL2CS
             }
             catch(Exception e)
             {
-                Console.WriteLine("(E) INSTRUCTION: " + e.Message + " ("+e.Source+")");
+//                Console.WriteLine("(E) INSTRUCTION: " + e.Message + " ("+e.Source+")");
+                Console.WriteLine("(E) INSTRUCTION: " + e);
             }
 
             return o;

@@ -10,7 +10,6 @@ namespace WDL2CS
         private static List<Instruction> s_instructions  = new List<Instruction>();
         private static Dictionary<int, Instruction> s_inserts = new Dictionary<int, Instruction>();
 
-        //private static Dictionary<string, string> s_actions = new Dictionary<string, string>();
         private static List<string> s_parameters = new List<string>();
         private static readonly Random s_random = new Random();
 
@@ -18,11 +17,14 @@ namespace WDL2CS
         private static int s_indents = 2;
         private static readonly string s_nl = Environment.NewLine;
 
-        public static string BuildActions()
-        {
-            return string.Empty;
-        }
+        //public static Dictionary<string, string> ActionTypes { get => s_actionTypes; }
 
+        /*
+public static string BuildActions()
+{
+return string.Empty;
+}
+*/
         private static string UpdateIndent(string s)
         {
             return UpdateIndent(s, s);
@@ -62,12 +64,18 @@ namespace WDL2CS
         public static string AddAction(string name, string stream)
         {
             string s = string.Empty;
-            //Console.WriteLine(stream);
+            bool interruptable = false;
+            string instName = Formatter.FormatIdentifier(name);
             s_instructions = Instruction.DeserializeList(stream);
 
             //iterate through instructionlist from end, so that new instructions can be inserted directly
             for (int i = s_instructions.Count - 1; i >= 0; i--)
             {
+                if (s_instructions[i].Command.StartsWith("Wait") || s_instructions[i].Command.StartsWith("Inkey"))
+                {
+                    interruptable = true;
+                }
+
                 //Transform "Skip" to "goto" and jump marker
                 if (s_instructions[i].Command.StartsWith("Skip"))
                 {
@@ -104,21 +112,35 @@ namespace WDL2CS
                 }
             }
             //always yield at end of function!
-            if (!s_instructions.Last().Command.Equals("Branch") && !s_instructions.Last().Command.Equals("End"))
+            if (!s_instructions.Last().Command.Equals("Branch") && 
+                !s_instructions.Last().Command.Equals("End") &&
+                !s_instructions.Last().Command.Equals("Goto") &&
+                !s_instructions.Last().Command.Equals("Exit")
+                )
                 s_instructions.Add(new Instruction("yield break;", false));
 
-            //Console.WriteLine("public IEnumerator " + name+"()");
-            //Console.WriteLine("{");
-            s += UpdateIndent("public static IEnumerator " + name + "()");
+            s += UpdateIndent("private class " + name + " : Function<" + name + ">");
+            s += UpdateIndent("{");
+            s += UpdateIndent("public override IEnumerator Logic()");
             s += UpdateIndent("{");
             foreach (Instruction inst in s_instructions)
             {
-                s += UpdateIndent(inst.Command, inst.Format());
-                //UpdateIndent(inst.Command);
-                //Console.WriteLine(s_indent + /*"("+inst.Count.ToString()[0]+"): " + */inst.Format());
+                s += UpdateIndent(inst.Command, inst.Format(instName));
             }
             s += UpdateIndent("}");
-//            Console.WriteLine("}");
+            s += UpdateIndent("}");
+            string c = "public static Function " + instName + " = new " + name + "()";
+            if (interruptable)
+            {
+                s += UpdateIndent(c);
+                s += UpdateIndent("{");
+                s += UpdateIndent("Interruptable = true");
+                s += UpdateIndent("};");
+            }
+            else
+            {
+                s += UpdateIndent(c + ";");
+            }
 
             //Cleanup
             s_instructions.Clear();
@@ -129,7 +151,6 @@ namespace WDL2CS
 
         private static int FindIndex(int startIndex, int count)
         {
-            //Console.WriteLine(s_instructions[startIndex].Parameters[0]);
             int progress = 0;
             int i = startIndex;
 
@@ -138,7 +159,6 @@ namespace WDL2CS
                 i += Math.Sign(count);
                 if (s_instructions[i].Count)
                     progress += Math.Sign(count);
-                //Console.WriteLine(s_instructions[i].Count + " " + progress);
             }
             if (count > 0)
             {
@@ -150,23 +170,6 @@ namespace WDL2CS
             }
 
             return i;
-        }
-
-        private static string RandomMarker()
-        {
-            int size = 10;
-            var builder = new StringBuilder(size);
-
-            char offset = 'a';
-            const int lettersOffset = 26; //a..z: length = 26  
-
-            for (var i = 0; i < size; i++)
-            {
-                var @char = (char)s_random.Next(offset, offset + lettersOffset);
-                builder.Append(@char);
-            }
-
-            return builder.ToString();
         }
 
         public static string CreateMarker(string name, string stream)
@@ -201,12 +204,13 @@ namespace WDL2CS
             return s;
         }
 
-        public static string CreatePreProcElseCondition(string stream)
+        public static string CreatePreProcElseCondition(string ifstream, string elsestream)
         {
             string s = string.Empty;
 
+            s += ifstream;
             s += new Instruction("#else", false).Serialize();
-            s += stream;
+            s += elsestream;
             s += new Instruction("#endif", false).Serialize();
 
             return s;
@@ -267,10 +271,6 @@ namespace WDL2CS
         public static string CreateInstruction(string type)
         {
             Instruction inst = new Instruction(type, s_parameters);
-
-            //Skip instructions need to be replaced by "goto", therefore supply a randomly generated jump marker as additional paraemter
-            //if (type.StartsWith("Skip"))
-            //    inst.Parameters.Add(RandomMarker());
 
             //Clean up
             s_parameters.Clear();

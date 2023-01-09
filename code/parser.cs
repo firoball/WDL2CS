@@ -372,55 +372,51 @@ namespace VCCCompiler
        break;
 							case    4 : 
          yyval = yyv[yysp-0];
-         //yyval = "";
          
        break;
 							case    5 : 
          yyval = yyv[yysp-0];
-         //Console.WriteLine(yyval);
          
        break;
 							case    6 : 
-         //yyval = yyv[yysp-0];
-         yyval = "";
-         Output.WriteLine(yyval);
+         yyval = yyv[yysp-0];
          
        break;
 							case    7 : 
          //yyval = yyv[yysp-0];
          yyval = "";
-         //Output.WriteLine(yyval);
          
        break;
 							case    8 : 
          yyval = yyv[yysp-0];
-         //Output.WriteLine(yyval);
          
        break;
 							case    9 : 
          yyval = yyv[yysp-0];
-         //Output.WriteLine(yyval);
          
        break;
 							case   10 : 
          yyval = yyv[yysp-0];
-         //Output.WriteLine(yyval);
          
        break;
 							case   11 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Sections.CreatePreProcIfCondition(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   12 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Sections.CreatePreProcIfNotCondition(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   13 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Sections.CreatePreProcElseCondition(yyv[yysp-4], yyv[yysp-1]);
          
        break;
 							case   14 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = Sections.CreatePreProcEndCondition(yyv[yysp-1]);
          
        break;
 							case   15 : 
@@ -435,7 +431,7 @@ namespace VCCCompiler
        break;
 							case   17 : 
          //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Actions.CreatePreProcElseCondition(yyv[yysp-1]);
+         yyval = Actions.CreatePreProcElseCondition(yyv[yysp-4], yyv[yysp-1]);
          
        break;
 							case   18 : 
@@ -509,9 +505,8 @@ namespace VCCCompiler
        break;
 							case   33 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = "//Inc " + yyv[yysp - 1] + " START\n" + Include.Process(yyv[yysp-1]) + "\n//inc " + yyv[yysp - 1] + "END";
-
-
+         yyval = Include.Process(yyv[yysp-1]);
+         
        break;
 							case   34 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
@@ -887,7 +882,7 @@ namespace VCCCompiler
          
        break;
 							case  121 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatTargetSkill(yyv[yysp-0]);
          
        break;
 							case  122 : 
@@ -1225,11 +1220,13 @@ namespace VCCCompiler
          
        break;
 							case  204 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = Formatter.FormatFunction(yyv[yysp-0]);
          
        break;
 							case  205 : 
-         yyval = yyv[yysp-0];
+         //yyval = yyv[yysp-0];
+         yyval = Formatter.FormatFunction(yyv[yysp-0]);
          
        break;
 							case  206 : 

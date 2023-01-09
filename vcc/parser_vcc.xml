@@ -94,7 +94,7 @@ Output.WriteLine($$);
                 <RULE name="Section"/>
                 <RULE name="Sections"/>
                 <CODE>
-                    $$ = $1 + $2;
+                    $$ = $1 + "\n" + $2;
 //Console.WriteLine($$);
 
                 </CODE>
@@ -111,7 +111,6 @@ Output.WriteLine($$);
                 <RULE name="Include"/>
                 <CODE>
                     $$ = $1;
-//$$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -119,16 +118,13 @@ Output.WriteLine($$);
                 <RULE name="GlobalDef"/>
                 <CODE>
                     $$ = $1;
-//Console.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Preprocessor"/>
                 <CODE>
-                    //$$ = $1;
-$$ = "";
-Output.WriteLine($$);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -137,7 +133,6 @@ Output.WriteLine($$);
                 <CODE>
                     //$$ = $1;
 $$ = "";
-//Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
@@ -145,7 +140,6 @@ $$ = "";
                 <RULE name="ObjectDef"/>
                 <CODE>
                     $$ = $1;
-//Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
@@ -153,7 +147,6 @@ $$ = "";
                 <RULE name="FunctionDef"/>
                 <CODE>
                     $$ = $1;
-//Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
@@ -161,7 +154,6 @@ $$ = "";
                 <RULE name="AssetDef"/>
                 <CODE>
                     $$ = $1;
-//Output.WriteLine($$);
 
                 </CODE>
             </RIGHTSIDE>
@@ -174,7 +166,8 @@ $$ = "";
                 <RULE name="PreprocessorSection"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Sections.CreatePreProcIfCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -185,7 +178,8 @@ $$ = "";
                 <RULE name="PreprocessorSection"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Sections.CreatePreProcIfNotCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -198,7 +192,8 @@ $$ = "";
                 <RULE name="Sections"/>
                 <TOKEN name="ENDIF"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Sections.CreatePreProcElseCondition($1, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -206,7 +201,8 @@ $$ = "";
                 <RULE name="Sections"/>
                 <TOKEN name="ENDIF"/>
                 <CODE>
-                    $$ = $1 + $2;
+                    //$$ = $1 + $2;
+$$ = Sections.CreatePreProcEndCondition($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -246,7 +242,7 @@ $$ = Actions.CreatePreProcIfNotCondition($2, $4);
                 <TOKEN name="ENDIF"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5;
-$$ = Actions.CreatePreProcElseCondition($4);
+$$ = Actions.CreatePreProcElseCondition($1, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1196,7 +1192,7 @@ Actions.AddInstructionParameter($1);
             <RIGHTSIDE>
                 <RULE name="Keyword"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatTargetSkill($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1860,14 +1856,16 @@ $$ = Actions.CreateWhileCondition($2, $4);
             <RIGHTSIDE>
                 <RULE name="ObjectRef"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = Formatter.FormatFunction($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectId"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = Formatter.FormatFunction($1);
 
                 </CODE>
             </RIGHTSIDE>
