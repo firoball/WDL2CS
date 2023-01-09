@@ -99,7 +99,7 @@ return string.Empty;
 
                 //add brackets for "If_..." instructions, since these are transformed to bare "if"
                 if (s_instructions[i].Command.StartsWith("If_") || 
-                    (s_instructions[i].Command.StartsWith("else") && (i < s_instructions.Count - 1) && (s_instructions[i + 1].Command[0] != '{')))
+                    (s_instructions[i].Command.StartsWith("Else") && (i < s_instructions.Count - 1) && (s_instructions[i + 1].Command[0] != '{')))
                 {
                     s_instructions.Insert(i + 2, new Instruction("}", false));
                     s_instructions.Insert(i + 1, new Instruction("{", false));
@@ -123,9 +123,34 @@ return string.Empty;
             s += UpdateIndent("{");
             s += UpdateIndent("public override IEnumerator Logic()");
             s += UpdateIndent("{");
+
+            Instruction lastif = null;
+            Instruction last = null;
+
             foreach (Instruction inst in s_instructions)
             {
-                s += UpdateIndent(inst.Command, inst.Format(instName));
+                //WDL allows isolated "else" (bug of scripting language)
+                //keep track of the last if, so the isolated "else" can be fixed with a negated condition
+                if (inst.Command.StartsWith("if"))
+                {
+                    lastif = inst;
+                }
+                //special case: "else" was found without previous closing bracket
+                //take last stored "if"-condiftion, negate it and replace "else" with an "if"
+                if ((last != null) && !last.Command.StartsWith("}") && inst.Command.StartsWith("else"))
+                {
+                    List<string> pars = new List<string>();
+                    pars.Add("(!" + lastif.Parameters[0] + ")");
+                    Instruction patch = new Instruction(lastif.Command, pars);
+                    s += UpdateIndent(patch.Command, patch.Format(instName));
+                }
+                //regular path
+                else
+                {
+                    s += UpdateIndent(inst.Command, inst.Format(instName));
+                }
+
+                last = inst;
             }
             s += UpdateIndent("}");
             s += UpdateIndent("}");

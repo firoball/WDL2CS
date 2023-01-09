@@ -223,6 +223,10 @@ namespace WDL2CS
                     //"Action" keyword is reserved in C# -> use "Function" instead (mandatory)
                     if (string.Compare(synType, "Action", true) == 0)
                         synType = "Function";
+                    //Scripts don't distinguish between object types and just use BaseObject which just carries all properties - like WDL
+                    //Trying to keep this more strict results in all kind of type problems in WDL actions
+                    if ((string.Compare(synType, "Wall", true) == 0) || (string.Compare(synType, "Thing", true) == 0) || (string.Compare(synType, "Actor", true) == 0))
+                        synType = "BaseObject";
 
                     o += synType + " " + name;
 
@@ -231,7 +235,11 @@ namespace WDL2CS
                     if (s_properties.Contains(prop))
                     {
                         i = s_properties.IndexOf(prop);
-                        o += " = " + Formatter.FormatObject(s_propertyValues[i][0]);
+                        if (!s_propertyValues[i][0].Equals("null"))
+                        {
+                            //o += " = " + Formatter.FormatObject(s_propertyValues[i][0]);
+                            o += " = " + Formatter.FormatIdentifier(s_propertyValues[i][0]);
+                        }
                     }
                 }
                 //Console.WriteLine("Synonym: " + o);
@@ -323,7 +331,7 @@ namespace WDL2CS
                 case "Skill6":
                 case "Skill7":
                 case "Skill8":
-                    p += " new Skill (" + values[0] + ")";
+                    p += " new Skill(" + values[0] + ")";
                     s_formattedProperties.Add(p);
                     break;
 
@@ -415,24 +423,30 @@ namespace WDL2CS
                     p += "new [] {" + GetValues(values, ", ") + "}";
                     s_formattedProperties.Add(p);
                     break;
-/*
-                case "Each_tick":
-                case "Each_cycle":
-                case "If_near":
-                case "If_far":
-                case "If_hit":
-                case "If_touch":
-                case "If_release":
-                case "If_klick":
-                case "If_arrived":
-                case "If_enter":
-                case "If_leave":
-                case "If_dive":
-                case "If_arise":
-                    p += values[0];
-                    s_formattedProperties.Add(p);
+
+                case "Target":
+                    //WDL allows a mix of modes and object here - split to different properties
+                    /*if (Is("Way", values[0]))
+                    {
+                        p = "Target = " + Formatter.FormatActorTarget("Way");
+                        s_formattedProperties.Add(p);
+                        p = "TargetWay = " + values[0];
+                        s_formattedProperties.Add(p);
+                    }
+                    else if(Is("Actor", values[0]) || Is("Thing", values[0]))
+                    {
+                        p = "Target = " + Formatter.FormatActorTarget("Object");
+                        s_formattedProperties.Add(p);
+                        p = "TargetObject = " + values[0];
+                        s_formattedProperties.Add(p);
+                    }
+                    else*/
+                    {
+                        p = "Target = " + Formatter.FormatActorTarget(values[0]);
+                        s_formattedProperties.Add(p);
+                    }
                     break;
-*/
+
                 default:
                     if (values.Count > 1)
                         p += "new [] {" + GetValues(values, ", ") + "}";

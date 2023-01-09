@@ -100,7 +100,22 @@ namespace WDL2CS
 
         public static string FormatFlag(string s)
         {
+            //somewhat dirty workaround due to"base" identifier being patched to avoid clash with C' language
+            //remove leading underscores and capitalize first char
+            while (s[0] == '_')
+                s = s.Substring(1);
+
             return "A3Flags." + FormatProperty(s);
+        }
+
+        //Targets are not detected specifically in the parser due to complexity limit
+        //Therefore, hard code the different targets here
+        private static string[] s_targets = new[] { "move", "bullet", "stick", "follow", "repel", "vertex", "node1", "node2", "hold" };
+        public static string FormatActorTarget(string s)
+        {
+            if (s_targets.Contains(s))
+                return "ActorTarget." + FormatProperty(s);
+            else return s;
         }
 
         public static string FormatSkillType(string s)

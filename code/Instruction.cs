@@ -252,11 +252,19 @@ namespace WDL2CS
                         o = $"{m_parameters[0]}.Place();";
                         break;
 
+                    case "Play_cd":
+                        o = $"Media.Play_cd({m_parameters[0]}, {m_parameters[1]});";
+                        break;
+
                     case "Play_demo":
                         o = $"Environment.Play_demo({m_parameters[0]}, {m_parameters[1]}, true);";
                         break;
 
                     case "Play_flic":
+                        o = $"Media.Play_flic({m_parameters[0]});";
+                        break;
+
+                    case "Play_flicfile":
                         o = $"Media.Play_flic({m_parameters[0]});";
                         break;
 
@@ -331,9 +339,14 @@ namespace WDL2CS
                         break;
 
                     case "Set":
+                        if (m_parameters[0].EndsWith(".Target"))
+                        {
+                            o = $"{m_parameters[0]} = {Formatter.FormatActorTarget(m_parameters[1])};";
+                        }
+
                         //TODO: create sub function for "set" and treat all special cases
                         //special case: function assignments to each_tick and each_sec
-                        if (m_parameters[0].StartsWith(Formatter.FormatGlobal("Each_")))
+                        else if (m_parameters[0].StartsWith(Formatter.FormatGlobal("Each_")))
                         {
                             string p = Formatter.FormatFunction(m_parameters[1]);
                             //if function assigns itself, use existing instance
