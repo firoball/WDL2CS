@@ -23,37 +23,6 @@ namespace WDL2CS
             s_assets.Add("Sound", new Dictionary<string, string>());
         }
 
-
-        public static string BuildAssets()
-        {
-            string o = string.Empty;
-            string scope = "public ";
-
-            //generate declarations
-            foreach (KeyValuePair<string, Dictionary<string, string>> assets in s_assets)
-            {
-                string type = assets.Key;
-                foreach (KeyValuePair<string, string> asset in assets.Value)
-                {
-                    o += s_indent + scope + type + " " + asset.Key + ";" + s_nl;
-                }
-            }
-            o += s_nl;
-
-            //generate definitions
-            foreach (KeyValuePair<string, Dictionary<string, string>> assets in s_assets)
-            {
-                string type = assets.Key;
-                foreach (KeyValuePair<string, string> asset in assets.Value)
-                {
-                    o += s_indent + asset.Key + " = new " + type + "(" + asset.Value + ");" + s_nl;
-                }
-            }
-            o += s_nl;
-
-            return o;
-        }
-
         private static string BuildAsset(string type, string name, string pars)
         {
             string o = string.Empty;

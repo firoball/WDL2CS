@@ -17,14 +17,6 @@ namespace WDL2CS
         private static int s_indents = 2;
         private static readonly string s_nl = Environment.NewLine;
 
-        //public static Dictionary<string, string> ActionTypes { get => s_actionTypes; }
-
-        /*
-public static string BuildActions()
-{
-return string.Empty;
-}
-*/
         private static string UpdateIndent(string s)
         {
             return UpdateIndent(s, s);
@@ -68,7 +60,7 @@ return string.Empty;
             string instName = Formatter.FormatIdentifier(name);
             s_instructions = Instruction.DeserializeList(stream);
 
-            //iterate through instructionlist from end, so that new instructions can be inserted directly
+            //iterate through instruction list from end, so that new instructions can be inserted directly
             for (int i = s_instructions.Count - 1; i >= 0; i--)
             {
                 if (s_instructions[i].Command.StartsWith("Wait") || s_instructions[i].Command.StartsWith("Inkey"))
@@ -139,9 +131,7 @@ return string.Empty;
                 //take last stored "if"-condiftion, negate it and replace "else" with an "if"
                 if ((last != null) && !last.Command.StartsWith("}") && inst.Command.StartsWith("else"))
                 {
-                    List<string> pars = new List<string>();
-                    pars.Add("(!" + lastif.Parameters[0] + ")");
-                    Instruction patch = new Instruction(lastif.Command, pars);
+                    Instruction patch = new Instruction(lastif.Command, "(!" + lastif.Parameters[0] + ")");
                     s += UpdateIndent(patch.Command, patch.Format(instName));
                 }
                 //regular path

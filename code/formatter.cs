@@ -45,11 +45,6 @@ namespace WDL2CS
         {
             if (!string.IsNullOrEmpty(s))
                 s = FormatProperty(s);
-            /*
-            s = s.ToLower();
-            char[] a = s.ToCharArray();
-            a[0] = char.ToUpper(a[0]);
-            return Defines.CheckTransform(new string(a));*/
             return "Events." + s;
         }
 

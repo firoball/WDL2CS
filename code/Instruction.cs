@@ -121,7 +121,7 @@ namespace WDL2CS
                         o = $"{m_parameters[0]}.Drop();";
                         break;
 
-                    //TODO: distinguish else-command from else{}-condition properly
+                    //TODO: distinguish else-command from else{}-condition properly - is this still required or already working?
                     case "Else":
                         o = $"else";
                         break;
@@ -339,13 +339,13 @@ namespace WDL2CS
                         break;
 
                     case "Set":
+                        //Special case "Target" property
                         if (m_parameters[0].EndsWith(".Target"))
                         {
                             o = $"{m_parameters[0]} = {Formatter.FormatActorTarget(m_parameters[1])};";
                         }
 
-                        //TODO: create sub function for "set" and treat all special cases
-                        //special case: function assignments to each_tick and each_sec
+                        //special case: function assignments to each_tick and each_sec (not applicable for Set_all)
                         else if (m_parameters[0].StartsWith(Formatter.FormatGlobal("Each_")))
                         {
                             string p = Formatter.FormatFunction(m_parameters[1]);
@@ -362,13 +362,20 @@ namespace WDL2CS
                         break;
 
                     case "Set_all":
-                        //TODO: update to match "set"
+                        //split property from object for iteration through all instances
                         int i = m_parameters[0].LastIndexOf('.');
                         string target = i < 0 ? m_parameters[0] : m_parameters[0].Substring(0, i);
-                        string property = i < 0 ? "" : m_parameters[0].Substring(i + 1);
-                        //string[] all = m_parameters[0].Split('.',);
-                        //o = $"foreach (var instance in {all[0]}) instance.{all[1]} = {m_parameters[1]};";
-                        o = $"foreach (var instance in {target}) instance.{Formatter.FormatTargetSkill(property)} = {m_parameters[1]};";
+                        string property = i < 0 ? "" : m_parameters[0].Substring(i);
+
+                        //Special case "Target" property
+                        if (property.EndsWith(".Target"))
+                        {
+                            o = $"foreach (var instance in {target}) instance{property} = {Formatter.FormatActorTarget(m_parameters[1])};";
+                        }
+                        else
+                        {
+                            o = $"foreach (var instance in {target}) instance{Formatter.FormatTargetSkill(property)} = {m_parameters[1]};";
+                        }
                         break;
 
                     case "Set_skill":

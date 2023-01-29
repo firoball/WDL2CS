@@ -440,19 +440,23 @@ namespace VCCCompiler
          
        break;
 							case   19 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Objects.CreatePreProcIfCondition(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   20 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Objects.CreatePreProcIfNotCondition(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   21 : 
-         yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = Objects.CreatePreProcElseCondition(yyv[yysp-4], yyv[yysp-1]);
          
        break;
 							case   22 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = Objects.CreatePreProcEndCondition(yyv[yysp-1]);
          
        break;
 							case   23 : 
@@ -587,19 +591,17 @@ namespace VCCCompiler
        break;
 							case   52 : 
          //yyval = yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Objects.AddObject(yyv[yysp-5], yyv[yysp-4]);
-         
+         yyval = Objects.AddObject(yyv[yysp-5], yyv[yysp-4], yyv[yysp-1]);
          
        break;
 							case   53 : 
          //yyval = yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Objects.AddObject(yyv[yysp-4], yyv[yysp-3], yyv[yysp-1]);
+         yyval = Objects.AddStringObject(yyv[yysp-4], yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   54 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
          yyval = Objects.AddObject(yyv[yysp-2], yyv[yysp-1]);
-         
          
        break;
 							case   55 : 
@@ -615,7 +617,8 @@ namespace VCCCompiler
          
        break;
 							case   58 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = yyv[yysp-2] + yyv[yysp-0];
          
        break;
 							case   59 : 
@@ -628,8 +631,7 @@ namespace VCCCompiler
        break;
 							case   61 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         Objects.AddProperty(yyv[yysp-2]);
-         yyval = "";
+         yyval = Objects.CreateProperty(yyv[yysp-2]);
          
        break;
 							case   62 : 

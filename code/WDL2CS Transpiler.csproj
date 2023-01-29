@@ -52,6 +52,8 @@
     <Compile Include="Instruction.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="PreProcessorStack.cs" />
+    <Compile Include="Property.cs" />
     <Compile Include="Sections.cs" />
   </ItemGroup>
   <ItemGroup>

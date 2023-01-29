@@ -264,7 +264,8 @@ $$ = Actions.CreatePreProcEndCondition($1);
                 <RULE name="PreprocPropSection"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Objects.CreatePreProcIfCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -275,7 +276,8 @@ $$ = Actions.CreatePreProcEndCondition($1);
                 <RULE name="PreprocPropSection"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Objects.CreatePreProcIfNotCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -288,7 +290,8 @@ $$ = Actions.CreatePreProcEndCondition($1);
                 <RULE name="PropertyDefs"/>
                 <TOKEN name="ENDIF"/>
                 <CODE>
-                    $$ = $1 + $2 + $3 + $4 + $5;
+                    //$$ = $1 + $2 + $3 + $4 + $5;
+$$ = Objects.CreatePreProcElseCondition($1, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -296,7 +299,8 @@ $$ = Actions.CreatePreProcEndCondition($1);
                 <RULE name="PropertyDefs"/>
                 <TOKEN name="ENDIF"/>
                 <CODE>
-                    $$ = $1 + $2;
+                    //$$ = $1 + $2;
+$$ = Objects.CreatePreProcEndCondition($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -576,8 +580,7 @@ $$ = Formatter.FormatNumber($1) + ", " + $3;
                 <TOKEN name="Char125"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5 + $6;
-$$ = Objects.AddObject($1, $2);
-
+$$ = Objects.AddObject($1, $2, $5);
 
                 </CODE>
             </RIGHTSIDE>
@@ -589,7 +592,7 @@ $$ = Objects.AddObject($1, $2);
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5;
-$$ = Objects.AddObject($1, $2, $4);
+$$ = Objects.AddStringObject($1, $2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -600,7 +603,6 @@ $$ = Objects.AddObject($1, $2, $4);
                 <CODE>
                     //$$ = $1 + $2 + $3;
 $$ = Objects.AddObject($1, $2);
-
 
                 </CODE>
             </RIGHTSIDE>
@@ -636,7 +638,8 @@ $$ = Objects.AddObject($1, $2);
                 <TOKEN name="Char59"/>
                 <RULE name="PropertyDefs"/>
                 <CODE>
-                    $$ = $1 + $2 + $3;
+                    //$$ = $1 + $2 + $3;
+$$ = $1 + $3;
 
                 </CODE>
             </RIGHTSIDE>
@@ -662,8 +665,7 @@ $$ = Objects.AddObject($1, $2);
                 <RULE name="PropertyValueList"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-Objects.AddProperty($1);
-$$ = "";
+$$ = Objects.CreateProperty($1);
 
                 </CODE>
             </RIGHTSIDE>
