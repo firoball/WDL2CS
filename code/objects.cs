@@ -11,7 +11,6 @@ namespace WDL2CS
         private static Dictionary<string, Dictionary<string, string>> s_objects = new Dictionary<string, Dictionary<string, string>>();
 
         private static readonly string s_indent = "\t\t";
-        private static List<Property> s_properties = new List<Property>();
         private static List<string> s_values = new List<string>();
 
         private static readonly string s_nl = Environment.NewLine;
@@ -88,7 +87,7 @@ namespace WDL2CS
                         if (!string.IsNullOrEmpty(props))
                         {
                             o += s_nl + s_indent + "{" + s_nl;
-                            o += props;
+                            o += props + s_nl;
                             o += s_indent + "}";
                         }
                         o += ";";
@@ -123,126 +122,63 @@ namespace WDL2CS
         {
             string o = string.Empty;
 
-            //Deserialize and merge properties 
-            //TODO: evaluate #ifdefs during merge (create stack with Lists)
             List<Property> properties = Property.DeserializeList(stream);
-            /*PreProcessorStack<Data> stack = new PreProcessorStack<Data>();
+            PreProcessorStack<ObjectData> stack = new PreProcessorStack<ObjectData>();
+            ObjectData objectData = stack.Content;
+
             foreach (Property property in properties)
             {
                 switch (property.Name)
                 {
                     case "#if":
+                        //update preprocessor stack and obtain new dataset
+                        objectData = stack.Update(property.Name, property.Values[0]);
                         break;
 
                     case "#else":
+                        //move all previously collected properties into data list
+                        objectData.PropertyData = ProcessObjectData(objectData, type, name);
+                        //update preprocessor stack and move to else branch of active dataset
+                        objectData = stack.Update(property.Name);
                         break;
 
-                    case "#end":
+                    case "#endif":
+                        //move all previously collected properties into data list
+                        objectData.PropertyData = ProcessObjectData(objectData, type, name);
+                        //update preprocessor stack, get previous dataset
+                        objectData = stack.Update(property.Name);
                         break;
 
                     default:
-                        AddProperty(property, stack.Content.Properties);
+                        //add property to active dataset
+                        AddProperty(property, objectData.Properties);
                         break;
                 }
-            }*/
-            properties.ForEach(x => AddProperty(x, s_properties));
-
-
-            //Synonyms are just plain variables in C# - special case
-            if (string.Equals(type, "Synonym"))
-            {
-                Property property;
-
-                //workaround build synonym definition in property
-                //Type declares datatype of Synonym
-                property = s_properties.Where(x => x.Name.Equals("Type")).FirstOrDefault();
-                if (property != null)
-                {
-                    string synType = Formatter.FormatObject(property.Values[0]);
-                    //"Action" keyword is reserved in C# -> use "Function" instead (mandatory)
-                    if (string.Equals(synType, "Action"))
-                        synType = "Function";
-                    //Scripts don't distinguish between object types and just use BaseObject which just carries all properties - like WDL
-                    //Trying to keep this more strict results in all kind of type problems in WDL actions
-                    if (string.Equals(synType, "Wall") || string.Equals(synType, "Thing") || string.Equals(synType, "Actor"))
-                        synType = "BaseObject";
-
-                    o += synType + " " + name;
-
-                    //Default declares default assignment of Synonym (optional)
-                    property = s_properties.Where(x => x.Name.Equals("Default")).FirstOrDefault();
-                    if (property != null)
-                    {
-                        if (!property.Values[0].Equals("null"))
-                        {
-                            o += " = " + Formatter.FormatIdentifier(property.Values[0]);
-                        }
-                    }
-                }
             }
-            else
+
+            //take care of properties not enclosed by any preprocessor directive
+            if (string.IsNullOrEmpty(stack.Condition))
             {
-                List<string> ranges = new List<string>();
-                List<string> controls = new List<string>();
-                List<string> formattedProperties = new List<string>();
+                objectData.PropertyData = ProcessObjectData(objectData, type, name);
+            }
 
-                foreach (Property property in s_properties)
-                {
-                    switch (property.Name)
-                    {
-                        case "Range":
-                            ranges.Add(property.Format(type));
-                            break;
+            objectData = stack.Merge();
 
-                        case "Digits":
-                        case "Hbar":
-                        case "Vbar":
-                        case "Hslider":
-                        case "Vslider":
-                        case "Picture":
-                        case "Window":
-                        case "Button":
-                            controls.Add(property.Format(type));
-                            break;
+            //copy standard properties to output
+            o += objectData.PropertyData.Properties;
 
-                        default:
-                            if (property.Name[0] == '#')
-                            {
-                                //TODO: switch preprocessor stack
-                                if (property.Values.Count > 0)
-                                    formattedProperties.Add(property.Name + " " + property.Values[0]);
-                                else
-                                    formattedProperties.Add(property.Name);
-                            }
-                            else
-                            {
-                                formattedProperties.Add(property.Format(type));
-                            }
-                            break;
-                    }
-                }
+            //handle palette range definitions
+            if (!string.IsNullOrEmpty(objectData.PropertyData.Ranges))
+            {
+                o += s_nl + s_indent + "\tRange = new[,]" + s_nl + s_indent + "\t{" + s_nl + objectData.PropertyData.Ranges;
+                o += s_nl + s_indent + "\t}";
+            }
 
-                //handle palette range definitions
-                if (ranges.Count > 0)
-                {
-                    string p = "Range = new[,] {" + string.Join(", ", ranges) + "}";
-                    formattedProperties.Add(p);
-                }
-
-                //handle panel control definitions
-                if (controls.Count > 0)
-                {
-                    formattedProperties.Add(BuildControls(controls));
-                }
-
-                formattedProperties.Sort();
-                foreach (string s in formattedProperties)
-                {
-                    if (s[0] == '#')
-                        o += s + s_nl;
-                    else
-                        o += s_indent + "\t" + s + ", " + s_nl;
-                }
+            //handle UI control definitions
+            if (!string.IsNullOrEmpty(objectData.PropertyData.Controls))
+            {
+                o += s_nl + s_indent + "\tControls = new UIControl[]" + s_nl + s_indent + "\t{ " + s_nl + objectData.PropertyData.Controls;
+                o += s_nl + s_indent + "\t}";
             }
 
             //move object into object lists
@@ -254,18 +190,129 @@ namespace WDL2CS
                     obj.Add(name, o); //TODO: change to List with names only
             }
 
-            //Clean up
-            s_properties.Clear();
             return BuildObject(type, name, o);
         }
 
-        private static string BuildControls(List<string> controls)
+        private static PropertyData ProcessObjectData(ObjectData active, string type, string name)
         {
-            string c = "Controls = new UIControl[]" + s_nl + s_indent + "\t{ " + s_nl;
-            c += string.Join("," + s_nl, controls.Select(x => s_indent + "\t\t" + x));
-            c += s_nl + s_indent + "\t}";
-            return c;
+            //Synonyms need special treatment: convert from WDL object with properties to C# object reference
+            if (type.Equals("Synonym"))
+                return ProcessSynonym(active, name);
+            else
+                return ProcessProperties(active, type);
+
         }
+
+        private static PropertyData ProcessSynonym(ObjectData active, string name)
+        {
+            //Current implementation is not compatible with preprocessor directives - most likely not relevant for any A3 game ever created
+            Property property;
+            PropertyData data = new PropertyData();
+            //workaround build synonym definition in property
+            //Type declares datatype of Synonym
+            property = active.Properties.Where(x => x.Name.Equals("Type")).FirstOrDefault();
+            if (property != null)
+            {
+                string synType = Formatter.FormatObject(property.Values[0]);
+                //"Action" keyword is reserved in C# -> use "Function" instead (mandatory)
+                if (synType.Equals("Action"))
+                    synType = "Function";
+                //Scripts don't distinguish between object types and just use BaseObject which just carries all properties - like WDL
+                //Trying to keep this more strict results in all kind of type problems in WDL actions
+                if (synType.Equals("Wall") || synType.Equals("Thing") || synType.Equals("Actor"))
+                    synType = "BaseObject";
+
+                data.Properties = synType + " " + name;
+
+                //Default declares default assignment of Synonym (optional)
+                property = active.Properties.Where(x => x.Name.Equals("Default")).FirstOrDefault();
+                if (property != null)
+                {
+                    if (!property.Values[0].Equals("null"))
+                    {
+                        data.Properties += " = " + Formatter.FormatIdentifier(property.Values[0]);
+                    }
+                }
+            }
+
+            return data;
+        }
+
+        private static PropertyData ProcessProperties(ObjectData active, string type)
+        {
+            PropertyData data = new PropertyData();
+
+            List<string> ranges = new List<string>();
+            List<string> controls = new List<string>();
+            List<string> properties = new List<string>();
+
+            foreach (Property property in active.Properties)
+            {
+                switch (property.Name)
+                {
+                    case "Range":
+                        ranges.Add(property.Format(type));
+                        break;
+
+                    case "Digits":
+                    case "Hbar":
+                    case "Vbar":
+                    case "Hslider":
+                    case "Vslider":
+                    case "Picture":
+                    case "Window":
+                    case "Button":
+                        controls.Add(property.Format(type));
+                        break;
+
+                    default:
+                        properties.Add(property.Format(type));
+                        break;
+                }
+            }
+
+            //create comma separated list of ranges
+            ranges.Sort();
+            data.Ranges += string.Join(s_nl, ranges.Select(x => s_indent + "\t\t" + x + ","));
+
+            //create comma separated list of controls
+            controls.Sort();
+            data.Controls += string.Join(s_nl, controls.Select(x => s_indent + "\t\t" + x + ","));
+
+            //create comma separated list of properties
+            properties.Sort();
+            data.Properties += string.Join(s_nl, properties.Select(x => s_indent + "\t" + x + ","));
+
+            return data;
+        }
+
+        private static void AddProperty(Property property, List<Property> properties)
+        {
+            List<string> propertyNames = properties.Select(x => x.Name).ToList();
+            //let preprocessor instructions always pass check
+            if (propertyNames.Contains(property.Name))
+            {
+                //Eliminate double definitions of properties only where their values can be merged
+                if (property.AllowMerge)
+                {
+                    int i = propertyNames.IndexOf(property.Name);
+                    properties[i].Values.AddRange(property.Values);
+                }
+                else if (property.AllowMultiple)
+                {
+                    properties.Add(property);
+                }
+                else
+                {
+                    Console.WriteLine("(W) OBJECTS ignore double definition of property: " + property.Name);
+                }
+            }
+            else
+            {
+                properties.Add(property);
+            }
+        }
+
 
         public static string CreatePreProcIfNotCondition(string expr, string stream)
         {
@@ -318,47 +365,111 @@ namespace WDL2CS
             return prop.Serialize();
         }
 
-        private static void AddProperty(Property property, List<Property> properties)
-        {
-            List<string> propertyNames = properties.Select(x => x.Name).ToList();
-            //let preprocessor instructions always pass check
-            if (propertyNames.Contains(property.Name))
-            {
-                //Eliminate double definitions of properties only where their values can be merged
-                if (property.AllowMerge)
-                {
-                    int i = propertyNames.IndexOf(property.Name);
-                    properties[i].Values.AddRange(property.Values);
-                }
-                else if (property.AllowMultiple)
-                {
-                    properties.Add(property);
-                }
-                else
-                {
-                    Console.WriteLine("(W) OBJECTS ignore double definition of property: " + property.Name);
-                }
-            }
-            else
-            {
-                properties.Add(property);
-            }
-        }
-
         public static void AddPropertyValue(string value)
         {
             s_values.Insert(0, value);
         }
 
-        class Data
+
+        class PropertyData
+        {
+            private string m_ranges;
+            private string m_controls;
+            private string m_properties;
+
+            public PropertyData()
+            {
+                m_ranges = string.Empty;
+                m_controls = string.Empty;
+                m_properties = string.Empty;
+            }
+
+            public string Ranges { get => m_ranges; set => m_ranges = value; }
+            public string Controls { get => m_controls; set => m_controls = value; }
+            public string Properties { get => m_properties; set => m_properties = value; }
+        }
+
+        class ObjectData : PreProcessorData
         {
             private List<Property> m_properties;
-            private List<string> m_ranges;
-            private List<string> m_controls;
+            private PropertyData m_propertyData;
 
-            public List<string> Ranges { get => m_ranges; set => m_ranges = value; }
-            public List<string> Controls { get => m_controls; set => m_controls = value; }
+            public ObjectData() : base()
+            {
+                m_properties = new List<Property>();
+                m_propertyData = new PropertyData();
+            }
+
             public List<Property> Properties { get => m_properties; set => m_properties = value; }
+            public PropertyData PropertyData { get => m_propertyData; set => m_propertyData = value; }
+
+            public override void Add(PreProcessorData data)
+            {
+                if ((data != null) && data is ObjectData)
+                {
+                    PropertyData propertyData = ((ObjectData)data).PropertyData;
+
+                    //append nested data if available
+                    if (!string.IsNullOrEmpty(m_propertyData.Ranges) && !string.IsNullOrEmpty(propertyData.Ranges))
+                        m_propertyData.Ranges += s_nl + propertyData.Ranges;
+                    else
+                        m_propertyData.Ranges += propertyData.Ranges;
+
+                    if (!string.IsNullOrEmpty(m_propertyData.Controls) && !string.IsNullOrEmpty(propertyData.Controls))
+                        m_propertyData.Controls += s_nl + propertyData.Controls;
+                    else
+                        m_propertyData.Controls += propertyData.Controls;
+
+                    if (!string.IsNullOrEmpty(m_propertyData.Properties) && !string.IsNullOrEmpty(propertyData.Properties))
+                        m_propertyData.Properties += s_nl + propertyData.Properties;
+                    else
+                        m_propertyData.Properties += propertyData.Properties;
+                }
+            }
+
+            public override void Merge(string condition, PreProcessorData ifData, PreProcessorData elseData)
+            {
+                //Append data from if-branch
+                Add(ifData);
+
+                if (!string.IsNullOrEmpty(condition))
+                {
+                    //insert preprocessor activation condition if required
+                    if (!string.IsNullOrEmpty(m_propertyData.Ranges))
+                        m_propertyData.Ranges = "#if " + condition + s_nl + m_propertyData.Ranges;
+                    if (!string.IsNullOrEmpty(m_propertyData.Controls))
+                        m_propertyData.Controls = "#if " + condition + s_nl + m_propertyData.Controls;
+                    if (!string.IsNullOrEmpty(m_propertyData.Properties))
+                        m_propertyData.Properties = "#if " + condition + s_nl + m_propertyData.Properties;
+
+                    //take care of else branch if available
+                    if ((elseData != null) && elseData is ObjectData)
+                    {
+                        ObjectData data = (ObjectData)elseData;
+                        //insert preprocessor activation condition if required
+                        if (!string.IsNullOrEmpty(data.PropertyData.Ranges))
+                            m_propertyData.Ranges += s_nl + s_else;
+                        if (!string.IsNullOrEmpty(data.PropertyData.Controls))
+                            m_propertyData.Controls += s_nl + s_else;
+                        if (!string.IsNullOrEmpty(data.PropertyData.Properties))
+                            m_propertyData.Properties += s_nl + s_else;
+                    }
+                }
+
+                //Append data from else-branch
+                Add(elseData);
+
+                if (!string.IsNullOrEmpty(condition))
+                {
+                    //append preprocessor end definition if present and required
+                    if (!string.IsNullOrEmpty(m_propertyData.Ranges))
+                        m_propertyData.Ranges += s_nl + s_end;
+                    if (!string.IsNullOrEmpty(m_propertyData.Controls))
+                        m_propertyData.Controls += s_nl + s_end;
+                    if (!string.IsNullOrEmpty(m_propertyData.Properties))
+                        m_propertyData.Properties += s_nl + s_end;
+                }
+            }
         }
     }
 }
