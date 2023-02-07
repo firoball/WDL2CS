@@ -116,15 +116,6 @@ namespace WDL2CS
                         p = "{" + string.Join(", ", m_values) + "}";
                         break;
 
-                    /*TODO: add two dimensional property in Api instead
-                    case "Scale_xy":
-                        p = "Scale_x = " + m_values[0];
-                        s_formattedProperties.Add(p);
-                        p = "Scale_y = " + m_values[1];
-                        s_formattedProperties.Add(p);
-                        break;
-                    */
-
                     case "Bmap":
                     case "Bmaps":
                         p = "Bmaps = new [] {" + string.Join(", ", m_values) + "}";

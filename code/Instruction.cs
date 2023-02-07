@@ -74,7 +74,7 @@ namespace WDL2CS
                 switch (m_command)
                 {
                     case "Abs":
-                        o = $"{m_parameters[0]} = {Formatter.FormatMath("Abs")}({m_parameters[1]});";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {Formatter.FormatMath("Abs")}({m_parameters[1]});";
                         break;
 
                     case "Accel":
@@ -98,7 +98,7 @@ namespace WDL2CS
                         break;
 
                     case "Asin":
-                        o = $"{m_parameters[0]} = {Formatter.FormatMath("Asin")}({m_parameters[1]});";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {Formatter.FormatMath("Asin")}({m_parameters[1]});";
                         break;
 
                     case "Beep":
@@ -106,15 +106,15 @@ namespace WDL2CS
                         break;
 
                     case "Branch":
-                        o = $"Scheduler.Run({m_parameters[0]}); yield break;";
+                        o = $"Run({m_parameters[0]}); yield break;";
                         break;
 
                     case "Call":
-                        o = $"Scheduler.Run({m_parameters[0]});";
+                        o = $"Run({m_parameters[0]});";
                         break;
 
                     case "Do":
-                        o = $"Scheduler.Run({m_parameters[0]});";
+                        o = $"Run({m_parameters[0]});";
                         break;
 
                     case "Drop":
@@ -135,7 +135,7 @@ namespace WDL2CS
                         break;
 
                     case "Exec_rules":
-                        o = $"Scheduler.Run(new {m_parameters[0]}());";
+                        o = $"Run({m_parameters[0]});";
                         break;
 
                     case "Exit":
@@ -198,7 +198,7 @@ namespace WDL2CS
                         break;
 
                     case "Inport":
-                        o = $"{m_parameters[0]} = Environment.Inport({m_parameters[1]});";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = Environment.Inport({m_parameters[1]});";
                         break;
 
                     case "Lift":
@@ -245,7 +245,7 @@ namespace WDL2CS
                         break;
 
                     case "outport":
-                        o = $"Environment.Inport({m_parameters[0]} , {m_parameters[1]});";
+                        o = $"Environment.Outport({m_parameters[0]} , {m_parameters[1]});";
                         break;
 
                     case "Place":
@@ -379,7 +379,7 @@ namespace WDL2CS
                         break;
 
                     case "Set_skill":
-                        o = $"{m_parameters[0]} = Convert.ToDouble({m_parameters[1]});";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = Convert.ToDouble({m_parameters[1]});";
                         break;
 
                     case "Set_string":
@@ -410,11 +410,11 @@ namespace WDL2CS
                         break;
 
                     case "Sin":
-                        o = $"{m_parameters[0]} = {Formatter.FormatMath("Sin")}({m_parameters[1]});";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {Formatter.FormatMath("Sin")}({m_parameters[1]});";
                         break;
 
                     case "Sqrt":
-                        o = $"{m_parameters[0]} = {Formatter.FormatMath("Sqrt")}({m_parameters[1]});";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {Formatter.FormatMath("Sqrt")}({m_parameters[1]});";
                         break;
 
                     case "Stop_demo":

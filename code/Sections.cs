@@ -37,7 +37,7 @@ namespace WDL2CS
             s += ifstream;
             s += "#else" + s_nl;
             s += elsestream;
-            s += "#endif" + s_nl;
+            s += "#endif";// + s_nl;
 
             return s;
         }
