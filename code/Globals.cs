@@ -11,7 +11,7 @@ namespace WDL2CS
         static Dictionary<string, string> s_globals = new Dictionary<string, string>();
 
         private static readonly string s_nl = Environment.NewLine;
-
+        /*
         public static string BuildGlobals()
         {
             string o = string.Empty;
@@ -24,7 +24,7 @@ namespace WDL2CS
             o += s_nl;
 
             return o;
-        }
+        }*/
 
         private static string BuildGlobal(string name, string value)
         {

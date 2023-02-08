@@ -80,7 +80,7 @@ namespace WDL2CS
                     case "Skill6":
                     case "Skill7":
                     case "Skill8":
-                        p = m_name + " = " + " new Skill(" + m_values[0] + ")";
+                        p = m_name + " = new Skill(" + m_values[0] + ")";
                         break;
 
                     //collect all panel control definitions for generation of multi-dimensional array

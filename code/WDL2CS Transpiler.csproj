@@ -43,6 +43,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Action.cs" />
     <Compile Include="Actions.cs" />
     <Compile Include="Assets.cs" />
     <Compile Include="Defines.cs" />
@@ -50,10 +51,13 @@
     <Compile Include="Globals.cs" />
     <Compile Include="Include.cs" />
     <Compile Include="Instruction.cs" />
+    <Compile Include="ObjectData.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="PreProcessorData.cs" />
     <Compile Include="PreProcessorStack.cs" />
     <Compile Include="Property.cs" />
+    <Compile Include="PropertyData.cs" />
     <Compile Include="Sections.cs" />
   </ItemGroup>
   <ItemGroup>
