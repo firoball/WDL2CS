@@ -7,8 +7,8 @@ namespace WDL2CS
 {
     class Property
     {
-        private static readonly string s_sepObj = "#[O]#";
         private static readonly string s_sepProp = "#[P]#";
+        private static readonly string s_sepCont = "#[C]#";
         private static readonly string s_sepVal = "#[V]#";
 
         private string m_name;
@@ -41,17 +41,17 @@ namespace WDL2CS
 
         public string Serialize()
         {
-            string s = s_sepObj + m_name;
-            s += s_sepProp + string.Join(s_sepVal, m_values);
+            string s = s_sepProp + m_name;
+            s += s_sepCont + string.Join(s_sepVal, m_values);
             return s;
         }
 
         public void Deserialize(string stream)
         {
             //kill any leading object seperator - it is used for serializing multiple instructions only
-            string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.RemoveEmptyEntries);
+            string[] fragments = stream.Split(new[] { s_sepProp }, StringSplitOptions.RemoveEmptyEntries);
 
-            fragments = fragments[0].Split(new[] { s_sepProp }, StringSplitOptions.None);
+            fragments = fragments[0].Split(new[] { s_sepCont }, StringSplitOptions.None);
             Name = fragments[0];
             if (!string.IsNullOrEmpty(fragments[1]))
             {
@@ -180,7 +180,7 @@ namespace WDL2CS
 
         public static List<Property> DeserializeList(string stream)
         {
-            string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.RemoveEmptyEntries);
+            string[] fragments = stream.Split(new[] { s_sepProp }, StringSplitOptions.RemoveEmptyEntries);
             List<Property> properties = new List<Property>();
             foreach (string fragment in fragments)
             {

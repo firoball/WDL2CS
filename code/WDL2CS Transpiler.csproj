@@ -51,6 +51,7 @@
     <Compile Include="Globals.cs" />
     <Compile Include="Include.cs" />
     <Compile Include="Instruction.cs" />
+    <Compile Include="Object.cs" />
     <Compile Include="ObjectData.cs" />
     <Compile Include="Objects.cs" />
     <Compile Include="Parser.cs" />

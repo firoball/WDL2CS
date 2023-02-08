@@ -13,7 +13,7 @@ namespace WDL2CS
         {
             string a = new Action(name, stream).Serialize();
 
-            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format Action
+            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
             Action act = Action.Deserialize(a);
             a = act.Format();
 

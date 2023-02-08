@@ -67,7 +67,7 @@ namespace WDL2CS
 
         public static void AddKeywordDefine(string s)
         {
-            if (Objects.Is(out string obj, s))
+            if (Objects.Identify(out string obj, s))
             {
                 s_const = obj;
             }

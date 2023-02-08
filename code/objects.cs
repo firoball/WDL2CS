@@ -8,7 +8,7 @@ namespace WDL2CS
 {
     class Objects
     {
-        private static Dictionary<string, Dictionary<string, string>> s_objects = new Dictionary<string, Dictionary<string, string>>();
+        private static Dictionary<string, List<string>> s_objects = new Dictionary<string, List<string>>();
 
         private static readonly string s_indent = "\t\t";
         private static List<string> s_values = new List<string>();
@@ -17,37 +17,37 @@ namespace WDL2CS
 
         static Objects()
         {
-            s_objects.Add("Synonym", new Dictionary<string, string>());
-            s_objects.Add("String", new Dictionary<string, string>());
-            s_objects.Add("Skill", new Dictionary<string, string>());
-            s_objects.Add("Palette", new Dictionary<string, string>());
-            s_objects.Add("Texture", new Dictionary<string, string>());
-            s_objects.Add("Wall", new Dictionary<string, string>());
-            s_objects.Add("Region", new Dictionary<string, string>());
-            s_objects.Add("Thing", new Dictionary<string, string>());
-            s_objects.Add("Actor", new Dictionary<string, string>());
-            s_objects.Add("Way", new Dictionary<string, string>());
-            s_objects.Add("Text", new Dictionary<string, string>());
-            s_objects.Add("Overlay", new Dictionary<string, string>());
-            s_objects.Add("Panel", new Dictionary<string, string>());
-            s_objects.Add("View", new Dictionary<string, string>());
+            s_objects.Add("Synonym", new List<string>());
+            s_objects.Add("String", new List<string>());
+            s_objects.Add("Skill", new List<string>());
+            s_objects.Add("Palette", new List<string>());
+            s_objects.Add("Texture", new List<string>());
+            s_objects.Add("Wall", new List<string>());
+            s_objects.Add("Region", new List<string>());
+            s_objects.Add("Thing", new List<string>());
+            s_objects.Add("Actor", new List<string>());
+            s_objects.Add("Way", new List<string>());
+            s_objects.Add("Text", new List<string>());
+            s_objects.Add("Overlay", new List<string>());
+            s_objects.Add("Panel", new List<string>());
+            s_objects.Add("View", new List<string>());
         }
 
         public static bool Is(string obj, string name)
         {
-            if (s_objects.TryGetValue(obj, out Dictionary<string, string> skills))
+            if (s_objects.TryGetValue(obj, out List<string> skills))
             {
 
-                return skills.ContainsKey(name);
+                return skills.Contains(name);
             }
             return false;
         }
 
-        public static bool Is(out string obj, string name)
+        public static bool Identify(out string obj, string name)
         {
-            foreach (KeyValuePair<string, Dictionary<string, string>> kvp in s_objects)
+            foreach (KeyValuePair<string, List<string>> kvp in s_objects)
             {
-                if (kvp.Value.ContainsKey(name))
+                if (kvp.Value.Contains(name))
                 {
                     obj = kvp.Key;
                     return true;
@@ -57,262 +57,51 @@ namespace WDL2CS
             return false;
         }
 
-        private static string BuildObject(string type, string name, string props)
+        private static void Register(string type, string name)
         {
-            string o = string.Empty;
-            string scope = "public static ";
-
-            switch (type)
+            /* Objects are registered for later identification as required by Defines and some Instructions
+             * The object registry does not consider preprocessor directives, this leads to following limits:
+             * 
+             * - Objects created with certain preprocessor directives only are always identified
+             * 
+             * - Ambiguous object name identification (same name could be used for different objects in 
+             *   different preprocessor directives) will be resolved with first come, first serve.
+             *   This can lead to wrong identification results, but this case should be very rare to non-existent
+             *   out in the wild.
+             */
+            if (s_objects.TryGetValue(type, out List<string> obj))
             {
-                case "Synonym":
-                    o += s_indent + scope + props + ";";
-                    break;
-
-                case "String":
-                    o += s_indent + scope + "string " + name;
-                    if (!string.IsNullOrEmpty(props))
-                        o += " = " + props;
-                    o += ";";
-                    break;
-
-                default:
-                    //Ways never have properties, but need to be instantiated nonetheless
-                    //if (!string.IsNullOrEmpty(props) || string.Compare(type, "Way", true) == 0 || string.Compare(type, "Skill", true) == 0)
-                    {
-                        if (name.StartsWith("Skills."))
-                            o += s_indent + "/*" + name + " = new " + type + "()"; //TODO: this needs to be moved to Constructor later on - PATCHED
-                        else
-                            o += s_indent + scope + type + " " + name + " = new " + type + "()";
-
-                        if (!string.IsNullOrEmpty(props))
-                        {
-                            o += s_nl + s_indent + "{" + s_nl;
-                            o += props + s_nl;
-                            o += s_indent + "}";
-                        }
-                        o += ";";
-                        if (name.StartsWith("Skills.")) o += "*/"; //PATCHED
-                    }
-                    break;
+                if (!obj.Contains(name))
+                    obj.Add(name);
+                //else
+                    //Console.WriteLine("(W) OBJECTS ignore double definition: " + name);
             }
-
-            return o;
         }
 
         public static string AddStringObject(string type, string name, string text)
         {
-            //move object into object lists
-            if (s_objects.TryGetValue(type, out Dictionary<string, string> obj))
-            {
-                if (obj.ContainsKey(name))
-                    Console.WriteLine("(W) OBJECTS ignore double definition: " + name);
-                else
-                    obj.Add(name, text);//TODO: change to List with names only
-            }
-            return BuildObject(type, name, text);
+            Register(type, name);
+            string o = new Object(type, name, text, true).Serialize();
 
+            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
+            Object obj = Object.Deserialize(o);
+            return obj.Format();
         }
 
         public static string AddObject(string type, string name)
         {
-            return BuildObject(type, name, string.Empty);
+            return AddObject(type, name, string.Empty);
         }
 
         public static string AddObject(string type, string name, string stream)
         {
-            string o = string.Empty;
+            Register(type, name);
+            string o = new Object(type, name, stream).Serialize();
 
-            List<Property> properties = Property.DeserializeList(stream);
-            PreProcessorStack<ObjectData> stack = new PreProcessorStack<ObjectData>();
-            ObjectData objectData = stack.Content;
-
-            foreach (Property property in properties)
-            {
-                switch (property.Name)
-                {
-                    case "#if":
-                        //update preprocessor stack and obtain new dataset
-                        objectData = stack.Update(property.Name, property.Values[0]);
-                        break;
-
-                    case "#else":
-                        //move all previously collected properties into data list
-                        objectData.PropertyData = ProcessObjectData(objectData, type, name);
-                        //update preprocessor stack and move to else branch of active dataset
-                        objectData = stack.Update(property.Name);
-                        break;
-
-                    case "#endif":
-                        //move all previously collected properties into data list
-                        objectData.PropertyData = ProcessObjectData(objectData, type, name);
-                        //update preprocessor stack, get previous dataset
-                        objectData = stack.Update(property.Name);
-                        break;
-
-                    default:
-                        //add property to active dataset
-                        AddProperty(property, objectData.Properties);
-                        break;
-                }
-            }
-
-            //take care of properties not enclosed by any preprocessor directive
-            if (string.IsNullOrEmpty(stack.Condition))
-            {
-                objectData.PropertyData = ProcessObjectData(objectData, type, name);
-            }
-
-            objectData = stack.Merge();
-
-            //copy standard properties to output
-            o += objectData.PropertyData.Properties;
-
-            //handle palette range definitions
-            if (!string.IsNullOrEmpty(objectData.PropertyData.Ranges))
-            {
-                o += s_nl + s_indent + "\tRange = new[,]" + s_nl + s_indent + "\t{" + s_nl + objectData.PropertyData.Ranges;
-                o += s_nl + s_indent + "\t}";
-            }
-
-            //handle UI control definitions
-            if (!string.IsNullOrEmpty(objectData.PropertyData.Controls))
-            {
-                o += s_nl + s_indent + "\tControls = new UIControl[]" + s_nl + s_indent + "\t{ " + s_nl + objectData.PropertyData.Controls;
-                o += s_nl + s_indent + "\t}";
-            }
-
-            //move object into object lists
-            if (s_objects.TryGetValue(type, out Dictionary<string, string> obj))
-            {
-                if (obj.ContainsKey(name))
-                    Console.WriteLine("(W) OBJECTS ignore double definition of object: " + name);
-                else
-                    obj.Add(name, o); //TODO: change to List with names only
-            }
-
-            return BuildObject(type, name, o);
+            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
+            Object obj = Object.Deserialize(o);
+            return obj.Format();
         }
-
-        private static PropertyData ProcessObjectData(ObjectData active, string type, string name)
-        {
-            //Synonyms need special treatment: convert from WDL object with properties to C# object reference
-            if (type.Equals("Synonym"))
-                return ProcessSynonym(active, name);
-            else
-                return ProcessProperties(active, type);
-
-        }
-
-        private static PropertyData ProcessSynonym(ObjectData active, string name)
-        {
-            //Current implementation is not compatible with preprocessor directives - most likely not relevant for any A3 game ever created
-            Property property;
-            PropertyData data = new PropertyData();
-            //workaround build synonym definition in property
-            //Type declares datatype of Synonym
-            property = active.Properties.Where(x => x.Name.Equals("Type")).FirstOrDefault();
-            if (property != null)
-            {
-                string synType = Formatter.FormatObject(property.Values[0]);
-                //"Action" keyword is reserved in C# -> use "Function" instead (mandatory)
-                if (synType.Equals("Action"))
-                    synType = "Function";
-                //Scripts don't distinguish between object types and just use BaseObject which just carries all properties - like WDL
-                //Trying to keep this more strict results in all kind of type problems in WDL actions
-                if (synType.Equals("Wall") || synType.Equals("Thing") || synType.Equals("Actor"))
-                    synType = "BaseObject";
-
-                data.Properties = synType + " " + name;
-
-                //Default declares default assignment of Synonym (optional)
-                property = active.Properties.Where(x => x.Name.Equals("Default")).FirstOrDefault();
-                if (property != null)
-                {
-                    if (!property.Values[0].Equals("null"))
-                    {
-                        data.Properties += " = " + Formatter.FormatIdentifier(property.Values[0]);
-                    }
-                }
-            }
-
-            return data;
-        }
-
-        private static PropertyData ProcessProperties(ObjectData active, string type)
-        {
-            PropertyData data = new PropertyData();
-
-            List<string> ranges = new List<string>();
-            List<string> controls = new List<string>();
-            List<string> properties = new List<string>();
-
-            foreach (Property property in active.Properties)
-            {
-                switch (property.Name)
-                {
-                    case "Range":
-                        ranges.Add(property.Format(type));
-                        break;
-
-                    case "Digits":
-                    case "Hbar":
-                    case "Vbar":
-                    case "Hslider":
-                    case "Vslider":
-                    case "Picture":
-                    case "Window":
-                    case "Button":
-                        controls.Add(property.Format(type));
-                        break;
-
-                    default:
-                        properties.Add(property.Format(type));
-                        break;
-                }
-            }
-
-            //create comma separated list of ranges
-            ranges.Sort();
-            data.Ranges += string.Join(s_nl, ranges.Select(x => s_indent + "\t\t" + x + ","));
-
-            //create comma separated list of controls
-            controls.Sort();
-            data.Controls += string.Join(s_nl, controls.Select(x => s_indent + "\t\t" + x + ","));
-
-            //create comma separated list of properties
-            properties.Sort();
-            data.Properties += string.Join(s_nl, properties.Select(x => s_indent + "\t" + x + ","));
-
-            return data;
-        }
-
-        private static void AddProperty(Property property, List<Property> properties)
-        {
-            List<string> propertyNames = properties.Select(x => x.Name).ToList();
-            //let preprocessor instructions always pass check
-            if (propertyNames.Contains(property.Name))
-            {
-                //Eliminate double definitions of properties only where their values can be merged
-                if (property.AllowMerge)
-                {
-                    int i = propertyNames.IndexOf(property.Name);
-                    properties[i].Values.AddRange(property.Values);
-                }
-                else if (property.AllowMultiple)
-                {
-                    properties.Add(property);
-                }
-                else
-                {
-                    Console.WriteLine("(W) OBJECTS ignore double definition of property: " + property.Name);
-                }
-            }
-            else
-            {
-                properties.Add(property);
-            }
-        }
-
 
         public static string CreatePreProcIfNotCondition(string expr, string stream)
         {
