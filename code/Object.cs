@@ -46,7 +46,8 @@ namespace WDL2CS
 
         public string Serialize()
         {
-            string s = m_type + s_sepObj + m_name + s_sepObj + m_isString.ToString() + s_sepObj + m_serializedProperties;
+            string s = m_type + s_sepObj + m_name + s_sepObj + m_isString.ToString();
+            s += s_sepObj + m_serializedProperties;
             return s;
         }
 
@@ -60,7 +61,7 @@ namespace WDL2CS
             if (!string.IsNullOrEmpty(fragments[3]))
             {
                 //do not deserialize properties if object is of type String
-                //in this case, the fragment contains jsut the string content
+                //in this case, the fragment contains just the string content for direct use
                 if (Convert.ToBoolean(fragments[2]))
                     return new Object(type, name, fragments[3], true);
                 else

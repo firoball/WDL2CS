@@ -10,7 +10,6 @@ namespace WDL2CS
     {
         private static Dictionary<string, List<string>> s_objects = new Dictionary<string, List<string>>();
 
-        private static readonly string s_indent = "\t\t";
         private static List<string> s_values = new List<string>();
 
         private static readonly string s_nl = Environment.NewLine;

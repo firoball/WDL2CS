@@ -22,6 +22,7 @@ namespace WDL2CS
         {
             string s = string.Empty;
 
+            //TODO: transforms (renames) are not generating output. Make sure to remove empty strings here
             if (s_transform)
             {
                 if (!s_redefines.ContainsKey(redefine))
@@ -37,7 +38,7 @@ namespace WDL2CS
             else
             {
                 Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
-                s = $"{s_indent}public static const {s_const} {redefine} = {s_original};{s_nl}";
+                s = $"{s_indent}public static readonly {s_const} {redefine} = {s_original};";
             }
 
             //Reset settings

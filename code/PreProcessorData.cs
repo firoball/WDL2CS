@@ -10,7 +10,7 @@ namespace WDL2CS
 
         protected static string s_if = "#if";
         protected static string s_else = "#else";
-        protected static string s_end = "#end";
+        protected static string s_end = "#endif";
 
         public PreProcessorData()
         {

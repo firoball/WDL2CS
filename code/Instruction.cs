@@ -82,7 +82,7 @@ namespace WDL2CS
                         break;
 
                     case "Add":
-                        o = $"{m_parameters[0]} += {m_parameters[1]};";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} += {m_parameters[1]};";
                         break;
 
                     case "Add_string":
@@ -90,11 +90,11 @@ namespace WDL2CS
                         break;
 
                     case "Addt":
-                        o = $"{m_parameters[0]} += {m_parameters[1]} * {Formatter.FormatTargetSkill(Formatter.FormatSkill("Time_corr"))};";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} += {m_parameters[1]} * {Formatter.FormatTargetSkill(Formatter.FormatSkill("Time_corr"))};";
                         break;
 
                     case "And":
-                        o = $"{m_parameters[0]} &= {m_parameters[1]};";
+                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} &= {m_parameters[1]};";
                         break;
 
                     case "Asin":
@@ -107,6 +107,10 @@ namespace WDL2CS
 
                     case "Branch":
                         o = $"Run({m_parameters[0]}); yield break;";
+                        break;
+
+                    case "Break":
+                        o = $"break;";
                         break;
 
                     case "Call":
@@ -238,6 +242,10 @@ namespace WDL2CS
 
                     case "Next_there":
                         o = $"Globals.There = Globals.There.Next();";
+                        break;
+
+                    case "Nop":
+                        o = string.Empty;
                         break;
 
                     case "Level":
@@ -378,6 +386,10 @@ namespace WDL2CS
                         }
                         break;
 
+                    case "Set_info":
+                        o = $"{m_parameters[0]} = {m_parameters[1]}.ToString();";
+                        break;
+
                     case "Set_skill":
                         o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = Convert.ToDouble({m_parameters[1]});";
                         break;
@@ -453,6 +465,15 @@ namespace WDL2CS
                         o = $"yield return Waitt({m_parameters[0]});";
                         break;
 
+                    case "while":
+                        //while(1) patch -> C# needs while(true)
+                        string x = m_parameters[0].Trim(new[] { '(', ')' });
+                        if(int.TryParse(x, out int n) && n > 0)
+                            o = $"while (true)";
+                        else
+                            o = $"while {m_parameters[0]}";
+                        break;
+
                     default:
                         if (m_parameters.Count == 0)
                         {
@@ -465,7 +486,7 @@ namespace WDL2CS
                             {
                                 pars += p + " ";
                             }
-                            o = "//TODO: " + m_command + " " + pars;
+                            o = /*"//TODO: " +*/ m_command + " " + pars;
                         }
                         break;
                 }

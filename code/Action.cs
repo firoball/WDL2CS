@@ -89,8 +89,11 @@ namespace WDL2CS
                 //regular path
                 else
                 {
-                    s += UpdateIndent(inst.Command, inst.Format(instName));
+                    string f = inst.Format(instName);
+                    if (!string.IsNullOrEmpty(f))
+                        s += UpdateIndent(inst.Command, f);
                 }
+                
 
                 last = inst;
             }

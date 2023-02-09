@@ -157,6 +157,10 @@ namespace WDL2CS
                         p = m_name + " = " + "new [] {" + string.Join(", ", m_values) + "}";
                         break;
 
+                    case "Scale_xy":
+                        p = m_name + " = " + "new Var [] {" + string.Join(", ", m_values) + "}";
+                        break;
+
                     case "Target":
                         {
                             p = m_name + " = " + Formatter.FormatActorTarget(m_values[0]);
