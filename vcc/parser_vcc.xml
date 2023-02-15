@@ -532,7 +532,7 @@ $$ = $1;
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3 + $4 + $5 + $6 + $7;
-$$ = Assets.AddAsset($1, $2, $4, $6);
+$$ = Assets.AddAsset($1, $2, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -544,14 +544,17 @@ $$ = Assets.AddAsset($1, $2, $4, $6);
                 <RULE name="AssetParams"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-$$ = Formatter.FormatNumber($1) + ", " + $3;
+$$ = "";
+Assets.AddParameter($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Integer"/>
                 <CODE>
-                    $$ = Formatter.FormatNumber($1);
+                    //$$ = $1;
+$$ = "";
+Assets.AddParameter($1);
 
                 </CODE>
             </RIGHTSIDE>

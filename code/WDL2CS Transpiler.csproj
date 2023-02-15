@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Actions.cs" />
+    <Compile Include="Asset.cs" />
     <Compile Include="Assets.cs" />
     <Compile Include="Defines.cs" />
     <Compile Include="Formatter.cs" />

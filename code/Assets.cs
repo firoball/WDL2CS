@@ -7,48 +7,22 @@ namespace WDL2CS
 {
     class Assets
     {
-        private static readonly string s_indent = "\t\t";
-        private static Dictionary<string, Dictionary<string, string>> s_assets = new Dictionary<string, Dictionary<string, string>>();
+        private static List<string> s_parameters = new List<string>();
 
-        private static readonly string s_nl = Environment.NewLine;
-
-        static Assets()
+        public static string AddAsset(string type, string name, string file)
         {
-            s_assets.Add("Bmap", new Dictionary<string, string>());
-            s_assets.Add("Flic", new Dictionary<string, string>());
-            s_assets.Add("Font", new Dictionary<string, string>());
-            s_assets.Add("Model", new Dictionary<string, string>());
-            s_assets.Add("Music", new Dictionary<string, string>());
-            s_assets.Add("Ovly", new Dictionary<string, string>());
-            s_assets.Add("Sound", new Dictionary<string, string>());
+            string a = new Asset(type, name, file, s_parameters).Serialize();
+
+            //Clean up
+            s_parameters.Clear();
+
+            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
+            return Asset.Deserialize(a).Format();
         }
 
-        private static string BuildAsset(string type, string name, string pars)
+        public static void AddParameter(string value)
         {
-            string o = string.Empty;
-            string scope = "public static ";
-
-            o += s_indent + scope + type + " " + name + " = new " + type + "(" + pars + ");";
-
-            return o;
-        }
-
-        public static string AddAsset(string type, string name, string file, string parameters)
-        {
-            string p = file;
-            if (!string.IsNullOrEmpty(parameters))
-                p += ", " + parameters;
-
-            //move asset into asset lists
-            if (s_assets.TryGetValue(type, out Dictionary<string, string> asset))
-            {
-                if (asset.ContainsKey(name))
-                    Console.WriteLine("(W) ASSETS ignore double definition: " + name);
-                else
-                    asset.Add(name, p);//TODO: change to List with names only
-            }
-
-            return BuildAsset(type, name, p);
+            s_parameters.Insert(0, Formatter.FormatNumber(value));
         }
 
     }

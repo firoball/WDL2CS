@@ -570,16 +570,19 @@ namespace VCCCompiler
        break;
 							case   47 : 
          //yyval = yyv[yysp-6] + yyv[yysp-5] + yyv[yysp-4] + yyv[yysp-3] + yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Assets.AddAsset(yyv[yysp-6], yyv[yysp-5], yyv[yysp-3], yyv[yysp-1]);
+         yyval = Assets.AddAsset(yyv[yysp-6], yyv[yysp-5], yyv[yysp-3]);
          
        break;
 							case   48 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Formatter.FormatNumber(yyv[yysp-2]) + ", " + yyv[yysp-0];
+         yyval = "";
+         Assets.AddParameter(yyv[yysp-2]);
          
        break;
 							case   49 : 
-         yyval = Formatter.FormatNumber(yyv[yysp-0]);
+         //yyval = yyv[yysp-0];
+         yyval = "";
+         Assets.AddParameter(yyv[yysp-0]);
          
        break;
 							case   50 : 
