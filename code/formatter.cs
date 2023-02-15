@@ -174,6 +174,11 @@ namespace WDL2CS
                 return obj;
         }
 
+        public static string FormatPreprocessor(string preproc)
+        {
+            return preproc.ToUpper();
+        }
+
         private static string Ucfirst(string s)
         {
             s = s.ToLower();

@@ -35,6 +35,7 @@ namespace WDL2CS
         public static string CreatePreProcIfNotCondition(string expr, string stream)
         {
             string s = string.Empty;
+            expr = Formatter.FormatPreprocessor(expr);
 
             s += new Instruction("#if", "!(" + expr + ")", false).Serialize();
             s += stream;
@@ -46,6 +47,7 @@ namespace WDL2CS
         public static string CreatePreProcIfCondition(string expr, string stream)
         {
             string s = string.Empty;
+            expr = Formatter.FormatPreprocessor(expr);
 
             s += new Instruction("#if", expr, false).Serialize();
             s += stream;
