@@ -14,7 +14,7 @@ namespace WDL2CS
         private bool m_count;
         private List<string> m_parameters;
 
-        public string Command { get => m_command; }
+        public string Command { get => m_command; set => m_command = value; }
         public bool Count { get => m_count; }
         public List<string> Parameters { get => m_parameters; }
 

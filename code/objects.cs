@@ -99,7 +99,11 @@ namespace WDL2CS
 
             //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
             Object obj = Object.Deserialize(o);
-            return obj.Format();
+
+            o = obj.Format();
+            if (name.StartsWith("Skills."))
+                o = "/*PATCHED: " + o + "*/"; //PATCHED
+            return o;
         }
 
         public static string CreatePreProcIfNotCondition(string expr, string stream)

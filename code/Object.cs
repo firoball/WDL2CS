@@ -99,10 +99,7 @@ namespace WDL2CS
                     //Ways never have properties, but need to be instantiated nonetheless
                     //if (!string.IsNullOrEmpty(props) || string.Compare(type, "Way", true) == 0 || string.Compare(type, "Skill", true) == 0)
                     {
-                        if (m_name.StartsWith("Skills."))
-                            o += s_indent + "/*" + m_name + " = new " + m_type + "()"; //TODO: this needs to be moved to Constructor later on - PATCHED
-                        else
-                            o += s_indent + scope + m_type + " " + m_name + " = new " + m_type + "()";
+                        o += s_indent + scope + m_type + " " + m_name + " = new " + m_type + "()";
 
                         if (!string.IsNullOrEmpty(properties))
                         {
@@ -111,7 +108,6 @@ namespace WDL2CS
                             o += s_indent + "}";
                         }
                         o += ";";
-                        if (m_name.StartsWith("Skills.")) o += "*/"; //PATCHED
                     }
                     break;
             }

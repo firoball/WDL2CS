@@ -155,8 +155,17 @@ namespace WDL2CS
                 if (m_instructions[i].Command.StartsWith("If_") ||
                     (m_instructions[i].Command.StartsWith("Else") && (i < m_instructions.Count - 1) && (m_instructions[i + 1].Command[0] != '{')))
                 {
-                    m_instructions.Insert(i + 2, new Instruction("}", false));
-                    m_instructions.Insert(i + 1, new Instruction("{", false));
+                    if (i < m_instructions.Count - 1)
+                    {
+                        m_instructions.Insert(i + 2, new Instruction("}", false));
+                        m_instructions.Insert(i + 1, new Instruction("{", false));
+                    }
+                    else
+                    {
+                        //in case no instruction follows after if_*, remove instruction
+                        Console.WriteLine("(W) INSTRUCTIONS remove incomplete statement: " + m_instructions[i].Format(m_name));
+                        m_instructions.RemoveAt(i);
+                    }
                 }
 
                 //check if any buffered instructions need to be inserted at current position
