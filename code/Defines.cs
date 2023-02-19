@@ -7,7 +7,7 @@ namespace WDL2CS
 {
     class Defines
     {
-        private static readonly string s_indent = "";
+        private static readonly string s_indent = "\t\t";
         private static readonly string s_nl = Environment.NewLine;
 
         public static List<string> s_defines = new List<string>();
@@ -38,6 +38,10 @@ namespace WDL2CS
             else
             {
                 Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
+
+                //format constants as identifiers instead of preprocessor definition
+                redefine = Formatter.FormatIdentifier(redefine);
+
                 s = $"{s_indent}public static readonly {s_const} {redefine} = {s_original};";
             }
 

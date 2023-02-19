@@ -474,11 +474,11 @@ namespace VCCCompiler
          
        break;
 							case   26 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatPreprocessor(yyv[yysp-0]);
          
        break;
 							case   27 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatPreprocessor(yyv[yysp-0]);
          
        break;
 							case   28 : 
@@ -515,7 +515,7 @@ namespace VCCCompiler
        break;
 							case   34 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = Globals.AddEvent(yyv[yysp-2], yyv[yysp-1]);
+         yyval = Globals.AddEvent(yyv[yysp-2]);
          
        break;
 							case   35 : 
@@ -544,12 +544,15 @@ namespace VCCCompiler
          
        break;
 							case   41 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
-         yyval = yyv[yysp-1];
+         //yyval = yyv[yysp-1];
+         yyval = "";
+         Globals.AddParameter(yyv[yysp-1]);
          
        break;
 							case   42 : 
-         yyval = yyv[yysp-2] + ", " + yyv[yysp-0];
+         //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = "";
+         Globals.AddParameter(yyv[yysp-2]);
          
        break;
 							case   43 : 
