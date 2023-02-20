@@ -118,11 +118,11 @@ namespace WDL2CS
 
                     case "Bmap":
                     case "Bmaps":
-                        p = "Bmaps = new [] {" + string.Join(", ", m_values) + "}";
+                        p = "Bmaps = new Bmap[] {" + string.Join(", ", m_values) + "}";
                         break;
 
                     case "Ovlys":
-                        p = "Ovlys = new [] {" + string.Join(", ", m_values) + "}";
+                        p = "Ovlys = new Ovly[] {" + string.Join(", ", m_values) + "}";
                         break;
 
                     case "Offset_x":
@@ -130,7 +130,7 @@ namespace WDL2CS
                         //for Wall only these properties are one-dimensional
                         if (!string.Equals(obj, "Wall"))
                         {
-                            p = m_name + " = " + "new [] {" + string.Join(", ", m_values) + "}";
+                            p = m_name + " = " + "new Var[] {" + string.Join(", ", m_values) + "}";
                         }
                         else
                         {
@@ -142,7 +142,7 @@ namespace WDL2CS
                         //fix name ambiguity for Text objects
                         if (string.Equals(obj, "Text"))
                         {
-                            p = "String_array = new [] {" + string.Join(", ", m_values) + "}";
+                            p = "String_array = new string[] {" + string.Join(", ", m_values) + "}";
                         }
                         else
                         {
@@ -154,11 +154,11 @@ namespace WDL2CS
                     case "Mirror":
                     case "Delay":
                     case "Scycles":
-                        p = m_name + " = " + "new [] {" + string.Join(", ", m_values) + "}";
+                        p = m_name + " = " + "new Var[] {" + string.Join(", ", m_values) + "}";
                         break;
 
                     case "Scale_xy":
-                        p = m_name + " = " + "new Var [] {" + string.Join(", ", m_values) + "}";
+                        p = m_name + " = " + "new Var[] {" + string.Join(", ", m_values) + "}";
                         break;
 
                     case "Target":

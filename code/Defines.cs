@@ -13,6 +13,7 @@ namespace WDL2CS
         public static List<string> s_defines = new List<string>();
 
         private static Dictionary<string, string> s_redefines = new Dictionary<string, string>();
+        public static List<string> s_consts = new List<string>();
         //private static Stack<string> s_ifdefs = new Stack<string>();
         private static bool s_transform = false;
         private static string s_const = string.Empty;
@@ -22,9 +23,14 @@ namespace WDL2CS
         {
             string s = string.Empty;
 
+            //patch away global skills - formatting gets inherited due to grammar of parsing process
+            int i = redefine.LastIndexOf('.');
+            redefine = i < 0 ? redefine : redefine.Substring(i+1);
+
             //TODO: transforms (renames) are not generating output. Make sure to remove empty strings here
             if (s_transform)
             {
+                redefine = Formatter.FormatProperty(redefine); //not clean: might also be an Identifier?
                 if (!s_redefines.ContainsKey(redefine))
                 {
                     s_redefines.Add(redefine, s_original);
@@ -37,12 +43,18 @@ namespace WDL2CS
             }
             else
             {
-                Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
-
                 //format constants as identifiers instead of preprocessor definition
                 redefine = Formatter.FormatIdentifier(redefine);
-
-                s = $"{s_indent}public static readonly {s_const} {redefine} = {s_original};";
+                if (!s_consts.Contains(redefine))
+                {
+                    s_consts.Add(redefine);
+                    Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
+                    s = $"{s_indent}public static readonly {s_const} {redefine} = {s_original};";
+                }
+                else
+                {
+                    Console.WriteLine("(W) DEFINES ignore double definition: " + redefine);
+                }
             }
 
             //Reset settings
@@ -74,13 +86,16 @@ namespace WDL2CS
         {
             if (Objects.Identify(out string obj, s))
             {
+                //identified as some specific object, declare data type accordingly
                 s_const = obj;
+                s_original = s;
             }
             else
             {
+                //must be some renamed property
                 s_transform = true;
+                s_original = Formatter.FormatProperty(s);
             }
-            s_original = s;
         }
 
         public static string AddDefine(string define)
@@ -115,5 +130,23 @@ namespace WDL2CS
                 return identifier;
         }
 
+        public static string CheckConst(string identifier)
+        {
+            //patch away global skills prefix
+            int i = identifier.LastIndexOf('.');
+            string constId = i < 0 ? identifier : identifier.Substring(i + 1);
+            //format constants as identifiers instead of preprocessor definition
+            constId = Formatter.FormatIdentifier(constId);
+
+            if (s_consts.Contains(constId))
+            {
+                return constId;
+            }
+            else
+            {
+                return identifier;
+            }
+
+        }
     }
 }

@@ -82,15 +82,19 @@ namespace WDL2CS
         public static string FormatGlobal(string s)
         {
             return "Globals." + FormatProperty(s);
-            //return Defines.CheckTransform(a);
-
         }
 
         public static string FormatSkill(string s)
         {
             return "Skills." + FormatProperty(s);
-            //return Defines.CheckTransform(a);
+        }
 
+        public static string FormatPropertyValue(string s)
+        {
+            //prioritize usage of const definitions (defines in WDL) over global skills/events in properties
+            //this is more or less a shameless hack, but consts cannot be treated at earlier stage
+            //without breaking redeclaration of built-in Acknex engine skills and events.
+            return Defines.CheckConst(s);
         }
 
         public static string FormatFlag(string s)
