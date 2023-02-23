@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Action
+    class Action : ISerializable
     {
         private static readonly string s_sepAct = "#[A]#";
         private static string s_indent = string.Empty;

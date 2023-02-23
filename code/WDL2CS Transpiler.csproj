@@ -43,25 +43,28 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Action.cs" />
-    <Compile Include="Actions.cs" />
-    <Compile Include="Asset.cs" />
-    <Compile Include="Assets.cs" />
-    <Compile Include="Defines.cs" />
-    <Compile Include="Formatter.cs" />
-    <Compile Include="Global.cs" />
-    <Compile Include="Globals.cs" />
-    <Compile Include="Include.cs" />
-    <Compile Include="Instruction.cs" />
-    <Compile Include="Object.cs" />
-    <Compile Include="ObjectData.cs" />
-    <Compile Include="Objects.cs" />
+    <Compile Include="Serializable\Action.cs" />
+    <Compile Include="Serializable\Define.cs" />
+    <Compile Include="Static\Actions.cs" />
+    <Compile Include="Serializable\Asset.cs" />
+    <Compile Include="Static\Assets.cs" />
+    <Compile Include="Static\Defines.cs" />
+    <Compile Include="Static\Formatter.cs" />
+    <Compile Include="Serializable\Global.cs" />
+    <Compile Include="Static\Globals.cs" />
+    <Compile Include="Static\Include.cs" />
+    <Compile Include="Serializable\Instruction.cs" />
+    <Compile Include="Serializable\Object.cs" />
+    <Compile Include="Util\ObjectData.cs" />
+    <Compile Include="Static\Objects.cs" />
     <Compile Include="Parser.cs" />
-    <Compile Include="PreProcessorData.cs" />
-    <Compile Include="PreProcessorStack.cs" />
-    <Compile Include="Property.cs" />
-    <Compile Include="PropertyData.cs" />
-    <Compile Include="Sections.cs" />
+    <Compile Include="Util\PreProcessorData.cs" />
+    <Compile Include="Util\PreProcessorStack.cs" />
+    <Compile Include="Serializable\Property.cs" />
+    <Compile Include="Util\PropertyData.cs" />
+    <Compile Include="Serializable\ISerializable.cs" />
+    <Compile Include="Serializable\Section.cs" />
+    <Compile Include="Static\Sections.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

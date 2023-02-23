@@ -46,17 +46,22 @@ namespace WDL2CS
             return s;
         }
 
-        public void Deserialize(string stream)
+        public static Property Deserialize(string stream)
         {
             //kill any leading object seperator - it is used for serializing multiple instructions only
             string[] fragments = stream.Split(new[] { s_sepProp }, StringSplitOptions.RemoveEmptyEntries);
 
             fragments = fragments[0].Split(new[] { s_sepCont }, StringSplitOptions.None);
-            Name = fragments[0];
+            Property prop = new Property
+            {
+                Name = fragments[0]
+            };
             if (!string.IsNullOrEmpty(fragments[1]))
             {
-                m_values = fragments[1].Split(new[] { s_sepVal }, StringSplitOptions.None).ToList();
+                prop.Values = fragments[1].Split(new[] { s_sepVal }, StringSplitOptions.None).ToList();
             }
+
+            return prop;
         }
 
         public string Format(string obj)
@@ -65,7 +70,7 @@ namespace WDL2CS
 
             try
             {
-                //Todo add List length checks for explicite array access
+                //TODO: add List length checks for explicite array access
                 switch (m_name)
                 {
                     case "Type":
@@ -188,9 +193,7 @@ namespace WDL2CS
             List<Property> properties = new List<Property>();
             foreach (string fragment in fragments)
             {
-                Property prop = new Property();
-                prop.Deserialize(fragment);
-                properties.Add(prop);
+                properties.Add(Deserialize(fragment));
             }
             return properties;
         }

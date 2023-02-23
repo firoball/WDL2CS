@@ -14,7 +14,6 @@ namespace WDL2CS
 
         private static Dictionary<string, string> s_redefines = new Dictionary<string, string>();
         public static List<string> s_consts = new List<string>();
-        //private static Stack<string> s_ifdefs = new Stack<string>();
         private static bool s_transform = false;
         private static string s_const = string.Empty;
         private static string s_original = string.Empty;
@@ -27,7 +26,6 @@ namespace WDL2CS
             int i = redefine.LastIndexOf('.');
             redefine = i < 0 ? redefine : redefine.Substring(i+1);
 
-            //TODO: transforms (renames) are not generating output. Make sure to remove empty strings here
             if (s_transform)
             {
                 redefine = Formatter.FormatProperty(redefine); //not clean: might also be an Identifier?
@@ -49,7 +47,11 @@ namespace WDL2CS
                 {
                     s_consts.Add(redefine);
                     Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
-                    s = $"{s_indent}public static readonly {s_const} {redefine} = {s_original};";
+                    s = new Define(s_const, redefine, s_original).Serialize();
+
+                    //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
+                    Define d = Define.Deserialize(s);
+                    s = d.Format();
                 }
                 else
                 {

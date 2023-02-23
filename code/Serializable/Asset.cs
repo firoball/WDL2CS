@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Asset
+    class Asset : ISerializable
     {
         private static readonly string s_sepAss = "#[A]#";
         private static readonly string s_sepPar = "#[P]#";

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Global
+    class Global : ISerializable
     {
         private static readonly string s_sepGlob = "#[G]#";
         private static readonly string s_sepPar = "#[P]#";

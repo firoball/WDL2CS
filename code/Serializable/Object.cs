@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Object
+    class Object : ISerializable
     {
         private static readonly string s_sepObj = "#[O]#";
         private static readonly string s_indent = "\t\t";
