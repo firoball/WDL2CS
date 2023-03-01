@@ -166,7 +166,10 @@ namespace WDL2CS
                         break;
 
                     case "Goto":
-                        o = $"goto {m_parameters[0]};";
+                        //make sure any falsly added prefix is discarded (parser cannot distinguish properly for goto)
+                        int g = m_parameters[0].LastIndexOf('.');
+                        string label = g < 0 ? m_parameters[0] : m_parameters[0].Substring(g + 1);
+                        o = $"goto {label.ToLowerInvariant()};";
                         break;
 
                     case "if":
@@ -182,11 +185,19 @@ namespace WDL2CS
                         break;
 
                     case "If_equal":
-                        o = $"if ({m_parameters[0]} == {m_parameters[1]})";
+                        //special treatment for actor target comparison
+                        if (m_parameters[0].EndsWith(".Target"))
+                            o = $"if ({m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
+                        else
+                            o = $"if ({m_parameters[0]} == {m_parameters[1]})";
                         break;
 
                     case "If_nequal":
-                        o = $"if ({m_parameters[0]} != {m_parameters[1]})";
+                        //special treatment for actor target comparison
+                        if (m_parameters[0].EndsWith(".Target"))
+                            o = $"if (!{m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
+                        else
+                            o = $"if ({m_parameters[0]} != {m_parameters[1]})";
                         break;
 
                     case "If_max":
@@ -218,7 +229,10 @@ namespace WDL2CS
                         break;
 
                     case "Locate":
-                        o = $"{m_parameters[0]}.Locate();";
+                        if (m_parameters.Count > 0)
+                            o = $"{m_parameters[0]}.Locate();";
+                        else
+                            o = $"Player.Locate();";
                         break;
 
                     case "Map":

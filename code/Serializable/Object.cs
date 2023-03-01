@@ -200,6 +200,9 @@ namespace WDL2CS
             if (property != null)
             {
                 string synType = Formatter.FormatObject(property.Values[0]);
+                //use C# strings -> convert to "string"
+                if (synType.Equals("String"))
+                    synType = "string";
                 //"Action" keyword is reserved in C# -> use "Function" instead (mandatory)
                 if (synType.Equals("Action"))
                     synType = "Function";

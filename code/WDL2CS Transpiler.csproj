@@ -55,6 +55,7 @@
     <Compile Include="Static\Include.cs" />
     <Compile Include="Serializable\Instruction.cs" />
     <Compile Include="Serializable\Object.cs" />
+    <Compile Include="Static\Script.cs" />
     <Compile Include="Util\ObjectData.cs" />
     <Compile Include="Static\Objects.cs" />
     <Compile Include="Parser.cs" />

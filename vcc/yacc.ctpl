@@ -49,6 +49,7 @@ namespace VCCCompiler
                 FileStream OutputStream;
                 //StreamWriter Output;
                 TextWriter Output;
+				bool DeserializeOutput = false;
 
                 class YYARec
                 {
@@ -111,6 +112,7 @@ namespace VCCCompiler
                         ////////////////////////////////////////////////////////////////
                         MyCompiler compiler = new MyCompiler();
                         compiler.Output = null;
+                        compiler.DeserializeOutput = true;
                         if (OutputFilename != "")
                         {
                                 File.Delete(OutputFilename);
