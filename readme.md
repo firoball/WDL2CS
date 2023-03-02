@@ -14,20 +14,23 @@ Workflow is as follows:
 ![Process](process.jpg)
 
 __Important:__ At this very early stage the transpiler __does not do anything productive__ yet. It can be tested against actual WDL files in order to verify whether parsing works as intended or not.
+The generated code can be hooked into my [Acknex3 C# Api](https://github.com/firoball/AcknexCSApi) project and reviewed for syntax errors.
+
 
 ## Step by step instruction
 
 ### Preparation
 
 * Download and install [AtoCC](https://atocc.de) tool chain. The included tools **kfgEdit** and **VCC** will be used for generation.
-* Copy `vcc\yacc.ctpl` or `vcc\yacc_opt.ctpl` (rename!) to same folder where your **vcc.exe** is located. Make sure to keep a backup of the original file.
+* Copy `vcc\yacc.ctpl` to same folder where your **vcc.exe** is located. Make sure to keep a backup of the original file.
 * The optimized parser requires some manual patching and recompilation. For easier patching you can add the Notepad++ macro `meta\regex_helpers\regex_npp_macro.xml` to your `shortcuts.xml` (requires **Notepad++**). 
+* Install a recent version of [Microsoft Visual Studio](https://visualstudio.microsoft.com/de/downloads/) (Community edition for C#).
 
 ### Workflow
 
 The AtoCC tool chain is pretty limited. With this transpiler getting more and more complex, several manual patches were required to be introduced in the somewhat tedious build process.
 Below, a step by step list is provided in order to get a successful compile done.
-The transpiler turned out to be very slow, which was a major roadblock. It showed, that the code generator produces very inefficient code. Unfortunately, that part is hardcoded into **VCC**, therefore some more manual patching had to be introduced. The optimized version processes large chunks of `.wdl` files in several seconds, whereas the non-optimized version takes minutes.
+The transpiler turned out to be very slow, which was a major roadblock. It showed, that the code generator produces very inefficient code. Unfortunately, that part is hardcoded into **VCC**, therefore some more manual patching was introduced. The optimized version processes large chunks of `.wdl` files in several seconds, whereas the non-optimized version takes minutes.
 
 #### Grammar
 
@@ -41,26 +44,39 @@ The transpiler turned out to be very slow, which was a major roadblock. It showe
 * Hit **Create Compiler** and check for any reported conflicts. Don't save any code yet.
 * Save `vcc\parser_vcc.xml`.
 * Open `vcc\parser_vcc.xml` in text editor of choice.
-* Apply any new regular expressions to `vcc\regex.txt` or `vcc\regex_opt.txt` (optimized, more complex regex).
-* Copy contents of `vcc\regex.txt` or `vcc\regex_opt.txt` to `vcc\parser_vcc.xml` between `<scanner>..</scanner>` tags.
+* Apply any new regular expressions to `vcc\regex.txt`.
+* Copy contents of `vcc\regex.txt` to `vcc\parser_vcc.xml` between `<scanner>..</scanner>` tags.
 * Save `vcc\parser_vcc.xml` and reload file in **VCC**.
-* Hit **Create Compiler** and save generated code to `code\parser.cs`. **VCC** will automatically compile `code\parser.exe`
+* Hit **Create Compiler** and save generated code to `code\parser.cs`. **VCC** will abort compilation due to a `#warning` pragma. This is intended.
 
-#### Patch and compile optimized transpiler
-
-Following steps are only required when `vcc\yacc_opt.ctpl` is used for building an optimized executable!
+#### Patch optimized transpiler
 
 * Locate _FindToken_ function in `code\parser.cs`.
 * Copy all `if (Regex.IsMatch(..){..}` statements into a new file in **Notepad++**. Make sure order remains as generated.
 * Run the **WDL2CS** macro (see _preparation_ chapter) and copy the result to clipboard.
 * Locate line `#warning Place tList and rList init in MyCompiler(){} (...)` in `code\parser.cs`.
 * Replace with previously copied content and save.
-* Run `csc parser.cs` from `code`folder. `code\parser.exe` should be compiled without error.
+
+#### Compile transpiler
+
+* Open `code\WDL2CS Transpiler.sln` in **Visual Studio** and build project.
 
 #### Run transpiler
 
-* Run `parser <file>` or `parser -t <file>` (for listing all identified tokens).
+* Run `parser <file>` or `parser -t <file>` (for listing all identified tokens) from command line.
 * An example for parsing through all files in a specific folder is provided: `test\test.bat`
+* If preferred, output can be redirected to file (append `> out.cs` to command line) or output file name can be provided as additional parameter.
+
+## Architecture and Workflow 
+
+![Architecture](architecture.jpg)
+
+The parser code is generated through **VCC** tool (and manually patched afterwards). Any function hooked in the parser configuration file is strictly provided by a static interface class. Behind the static layer the actual core of the transpiler is abstracted. These parts are maintained manually and unrelated to the workflow of the **VCC** tool.
+
+![Workflow](workflow.jpg)
+
+Since the parser operates string-based, any object represented by an internal data structure is serialized to a string-based stream. Once all incoming tokens have been processed, the whole stream is deserialized again into internal data structures. Based on certain criteria like required initialization or preprocessor conditions, all data is sorted.
+As last step every object is formatted, in the sense of the corresponding C# code is generated.
 
 ## Current status
 
@@ -72,8 +88,9 @@ Due to the limits of [AtoCC](https://atocc.de), manual patches are required in s
 High-level road map:
 * [x] define grammar and token regex
 * [x] define WDL API for C# (separate project, in progress)
-* [ ] add token to script generator logic <-- __HERE__
+* [x] add token to script generator logic
 * [ ] export C# scripts <-- __HERE__
+* [ ] test exported code against AckexCSApi <-- __HERE__
 
 
 ## Legal stuff
