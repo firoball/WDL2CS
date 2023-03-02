@@ -7,16 +7,28 @@ namespace WDL2CS
 {
     class Defines
     {
-        private static readonly string s_indent = "\t\t";
         private static readonly string s_nl = Environment.NewLine;
 
-        public static List<string> s_defines = new List<string>();
+        private static List<string> s_defines = new List<string>();
 
         private static Dictionary<string, string> s_redefines = new Dictionary<string, string>();
         public static List<string> s_consts = new List<string>();
         private static bool s_transform = false;
         private static string s_const = string.Empty;
         private static string s_original = string.Empty;
+
+
+        public static string FormatDefines()
+        {
+            string o = string.Empty;
+
+            foreach(string s in s_defines)
+            {
+                o += "#define " + s + s_nl;
+            }
+
+            return o;
+        }
 
         public static string AddTransform(string redefine)
         {
@@ -102,26 +114,25 @@ namespace WDL2CS
 
         public static string AddDefine(string define)
         {
-            return s_indent + "#define " + define + s_nl;
-            /*
+            //C# does not allow conditional #define, therefore just add all identified #defines at beginning of generated code file            
             if (!s_defines.Contains(define))
                 s_defines.Add(define);
             else
                 Console.WriteLine("DEFINES ignore double definition: " + define);
-                */
+
+            return string.Empty; //defines without parameters are treated independently from data stream
         }
 
         public static string RemoveDefine(string define)
         {
+            //#undef directives are not supported by C# in the same way as in WDL, transpilation may fail here
             if (s_redefines.ContainsKey(define))
                 s_redefines.Remove(define);
-
-            return s_indent + "#undef " + define + s_nl;
-
-            /*
+            
             if (s_defines.Contains(define))
                 s_defines.Remove(define);
-            */
+
+            return string.Empty; //defines without parameters are treated independently from data stream
         }
 
         public static string CheckTransform(string identifier)

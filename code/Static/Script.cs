@@ -11,6 +11,7 @@ namespace WDL2CS
         {
             string s = string.Empty;
 
+            s += Defines.FormatDefines();
             s += @"
 using System.Collections;
 using Acknex3.Api;

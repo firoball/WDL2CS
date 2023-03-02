@@ -326,7 +326,7 @@ $$ = Defines.AddTransform($2);
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-$$ = "";//TODO: generate defines
+$$ = Defines.AddDefine($2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -336,7 +336,7 @@ $$ = "";//TODO: generate defines
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1 + $2 + $3;
-$$ = ""; //TODO: add warning for unsupported #undef directive
+$$ = Defines.RemoveDefine($2);
 
                 </CODE>
             </RIGHTSIDE>

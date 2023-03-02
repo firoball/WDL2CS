@@ -470,12 +470,12 @@ namespace VCCCompiler
        break;
 							case   24 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = "";//TODO: generate defines
+         yyval = Defines.AddDefine(yyv[yysp-1]);
          
        break;
 							case   25 : 
          //yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
-         yyval = ""; //TODO: add warning for unsupported #undef directive
+         yyval = Defines.RemoveDefine(yyv[yysp-1]);
          
        break;
 							case   26 : 
