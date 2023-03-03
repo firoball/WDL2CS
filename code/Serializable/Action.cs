@@ -35,6 +35,11 @@ namespace WDL2CS
         public Action() : this(string.Empty, string.Empty) { }
         public Action(string name) : this(name, string.Empty) { }
 
+        public bool IsInitialized()
+        {
+            return false;
+        }
+
         public string Serialize()
         {
             string s = m_name + s_sepAct + m_serializedInstructions;

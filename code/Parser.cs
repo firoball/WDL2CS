@@ -363,11 +363,11 @@ namespace VCCCompiler
          if (DeserializeOutput)
          Output.WriteLine(Script.Format(yyval));
          else
-         Output.WriteLine(yyval);
+         Output.Write(yyval);
          
        break;
 							case    2 : 
-         yyval = yyv[yysp-1] + "\n" + yyv[yysp-0];
+         yyval = yyv[yysp-1] + /*"\n" +*/ yyv[yysp-0];
          //Console.WriteLine(yyval);
          
        break;
@@ -380,7 +380,7 @@ namespace VCCCompiler
          
        break;
 							case    5 : 
-         yyval = yyv[yysp-0];
+         yyval = Sections.AddGlobalSection(yyv[yysp-0]);
          
        break;
 							case    6 : 
@@ -388,19 +388,19 @@ namespace VCCCompiler
          
        break;
 							case    7 : 
-         yyval = yyv[yysp-0];
+         yyval = Sections.AddDefineSection(yyv[yysp-0]);
          
        break;
 							case    8 : 
-         yyval = yyv[yysp-0];
+         yyval = Sections.AddObjectSection(yyv[yysp-0]);
          
        break;
 							case    9 : 
-         yyval = yyv[yysp-0];
+         yyval = Sections.AddActionSection(yyv[yysp-0]);
          
        break;
 							case   10 : 
-         yyval = yyv[yysp-0];
+         yyval = Sections.AddAssetSection(yyv[yysp-0]);
          
        break;
 							case   11 : 

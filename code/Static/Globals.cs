@@ -16,8 +16,7 @@ namespace WDL2CS
             //Clean up
             s_eventPars.Clear();
 
-            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
-            return "//PATCHED: " + Global.Deserialize(g).Format(); //PATCHED
+            return "//PATCHED: " + g; //TODO: PATCHED
         }
 
         public static string AddGlobal(string name, string parameter)
@@ -37,8 +36,7 @@ namespace WDL2CS
 
                 default:
                     g = new Global(name, parameter).Serialize();
-                    //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
-                    g = "//PATCHED: " + Global.Deserialize(g).Format(); //PATCHED
+                    g = "//PATCHED: " + g; //TODO: PATCHED
                     break;
             }
             return g;

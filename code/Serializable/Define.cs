@@ -22,6 +22,11 @@ namespace WDL2CS
             m_original = original;
         }
 
+        public bool IsInitialized()
+        {
+            return false;
+        }
+
         public string Serialize()
         {
             return m_type + s_sepDef + m_redefine + s_sepDef + m_original;

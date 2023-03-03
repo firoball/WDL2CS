@@ -9,5 +9,6 @@ namespace WDL2CS
     {
         string Serialize();
         string Format();
+        bool IsInitialized();
     }
 }

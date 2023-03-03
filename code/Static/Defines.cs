@@ -18,7 +18,7 @@ namespace WDL2CS
         private static string s_original = string.Empty;
 
 
-        public static string FormatDefines()
+        public static string Format()
         {
             string o = string.Empty;
 
@@ -60,10 +60,6 @@ namespace WDL2CS
                     s_consts.Add(redefine);
                     Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
                     s = new Define(s_const, redefine, s_original).Serialize();
-
-                    //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
-                    Define d = Define.Deserialize(s);
-                    s = d.Format();
                 }
                 else
                 {

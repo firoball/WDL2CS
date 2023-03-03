@@ -30,6 +30,11 @@ namespace WDL2CS
                 m_parameters.AddRange(parameters);
         }
 
+        public bool IsInitialized()
+        {
+            return true;
+        }
+
         public string Serialize()
         {
             string s = m_name + s_sepGlob;

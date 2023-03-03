@@ -56,7 +56,7 @@ namespace WDL2CS
             {
                 Name = fragments[0]
             };
-            if (!string.IsNullOrEmpty(fragments[1]))
+            if ((fragments.Length > 1) && !string.IsNullOrEmpty(fragments[1]))
             {
                 prop.Values = fragments[1].Split(new[] { s_sepVal }, StringSplitOptions.None).ToList();
             }

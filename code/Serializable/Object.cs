@@ -9,16 +9,18 @@ namespace WDL2CS
     {
         private static readonly string s_sepObj = "#[O]#";
         private static readonly string s_indent = "\t\t";
+        private static readonly string s_indentInit = "\t\t\t";
         private static readonly string s_nl = Environment.NewLine;
 
         private string m_name;
         private string m_type;
         private bool m_isString;
+        private bool m_isInitialized;
         private readonly string m_serializedProperties;
         private List<Property> m_properties;
 
-        public string Name { get => m_name; set => m_name = value; }
-        public string Type { get => m_type; set => m_type = value; }
+        //public string Name { get => m_name; set => m_name = value; }
+        //public string Type { get => m_type; set => m_type = value; }
 
         public Object(string type, string name, bool isString)
         {
@@ -27,6 +29,12 @@ namespace WDL2CS
             m_isString = isString;
             m_serializedProperties = string.Empty;
             m_properties = new List<Property>();
+            //global skills are initialized
+            if (m_name.StartsWith("Skills."))
+                m_isInitialized = true;
+            //user defined skills are allocated statically
+            else
+                m_isInitialized = false;
         }
 
         public Object(string type, string name, string properties) : this(type, name, properties, false) { }
@@ -44,6 +52,11 @@ namespace WDL2CS
 
         public Object() : this(string.Empty, string.Empty, false) { }
 
+        public bool IsInitialized()
+        {
+            return m_isInitialized;
+        }
+
         public string Serialize()
         {
             string s = m_type + s_sepObj + m_name + s_sepObj + m_isString.ToString();
@@ -58,7 +71,7 @@ namespace WDL2CS
             string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.None);
             string type = fragments[0];
             string name = fragments[1];
-            if (!string.IsNullOrEmpty(fragments[3]))
+            if ((fragments.Length > 3) && !string.IsNullOrEmpty(fragments[3]))
             {
                 //do not deserialize properties if object is of type String
                 //in this case, the fragment contains just the string content for direct use
@@ -99,18 +112,32 @@ namespace WDL2CS
                     //Ways never have properties, but need to be instantiated nonetheless
                     //if (!string.IsNullOrEmpty(props) || string.Compare(type, "Way", true) == 0 || string.Compare(type, "Skill", true) == 0)
                     {
-                        o += s_indent + scope + m_type + " " + m_name + " = new " + m_type + "()";
+                        string indent = s_indent;
+                        if (!IsInitialized())
+                        {
+                            indent = s_indent;
+                            o += indent + scope + m_type + " ";
+                        }
+                        else
+                        {
+                            indent = s_indentInit;
+                            o += indent;
+                        }
+
+                        o += m_name + " = new " + m_type + "()";
 
                         if (!string.IsNullOrEmpty(properties))
                         {
-                            o += s_nl + s_indent + "{" + s_nl;
+                            o += s_nl + indent + "{" + s_nl;
                             o += properties + s_nl;
-                            o += s_indent + "}";
+                            o += indent + "}";
                         }
                         o += ";";
                     }
                     break;
             }
+            if (m_name.StartsWith("Skills."))
+                o = "/*PATCHED: " + o + "*/"; //TODO: PATCHED
 
             return o;
         }
@@ -260,17 +287,21 @@ namespace WDL2CS
                 }
             }
 
+            //initialized object definitions need different indention
+            string indent = s_indent;
+            if (IsInitialized())
+                indent = s_indentInit;
             //create comma separated list of ranges
             ranges.Sort();
-            data.Ranges += string.Join(s_nl, ranges.Select(x => s_indent + "\t\t" + x + ","));
+            data.Ranges += string.Join(s_nl, ranges.Select(x => indent + "\t\t" + x + ","));
 
             //create comma separated list of controls
             controls.Sort();
-            data.Controls += string.Join(s_nl, controls.Select(x => s_indent + "\t\t" + x + ","));
+            data.Controls += string.Join(s_nl, controls.Select(x => indent + "\t\t" + x + ","));
 
             //create comma separated list of properties
             properties.Sort();
-            data.Properties += string.Join(s_nl, properties.Select(x => s_indent + "\t" + x + ","));
+            data.Properties += string.Join(s_nl, properties.Select(x => indent + "\t" + x + ","));
 
             return data;
         }

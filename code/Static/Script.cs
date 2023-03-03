@@ -9,9 +9,10 @@ namespace WDL2CS
     {
         public static string Format(string stream)
         {
+            Sections.Deserialize(stream);
             string s = string.Empty;
 
-            s += Defines.FormatDefines();
+            s += Defines.Format();
             s += @"
 using System.Collections;
 using Acknex3.Api;
@@ -20,8 +21,14 @@ namespace Acknex3.Script
 {
 	class Script
 	{
+		public void Initialize()
+		{
 ";
-            s += stream;
+            s += Sections.FormatInit();
+            s += @"
+		}
+";
+            s += Sections.Format();
             s += @"
 	}
 }

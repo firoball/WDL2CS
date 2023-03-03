@@ -16,8 +16,7 @@ namespace WDL2CS
             //Clean up
             s_parameters.Clear();
 
-            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
-            return Asset.Deserialize(a).Format();
+            return a;
         }
 
         public static void AddParameter(string value)

@@ -120,7 +120,7 @@ else
             <RIGHTSIDE>
                 <RULE name="GlobalDef"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Sections.AddGlobalSection($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -134,28 +134,28 @@ else
             <RIGHTSIDE>
                 <RULE name="Define"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Sections.AddDefineSection($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectDef"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Sections.AddObjectSection($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="FunctionDef"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Sections.AddActionSection($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="AssetDef"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Sections.AddAssetSection($1);
 
                 </CODE>
             </RIGHTSIDE>

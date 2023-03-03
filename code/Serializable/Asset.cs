@@ -39,6 +39,11 @@ namespace WDL2CS
                 m_parameters.AddRange(parameters);
         }
 
+        public bool IsInitialized()
+        {
+            return false;
+        }
+
         public string Serialize()
         {
             string s = m_type + s_sepAss + m_name + s_sepAss + m_file;

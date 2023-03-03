@@ -82,9 +82,7 @@ namespace WDL2CS
             Register(type, name);
             string o = new Object(type, name, text, true).Serialize();
 
-            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
-            Object obj = Object.Deserialize(o);
-            return obj.Format();
+            return o;
         }
 
         public static string AddObject(string type, string name)
@@ -97,12 +95,6 @@ namespace WDL2CS
             Register(type, name);
             string o = new Object(type, name, stream).Serialize();
 
-            //TODO: move up to Section level - until Section code is updated for serialization, just deserialize and format
-            Object obj = Object.Deserialize(o);
-
-            o = obj.Format();
-            if (name.StartsWith("Skills."))
-                o = "/*PATCHED: " + o + "*/"; //PATCHED
             return o;
         }
 
