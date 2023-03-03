@@ -83,11 +83,10 @@
                 <RULE name="Sections"/>
                 <CODE>
                     $$ = $1;
-//$$ = Globals.BuildGlobals(); + Assets.BuildAssets(); + Objects.BuildObjects();
 if (DeserializeOutput)
    Output.WriteLine(Script.Format($$));
 else
-    Output.WriteLine($$);
+    Output.Write($$);
 
                 </CODE>
             </RIGHTSIDE>
@@ -97,8 +96,7 @@ else
                 <RULE name="Section"/>
                 <RULE name="Sections"/>
                 <CODE>
-                    $$ = $1 + "\n" + $2;
-//Console.WriteLine($$);
+                    $$ = $1 + $2;
 
                 </CODE>
             </RIGHTSIDE>
