@@ -67,6 +67,8 @@
     <Compile Include="Serializable\ISerializable.cs" />
     <Compile Include="Serializable\Section.cs" />
     <Compile Include="Static\Sections.cs" />
+    <Compile Include="Util\SerializableData.cs" />
+    <Compile Include="Util\SectionData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

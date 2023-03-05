@@ -9,8 +9,11 @@ namespace WDL2CS
     {
         private static readonly string s_sepPre = "#[P]#";
 
-        private string m_name;
-        private string m_expression;
+        private readonly string m_name;
+        private readonly string m_expression;
+
+        public string Name { get => m_name; }
+        public string Expression { get => m_expression; }
 
         public Preprocessor()
         {

@@ -19,7 +19,7 @@ namespace WDL2CS
         private readonly string m_serializedProperties;
         private List<Property> m_properties;
 
-        //public string Name { get => m_name; set => m_name = value; }
+        public string Name { get => m_name; set => m_name = value; }
         //public string Type { get => m_type; set => m_type = value; }
 
         public Object(string type, string name, bool isString)
@@ -136,8 +136,6 @@ namespace WDL2CS
                     }
                     break;
             }
-            if (m_name.StartsWith("Skills."))
-                o = "/*PATCHED: " + o + "*/"; //TODO: PATCHED
 
             return o;
         }

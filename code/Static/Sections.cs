@@ -9,7 +9,8 @@ namespace WDL2CS
     {
 
         private static readonly string s_nl = Environment.NewLine;
-        private static List<ISerializable> s_sections;
+        //private static List<ISerializable> s_sections;
+        private static SectionData s_sectionData;
 
         public static string CreatePreProcIfNotCondition(string expr, string stream)
         {
@@ -105,18 +106,111 @@ namespace WDL2CS
 
         public static string FormatInit()
         {
-            return "//TODO: add init sections here";
+            return s_sectionData.InitSections;
         }
 
         public static string Format()
         {
-            return string.Join(s_nl, s_sections.Select(x => x.Format()));
+            return s_sectionData.Sections;
+            //return string.Join(s_nl, s_sections.Select(x => x.Format()));
         }
 
         public static void Deserialize(string stream)
         {
             //Console.WriteLine(stream);
-            s_sections = Section.DeserializeList(stream);
+            List<ISerializable> sections = Section.DeserializeList(stream);
+            ProcessSections(sections); //TODO: right place to call?
+        }
+
+        private static void ProcessSections(List<ISerializable> sections)
+        {
+            string p = string.Empty;
+            PreProcessorStack<SerializableData> stack = new PreProcessorStack<SerializableData>();
+            SerializableData serializableData = stack.Content;
+
+            foreach (ISerializable section in sections)
+            {
+                if (section is Preprocessor)
+                {
+                    Preprocessor pre = section as Preprocessor;
+                    switch (pre.Name)
+                    {
+                        case "#if":
+                            //update preprocessor stack and obtain new dataset
+                            serializableData = stack.Update(pre.Name, pre.Expression);
+                            break;
+
+                        case "#else":
+                            //move all previously collected sections into data list
+                            ProcessSectionData(serializableData);
+                            //update preprocessor stack and move to else branch of active dataset
+                            serializableData = stack.Update(pre.Name);
+                            break;
+
+                        case "#endif":
+                            //move all previously collected properties into data list
+                            ProcessSectionData(serializableData);
+                            //update preprocessor stack, get previous dataset
+                            serializableData = stack.Update(pre.Name);
+                            break;
+
+                        default:
+                            //this should never be reached - just do nothing
+                            break;
+                    }
+                }
+                else
+                {
+                    //add property to active dataset
+                    AddSection(section, serializableData.Sections);
+                }
+            }
+
+            //take care of properties not enclosed by any preprocessor directive
+            if (string.IsNullOrEmpty(stack.Condition))
+            {
+                ProcessSectionData(serializableData);
+            }
+
+            serializableData = stack.Merge();
+
+            //copy formatted data to static interface
+            s_sectionData = serializableData.SectionData;
+        }
+
+        private static void ProcessSectionData(SerializableData active)
+        {
+            SectionData data = new SectionData();
+
+            List<string> sections = new List<string>();
+            List<string> initSections = new List<string>();
+
+            foreach (ISerializable section in active.Sections)
+            {
+                if (section.IsInitialized())
+                    initSections.Add(section.Format());
+                else
+                    sections.Add(section.Format());
+            }
+
+            //sections.Sort(); //TODO: this is dangerous - introduce sort by type
+            active.SectionData.Sections = string.Join(s_nl, sections);
+
+            //initSections.Sort(); //TODO: this is dangerous - introduce sort by type
+            active.SectionData.InitSections += string.Join(s_nl, initSections);
+        }
+
+        private static void AddSection(ISerializable section, List<ISerializable> sections)
+        {
+            List<string> sectionNames = sections.Select(x => x.Name).ToList();
+            if (sectionNames.Contains(section.Name))
+            {
+                Console.WriteLine("(W) SECTIONS ignore double definition of section: " + section.Name);
+            }
+            else
+            {
+                sections.Add(section);
+            }
         }
     }
 }

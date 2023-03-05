@@ -15,6 +15,8 @@ namespace WDL2CS
         private readonly string m_redefine;
         private readonly string m_original;
 
+        public string Name => m_redefine; //serve ISerializable (required by section double definition check)
+
         public Define(string type, string redefine, string original)
         {
             m_type = type;

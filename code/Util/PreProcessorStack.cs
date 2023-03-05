@@ -82,10 +82,14 @@ namespace WDL2CS
 
                 if (m_isElse)
                 {
+                    if (m_nextElse != null)
+                        Console.WriteLine("(W) STACK else already created. Overwriting...");
                     m_nextElse = next;
                 }
                 else
                 {
+                    if (m_nextIf != null)
+                        Console.WriteLine("(W) STACK if already created. Overwriting...");
                     m_nextIf = next;
                 }
 

@@ -16,7 +16,7 @@ namespace WDL2CS
             //Clean up
             s_eventPars.Clear();
 
-            return "//PATCHED: " + g; //TODO: PATCHED
+            return g;
         }
 
         public static string AddGlobal(string name, string parameter)
@@ -36,7 +36,6 @@ namespace WDL2CS
 
                 default:
                     g = new Global(name, parameter).Serialize();
-                    g = "//PATCHED: " + g; //TODO: PATCHED
                     break;
             }
             return g;

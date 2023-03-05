@@ -7,6 +7,10 @@ namespace WDL2CS
 {
     interface ISerializable
     {
+        string Name
+        {
+            get;
+        }
         string Serialize();
         string Format();
         bool IsInitialized();

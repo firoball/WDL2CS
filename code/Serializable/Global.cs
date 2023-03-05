@@ -9,7 +9,7 @@ namespace WDL2CS
     {
         private static readonly string s_sepGlob = "#[G]#";
         private static readonly string s_sepPar = "#[P]#";
-        private static readonly string s_indent = "\t\t";
+        private static readonly string s_indent = "\t\t\t";
         private string m_name;
         private List<string> m_parameters;
 
