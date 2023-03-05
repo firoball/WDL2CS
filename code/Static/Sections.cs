@@ -15,47 +15,52 @@ namespace WDL2CS
         {
             string s = string.Empty;
 
-            s += "#if !(" + expr + ")" + s_nl;
+            //wrap preprocessor statement into section object
+            string pre = new Preprocessor("#if", "!(" + expr + ")").Serialize();
+            s += new Section(Section.PreProcType, pre).Serialize();
             s += stream;
 
-//            return s;
-            return stream; //TODO: proper serialization
+            return s;
         }
-
 
         public static string CreatePreProcIfCondition(string expr, string stream)
         {
             string s = string.Empty;
 
-            s += "#if " + expr + s_nl;
+            //wrap preprocessor statement into section object
+            string pre = new Preprocessor("#if", expr).Serialize();
+            s += new Section(Section.PreProcType, pre).Serialize();
             s += stream;
 
-//            return s;
-            return stream; //TODO: proper serialization
+            return s;
         }
 
         public static string CreatePreProcElseCondition(string ifstream, string elsestream)
         {
             string s = string.Empty;
+            string pre = string.Empty;
 
+            //wrap preprocessor statements into section object
             s += ifstream;
-            s += "#else" + s_nl;
+            pre = new Preprocessor("#else").Serialize();
+            s += new Section(Section.PreProcType, pre).Serialize();
             s += elsestream;
-            s += "#endif";// + s_nl;
+            pre = new Preprocessor("#endif").Serialize();
+            s += new Section(Section.PreProcType, pre).Serialize();
 
-//            return s;
-            return ifstream+elsestream; //TODO: proper serialization
+            return s;
         }
 
         public static string CreatePreProcEndCondition(string stream)
         {
             string s = string.Empty;
 
-            s += stream + s_nl;
-            s += "#endif";
+            //wrap preprocessor statement into section object
+            s += stream;
+            string pre = new Preprocessor("#endif").Serialize();
+            s += new Section(Section.PreProcType, pre).Serialize();
 
-//            return s;
-            return string.Empty; //TODO: proper serialization
+            return s;
         }
 
         public static string AddActionSection(string stream)
