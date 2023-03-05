@@ -157,14 +157,14 @@ namespace WDL2CS
 
                     case "#else":
                         //move all previously collected properties into data list
-                        objectData.PropertyData = ProcessObjectData(objectData);
+                        ProcessObjectData(objectData);
                         //update preprocessor stack and move to else branch of active dataset
                         objectData = stack.Update(property.Name);
                         break;
 
                     case "#endif":
                         //move all previously collected properties into data list
-                        objectData.PropertyData = ProcessObjectData(objectData);
+                        ProcessObjectData(objectData);
                         //update preprocessor stack, get previous dataset
                         objectData = stack.Update(property.Name);
                         break;
@@ -179,7 +179,7 @@ namespace WDL2CS
             //take care of properties not enclosed by any preprocessor directive
             if (string.IsNullOrEmpty(stack.Condition))
             {
-                objectData.PropertyData = ProcessObjectData(objectData);
+                ProcessObjectData(objectData);
             }
 
             objectData = stack.Merge();
@@ -204,17 +204,17 @@ namespace WDL2CS
             return p;
         }
 
-        private PropertyData ProcessObjectData(ObjectData active)
+        private void ProcessObjectData(ObjectData active)
         {
             //Synonyms need special treatment: convert from WDL object with properties to C# object reference
             if (m_type.Equals("Synonym"))
-                return ProcessSynonym(active);
+                ProcessSynonym(active);
             else
-                return ProcessProperties(active);
+                ProcessProperties(active);
 
         }
 
-        private PropertyData ProcessSynonym(ObjectData active)
+        private void ProcessSynonym(ObjectData active)
         {
             //Current implementation is not compatible with preprocessor directives - most likely not relevant for any A3 game ever created
             Property property;
@@ -249,10 +249,10 @@ namespace WDL2CS
                 }
             }
 
-            return data;
+            active.PropertyData = data;
         }
 
-        private PropertyData ProcessProperties(ObjectData active)
+        private void ProcessProperties(ObjectData active)
         {
             PropertyData data = new PropertyData();
 
@@ -301,7 +301,7 @@ namespace WDL2CS
             properties.Sort();
             data.Properties += string.Join(s_nl, properties.Select(x => indent + "\t" + x + ","));
 
-            return data;
+            active.PropertyData = data;
         }
 
         private void AddProperty(Property property, List<Property> properties)

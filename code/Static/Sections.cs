@@ -194,10 +194,12 @@ namespace WDL2CS
             }
 
             //sections.Sort(); //TODO: this is dangerous - introduce sort by type
-            active.SectionData.Sections = string.Join(s_nl, sections);
+            data.Sections = string.Join(s_nl, sections);
 
             //initSections.Sort(); //TODO: this is dangerous - introduce sort by type
-            active.SectionData.InitSections += string.Join(s_nl, initSections);
+            data.InitSections += string.Join(s_nl, initSections);
+
+            active.SectionData = data;
         }
 
         private static void AddSection(ISerializable section, List<ISerializable> sections)

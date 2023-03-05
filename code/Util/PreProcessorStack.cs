@@ -12,8 +12,8 @@ namespace WDL2CS
 
         public PreProcessorStack()
         {
-            m_head = new Layer();
-            m_layer = m_head;
+            m_layer = new Layer();
+            m_head = m_layer;
         }
 
         public T Update(string preproc)
@@ -54,8 +54,8 @@ namespace WDL2CS
         class Layer
         {
             private readonly string m_condition;
-            private Layer m_nextIf;
-            private Layer m_nextElse;
+            private List<Layer> m_nextIf;
+            private List<Layer> m_nextElse;
             private Layer m_prev;
             private readonly T m_contentIf = default(T);
             private T m_contentElse = default(T);
@@ -71,6 +71,8 @@ namespace WDL2CS
                 m_condition = condition;
                 m_isElse = false;
                 m_contentIf = new T() { };
+                m_nextIf = new List<Layer>();
+                m_nextElse = new List<Layer>();
             }
 
             public Layer Add(string preprocessor, string condition)
@@ -82,15 +84,11 @@ namespace WDL2CS
 
                 if (m_isElse)
                 {
-                    if (m_nextElse != null)
-                        Console.WriteLine("(W) STACK else already created. Overwriting...");
-                    m_nextElse = next;
+                    m_nextElse.Add(next);
                 }
                 else
                 {
-                    if (m_nextIf != null)
-                        Console.WriteLine("(W) STACK if already created. Overwriting...");
-                    m_nextIf = next;
+                    m_nextIf.Add(next);
                 }
 
                 return next;
@@ -98,6 +96,7 @@ namespace WDL2CS
 
             public Layer Close(string preprocessor)
             {
+                m_isElse = false;
                 return m_prev;
             }
 
@@ -110,14 +109,14 @@ namespace WDL2CS
             public T Merge()
             {
                 T next;
-                if (m_nextIf != null)
+                foreach (Layer layer in m_nextIf)
                 {
-                    next = m_nextIf.Merge();
+                    next = layer.Merge();
                     m_contentIf.Add(next);
                 }
-                if (m_nextElse != null)
+                foreach (Layer layer in m_nextElse)
                 {
-                    next = m_nextElse.Merge();
+                    next = layer.Merge();
                     m_contentElse.Add(next);
                 }
                 T content = new T();
