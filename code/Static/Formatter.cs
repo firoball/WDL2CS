@@ -178,6 +178,15 @@ namespace WDL2CS
                 return obj;
         }
 
+        public static string FormatAssetId(string asset)
+        {
+            //WDL accepts numbers as asset IDs -> prefix these for valid C# identifiers
+            if (int.TryParse(asset, out int n))
+                return "__" + asset;
+            else
+                return asset;
+        }
+
         public static string FormatPreprocessor(string preproc)
         {
             return preproc.ToUpperInvariant();

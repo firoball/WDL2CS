@@ -1753,7 +1753,7 @@ $$ = Actions.CreateWhileCondition($2, $4);
             <RIGHTSIDE>
                 <TOKEN name="integer"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatAssetId($1);
 
                 </CODE>
             </RIGHTSIDE>

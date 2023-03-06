@@ -359,7 +359,6 @@ namespace VCCCompiler
                                 ////////////////////////////////////////////////////////////////
 							case    1 : 
          yyval = yyv[yysp-0];
-         //yyval = Globals.BuildGlobals(); + Assets.BuildAssets(); + Objects.BuildObjects();
          if (DeserializeOutput)
          Output.WriteLine(Script.Format(yyval));
          else
@@ -367,8 +366,7 @@ namespace VCCCompiler
          
        break;
 							case    2 : 
-         yyval = yyv[yysp-1] + /*"\n" +*/ yyv[yysp-0];
-         //Console.WriteLine(yyval);
+         yyval = yyv[yysp-1] + yyv[yysp-0];
          
        break;
 							case    3 : 
@@ -1174,7 +1172,7 @@ namespace VCCCompiler
          
        break;
 							case  189 : 
-         yyval = yyv[yysp-0];
+         yyval = Formatter.FormatAssetId(yyv[yysp-0]);
          
        break;
 							case  190 : 

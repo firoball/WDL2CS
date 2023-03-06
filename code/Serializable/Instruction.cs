@@ -341,6 +341,14 @@ namespace WDL2CS
                         break;
 
                     case "Rule":
+                        //ridiculous patch: A3 accepts RULE statements without assignment
+                        //TODO: find out real behaviour in A3, currently first identifier is treated as assignee
+                        if (!m_parameters[0].Contains("="))
+                        {
+                            string[] fragments = m_parameters[0].Split(new[] { ' ' });
+                            fragments[0] += " ="; //first identifier is made the assignee
+                            m_parameters[0] = string.Join(" ", fragments);
+                        }
                         o = $"{m_parameters[0]};";
                         break;
 

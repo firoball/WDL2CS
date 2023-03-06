@@ -9,7 +9,6 @@ namespace WDL2CS
     {
 
         private static readonly string s_nl = Environment.NewLine;
-        //private static List<ISerializable> s_sections;
         private static SectionData s_sectionData;
 
         public static string CreatePreProcIfNotCondition(string expr, string stream)
@@ -197,7 +196,7 @@ namespace WDL2CS
             data.Sections = string.Join(s_nl, sections);
 
             //initSections.Sort(); //TODO: this is dangerous - introduce sort by type
-            data.InitSections += string.Join(s_nl, initSections);
+            data.InitSections = string.Join(s_nl, initSections);
 
             active.SectionData = data;
         }
@@ -207,7 +206,7 @@ namespace WDL2CS
             List<string> sectionNames = sections.Select(x => x.Name).ToList();
             if (sectionNames.Contains(section.Name))
             {
-                Console.WriteLine("(W) SECTIONS ignore double definition of section: " + section.Name);
+                Console.WriteLine("(W) SECTIONS ignore double definition: " + section.Name);
             }
             else
             {

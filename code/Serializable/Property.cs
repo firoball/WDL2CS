@@ -71,6 +71,7 @@ namespace WDL2CS
             try
             {
                 //TODO: add List length checks for explicite array access
+                //TODO: add prefix patch for integer asset IDs for all asset types
                 switch (m_name)
                 {
                     case "Type":
@@ -123,11 +124,13 @@ namespace WDL2CS
 
                     case "Bmap":
                     case "Bmaps":
-                        p = "Bmaps = new Bmap[] {" + string.Join(", ", m_values) + "}";
+                        //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
+                        p = "Bmaps = new Bmap[] {" + string.Join(", ", m_values.Select(x => Formatter.FormatAssetId(x))) + "}";
                         break;
 
                     case "Ovlys":
-                        p = "Ovlys = new Ovly[] {" + string.Join(", ", m_values) + "}";
+                        //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
+                        p = "Ovlys = new Ovly[] {" + string.Join(", ", m_values.Select(x => Formatter.FormatAssetId(x))) + "}";
                         break;
 
                     case "Offset_x":
