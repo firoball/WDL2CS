@@ -77,6 +77,7 @@ namespace WDL2CS
 
             public Layer Add(string preprocessor, string condition)
             {
+                //TODO: append to layer with identical condition instead of creating new one
                 Layer next = new Layer(preprocessor, condition)
                 {
                     m_prev = this

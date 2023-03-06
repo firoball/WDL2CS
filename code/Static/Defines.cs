@@ -40,11 +40,13 @@ namespace WDL2CS
 
             if (s_transform)
             {
+                //TODO: define transformation must support both Property (ucfirst) and identifier (lcfirst)
+                string rdt = string.Copy(redefine);
                 redefine = Formatter.FormatProperty(redefine); //not clean: might also be an Identifier?
                 if (!s_redefines.ContainsKey(redefine))
                 {
                     s_redefines.Add(redefine, s_original);
-                    Console.WriteLine("(I) DEFINES add transformation: " + redefine + ", " + s_original);
+                    Console.WriteLine("(I) DEFINES add transformation: " + redefine + ", " + s_original + " ORIG "+rdt);
                 }
                 else
                 {
@@ -58,13 +60,16 @@ namespace WDL2CS
                 if (!s_consts.Contains(redefine))
                 {
                     s_consts.Add(redefine);
-                    Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
-                    s = new Define(s_const, redefine, s_original).Serialize();
+//                    Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
+//                    s = new Define(s_const, redefine, s_original).Serialize();
                 }
                 else
                 {
-                    Console.WriteLine("(W) DEFINES ignore double definition: " + redefine);
+                    //Defines can be defined in different preprocessor sections - do not issue warning 
+//                    Console.WriteLine("(W) DEFINES ignore double definition: " + redefine);
                 }
+                Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
+                s = new Define(s_const, redefine, s_original).Serialize();
             }
 
             //Reset settings

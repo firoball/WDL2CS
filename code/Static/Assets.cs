@@ -7,6 +7,7 @@ namespace WDL2CS
 {
     class Assets
     {
+        //TODO: add asset list (similar to Objects) for identification whether identifier is an asset
         private static List<string> s_parameters = new List<string>();
 
         public static string AddAsset(string type, string name, string file)

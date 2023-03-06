@@ -52,6 +52,7 @@ namespace WDL2CS
 
             if (!string.IsNullOrEmpty(condition))
             {
+                //TODO: support empty #if in case #else is not empty
                 //insert preprocessor activation condition if required
                 if (!string.IsNullOrEmpty(m_propertyData.Ranges))
                     m_propertyData.Ranges = "#if " + condition + s_nl + m_propertyData.Ranges;

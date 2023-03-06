@@ -47,6 +47,7 @@ namespace WDL2CS
 
             if (!string.IsNullOrEmpty(condition))
             {
+                //TODO: support empty #if in case #else is not empty
                 //insert preprocessor activation condition if required
                 if (!string.IsNullOrEmpty(m_sectionData.Sections))
                     m_sectionData.Sections = "#if " + condition + s_nl + m_sectionData.Sections;
