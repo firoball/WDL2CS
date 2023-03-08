@@ -343,10 +343,12 @@ namespace WDL2CS
                     case "Rule":
                         //ridiculous patch: A3 accepts RULE statements without assignment
                         //TODO: find out real behaviour in A3, currently first identifier is treated as assignee
+                        //patch is derived from the behaviour of A3 for statements like "+ =" - seems like "=" is optional for WDL parser
                         if (!m_parameters[0].Contains("="))
                         {
+                            Console.WriteLine("(W) INSTRUCTION patched invalid rule: " + m_parameters[0]);
                             string[] fragments = m_parameters[0].Split(new[] { ' ' });
-                            fragments[0] += " ="; //first identifier is made the assignee
+                            fragments[1] += "="; //first operator is changed to assignment operator
                             m_parameters[0] = string.Join(" ", fragments);
                         }
                         o = $"{m_parameters[0]};";

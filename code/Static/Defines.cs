@@ -17,7 +17,6 @@ namespace WDL2CS
         private static string s_const = string.Empty;
         private static string s_original = string.Empty;
 
-
         public static string Format()
         {
             string o = string.Empty;
@@ -34,19 +33,17 @@ namespace WDL2CS
         {
             string s = string.Empty;
 
-            //patch away global skills - formatting gets inherited due to grammar of parsing process
+            //patch away global skills - formatting gets inherited due to grammar of parser
             int i = redefine.LastIndexOf('.');
             redefine = i < 0 ? redefine : redefine.Substring(i+1);
 
             if (s_transform)
             {
-                //TODO: define transformation must support both Property (ucfirst) and identifier (lcfirst)
-                string rdt = string.Copy(redefine);
-                redefine = Formatter.FormatProperty(redefine); //not clean: might also be an Identifier?
+                redefine = Formatter.FormatProperty(redefine);
                 if (!s_redefines.ContainsKey(redefine))
                 {
                     s_redefines.Add(redefine, s_original);
-                    Console.WriteLine("(I) DEFINES add transformation: " + redefine + ", " + s_original + " ORIG "+rdt);
+                    Console.WriteLine("(I) DEFINES add transformation: " + redefine + ", " + s_original);
                 }
                 else
                 {
@@ -60,13 +57,11 @@ namespace WDL2CS
                 if (!s_consts.Contains(redefine))
                 {
                     s_consts.Add(redefine);
-//                    Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
-//                    s = new Define(s_const, redefine, s_original).Serialize();
                 }
                 else
                 {
                     //Defines can be defined in different preprocessor sections - do not issue warning 
-//                    Console.WriteLine("(W) DEFINES ignore double definition: " + redefine);
+                    //Console.WriteLine("(W) DEFINES ignore double definition: " + redefine);
                 }
                 Console.WriteLine("(I) DEFINES add const: " + redefine + ", " + s_original);
                 s = new Define(s_const, redefine, s_original).Serialize();
@@ -103,6 +98,12 @@ namespace WDL2CS
             {
                 //identified as some specific object, declare data type accordingly
                 s_const = obj;
+                s_original = s;
+            }
+            else if (Assets.Identify(out string asset, s))
+            {
+                //identified as some specific asset, declare data type accordingly
+                s_const = asset;
                 s_original = s;
             }
             else
@@ -162,5 +163,6 @@ namespace WDL2CS
             }
 
         }
+
     }
 }
