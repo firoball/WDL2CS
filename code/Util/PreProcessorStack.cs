@@ -48,7 +48,7 @@ namespace WDL2CS
 
         public bool Contains(string name)
         {
-            return m_layer.Contains(name);
+            return m_layer.ParentContains(name);
         }
 
         public T Merge()
@@ -83,58 +83,50 @@ namespace WDL2CS
 
             }
 
-            public bool Contains(string name) //TODO: concept does not work... refactor this for detecting of shadowing parent layer defs
+            public bool ParentContains(string name)
             {
-                //reached stack head - there won't be any other duplicates
-                if (m_prev == null)
-                    return false;
+                if (m_prev != null)
+                    return m_prev.Contains(name);
+                else
+                    return false; //reached stack head - there won't be any other duplicates
+            }
 
-                //check the child lists of parent layer
-                //there might be children with identical conditions carrying identical section identifiers
-                //detect same condition of active layer, but include active layer from self-comparison
-                IEnumerable<Layer> candidates;
-                if (m_prev.m_isElse)
+            private bool Contains(string name)
+            {
+                bool found = false;
+                //check the parent layers recurively for matching name
+                //if the name already exists in a parent layer, the current layer shadows that definition in case the #define is set
+                if (m_isElse)
                 {
-                    candidates = m_prev.m_nextElse.Where(x => (x != this) && (x.m_condition == m_condition));
+                    found = m_contentElse.Contains(name);
                 }
                 else
                 {
-                    candidates = m_prev.m_nextIf.Where(x => (x != this) && (x.m_condition == m_condition));
+                    found = m_contentIf.Contains(name);
                 }
-                return candidates.Where(x => x.Content.Contains(name)).FirstOrDefault() != null;
+
+                if (found)
+                    return true;
+                else
+                    return ParentContains(name);
             }
 
             public Layer Add(string condition)
             {
-                Layer next = new Layer(condition)
-                {
-                    m_prev = this
-                };
-
-                if (m_isElse)
-                {
-                    m_nextElse.Add(next);
-                }
-                else
-                {
-                    m_nextIf.Add(next);
-                }
-                /*
-                //                return next;
+                //check if child layer with same condition already exists and use that one
+                //otherwise create and add fresh child layer
+                //reusing layers allows removal of duplicate definitions easily
                 if (m_isElse)
                 {
                     Layer next = m_nextElse.Where(x => x.m_condition == condition).FirstOrDefault();
                     if (next == null)
                     {
-                        Console.WriteLine("STACK new else-layer for: " + m_condition + " next " + condition);
                         next = new Layer(condition)
                         {
                             m_prev = this
                         };
                         m_nextElse.Add(next);
                     }
-                    else
-                        Console.WriteLine("STACK found else-layer for: " + condition);
                     return next;
                 }
                 else
@@ -142,21 +134,14 @@ namespace WDL2CS
                     Layer next = m_nextIf.Where(x => x.m_condition == condition).FirstOrDefault();
                     if (next == null)
                     {
-                        Console.WriteLine("STACK new if-layer for: " + m_condition + " next " + condition);
                         next = new Layer(condition)
                         {
                             m_prev = this
                         };
                         m_nextIf.Add(next);
                     }
-                    else
-                        Console.WriteLine("STACK found if-layer for: " + condition);
-
                     return next;
- //                   m_nextIf.Add(next);
                 }
-                */
-                return next;
             }
 
             public Layer Close()

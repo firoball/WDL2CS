@@ -170,8 +170,9 @@ namespace WDL2CS
         private static void AddSection(PreProcessorStack<SerializableData> stack, ISerializable section, List<ISerializable> sections)
         {
             IEnumerable<string> sectionNames = sections.Select(x => x.Name);
-            if (sectionNames.Contains(section.Name) || stack.Contains(section.Name)) //TODO: review stack.Contains function for identification of shadow definitions
+            if (sectionNames.Contains(section.Name) || stack.Contains(section.Name))
             {
+                //TODO: find out whether 1st (delete) or last (move to Initialize routine) definition is the one evaluated by A3
                 Console.WriteLine("(W) SECTIONS ignore double definition: " + section.Name);
             }
             else

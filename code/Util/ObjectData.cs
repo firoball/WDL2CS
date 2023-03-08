@@ -28,7 +28,7 @@ namespace WDL2CS
 
         public override void Format()
         {
-            //else branch may not have been populated and therefore m_parent may be null
+            //if/else branch may not have been populated and therefore m_parent may be null
             if (m_parent != null)
             {
                 //Formatting is done in Object class itself due to dependency on internal parameters

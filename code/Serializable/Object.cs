@@ -15,7 +15,7 @@ namespace WDL2CS
         private string m_name;
         private string m_type;
         private bool m_isString;
-        private bool m_isInitialized;
+        private readonly bool m_isInitialized;
         private readonly string m_serializedProperties;
         private List<Property> m_properties;
 
@@ -170,7 +170,7 @@ namespace WDL2CS
 
                     default:
                         //add property to active dataset
-                        AddProperty(property, objectData.Properties);
+                        AddProperty(stack, property, objectData.Properties);
                         break;
                 }
             }
@@ -290,11 +290,15 @@ namespace WDL2CS
             objectData.PropertyStream.Append(string.Join(s_nl, properties.Select(x => indent + "\t" + x + ",")));
         }
 
-        private void AddProperty(Property property, List<Property> properties)
+        private void AddProperty(PreProcessorStack<ObjectData> stack, Property property, List<Property> properties)
         {
             List<string> propertyNames = properties.Select(x => x.Name).ToList();
-            //let preprocessor instructions always pass check
-            if (propertyNames.Contains(property.Name))
+            if (stack.Contains(property.Name) && !property.AllowMerge && !property.AllowMultiple)
+            {
+                //TODO: find out whether 1st (delete) or last (move to Initialize routine) definition is the one evaluated by A3
+                Console.WriteLine("(W) OBJECTS ignore double definition of property: " + property.Name);
+            }
+            else if (propertyNames.Contains(property.Name))
             {
                 //Eliminate double definitions of properties only where their values can be merged
                 if (property.AllowMerge)
