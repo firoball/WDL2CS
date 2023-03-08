@@ -9,7 +9,7 @@ namespace WDL2CS
     {
 
         private static readonly string s_nl = Environment.NewLine;
-        private static SectionData s_sectionData;
+        private static SerializableData s_serializableData;
 
         public static string CreatePreProcIfNotCondition(string expr, string stream)
         {
@@ -105,12 +105,12 @@ namespace WDL2CS
 
         public static string FormatInit()
         {
-            return s_sectionData.InitSections;
+            return s_serializableData.InitSectionStream.ToString();
         }
 
         public static string Format()
         {
-            return s_sectionData.Sections;
+            return s_serializableData.SectionStream.ToString();
             //return string.Join(s_nl, s_sections.Select(x => x.Format()));
         }
 
@@ -174,13 +174,11 @@ namespace WDL2CS
             serializableData = stack.Merge();
 
             //copy formatted data to static interface
-            s_sectionData = serializableData.SectionData;
+            s_serializableData = serializableData;
         }
 
         private static void ProcessSectionData(SerializableData active)
         {
-            SectionData data = new SectionData();
-
             List<string> sections = new List<string>();
             List<string> initSections = new List<string>();
 
@@ -193,12 +191,10 @@ namespace WDL2CS
             }
 
             //sections.Sort(); //TODO: this is dangerous - introduce sort by type
-            data.Sections = string.Join(s_nl, sections);
+            active.SectionStream.Append(string.Join(s_nl, sections));
 
             //initSections.Sort(); //TODO: this is dangerous - introduce sort by type
-            data.InitSections = string.Join(s_nl, initSections);
-
-            active.SectionData = data;
+            active.InitSectionStream.Append(string.Join(s_nl, initSections));
         }
 
         private static void AddSection(ISerializable section, List<ISerializable> sections)

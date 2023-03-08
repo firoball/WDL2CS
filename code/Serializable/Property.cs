@@ -125,12 +125,12 @@ namespace WDL2CS
                     case "Bmap":
                     case "Bmaps":
                         //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                        p = "Bmaps = new Bmap[] {" + string.Join(", ", m_values.Select(x => Formatter.FormatAssetId(x))) + "}";
+                        p = "Bmaps = new Bmap[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatAssetId(x))) + " }";
                         break;
 
                     case "Ovlys":
                         //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                        p = "Ovlys = new Ovly[] {" + string.Join(", ", m_values.Select(x => Formatter.FormatAssetId(x))) + "}";
+                        p = "Ovlys = new Ovly[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatAssetId(x))) + " }";
                         break;
 
                     case "Offset_x":
@@ -138,7 +138,7 @@ namespace WDL2CS
                         //for Wall only these properties are one-dimensional
                         if (!string.Equals(obj, "Wall"))
                         {
-                            p = m_name + " = " + "new Var[] {" + string.Join(", ", m_values) + "}";
+                            p = m_name + " = " + "new Var[] { " + string.Join(", ", m_values) + " }";
                         }
                         else
                         {
@@ -150,7 +150,7 @@ namespace WDL2CS
                         //fix name ambiguity for Text objects
                         if (string.Equals(obj, "Text"))
                         {
-                            p = "String_array = new string[] {" + string.Join(", ", m_values) + "}";
+                            p = "String_array = new string[] { " + string.Join(", ", m_values) + " }";
                         }
                         else
                         {
@@ -162,11 +162,11 @@ namespace WDL2CS
                     case "Mirror":
                     case "Delay":
                     case "Scycles":
-                        p = m_name + " = " + "new Var[] {" + string.Join(", ", m_values) + "}";
+                        p = m_name + " = " + "new Var[] { " + string.Join(", ", m_values) + " }";
                         break;
 
                     case "Scale_xy":
-                        p = m_name + " = " + "new Var[] {" + string.Join(", ", m_values) + "}";
+                        p = m_name + " = " + "new Var[] { " + string.Join(", ", m_values) + " }";
                         break;
 
                     case "Target":
@@ -177,7 +177,7 @@ namespace WDL2CS
 
                     default:
                         if (m_values.Count > 1)
-                            p = m_name + " = " + "new [] {" + string.Join(", ", m_values) + "}";
+                            p = m_name + " = " + "new [] { " + string.Join(", ", m_values) + " }";
                         else
                             p = m_name + " = " + m_values[0];
                         break;

@@ -8,22 +8,87 @@ namespace WDL2CS
     abstract class PreProcessorData
     {
 
-        protected static string s_if = "#if";
-        protected static string s_else = "#else";
-        protected static string s_end = "#endif";
+        protected static readonly string s_if = "#if";
+        protected static readonly string s_else = "#else";
+        protected static readonly string s_end = "#endif";
+        protected static readonly string s_nl = Environment.NewLine;
 
-        public PreProcessorData()
+        protected StringBuilder[] m_streams;
+
+        public PreProcessorData(int streams)
         {
+            m_streams = new StringBuilder[streams];
+            for (int i = 0; i < streams; i++)
+            {
+                m_streams[i] = new StringBuilder();
+            }
         }
 
-        public virtual void Add(PreProcessorData data)
+        private void AddStream(StringBuilder ownData, StringBuilder otherData)
         {
-            Console.WriteLine("(W) PREPROCESSORDATA: Add function requires appropriate override");
+            //append nested data if available
+            if ((ownData.Length > 0) && (otherData.Length > 0))
+                ownData.Append(s_nl);
+            ownData.Append(otherData);
         }
 
-        public virtual void Merge(string condition, PreProcessorData ifData, PreProcessorData elseData)
+        private void MergeStream(StringBuilder result, string condition, StringBuilder ifData, StringBuilder elseData)
         {
-            Console.WriteLine("(W) PREPROCESSORDATA: Merge function requires appropriate override");
+            //add #if - directive (allow empty #if in case #else is required)
+            if (!string.IsNullOrEmpty(condition) && ((ifData.Length > 0) || (elseData.Length > 0)))
+            {
+                result.Append("#if " + condition);
+            }
+            AddStream(result, ifData);
+
+            //add #else directive
+            if (elseData.Length > 0)
+            {
+                result.Append(s_nl + s_else);
+            }
+            AddStream(result, elseData);
+
+            //add #end directive only in case #if and/or #else is required
+            if (!string.IsNullOrEmpty(condition) && (result.Length > 0))
+            {
+                result.Append(s_nl + s_end);
+            }
+        }
+
+        public void Add(PreProcessorData data)
+        {
+            if ((data != null) && (data.m_streams.Length == m_streams.Length))
+            {
+                for(int i = 0; i < m_streams.Length; i++)
+                {
+                    AddStream(m_streams[i], data.m_streams[i]);
+                }
+            }
+        }
+
+        public void Merge(string condition, PreProcessorData ifData, PreProcessorData elseData)
+        {
+            if (ifData != null)
+            {
+
+                StringBuilder[] elseStreams;
+                if (elseData != null)
+                {
+                    elseStreams = elseData.m_streams;
+                }
+                else
+                {
+                    //no #else branch available; make it empty
+                    elseStreams = new StringBuilder[m_streams.Length];
+                    for (int i = 0; i < elseStreams.Length; i++)
+                        elseStreams[i] = new StringBuilder();
+                }
+
+                for (int i = 0; i < m_streams.Length; i++)
+                {
+                    MergeStream(m_streams[i], condition, ifData.m_streams[i], elseStreams[i]);
+                }
+            }
         }
     }
 }

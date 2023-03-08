@@ -20,7 +20,6 @@ namespace WDL2CS
         private List<Property> m_properties;
 
         public string Name { get => m_name; set => m_name = value; }
-        //public string Type { get => m_type; set => m_type = value; }
 
         public Object(string type, string name, bool isString)
         {
@@ -185,19 +184,19 @@ namespace WDL2CS
             objectData = stack.Merge();
 
             //copy standard properties to output
-            p += objectData.PropertyData.Properties;
+            p += objectData.PropertyStream;
 
             //handle palette range definitions
-            if (!string.IsNullOrEmpty(objectData.PropertyData.Ranges))
+            if (objectData.RangeStream.Length > 0)
             {
-                p += s_nl + s_indent + "\tRange = new[,]" + s_nl + s_indent + "\t{" + s_nl + objectData.PropertyData.Ranges;
+                p += s_nl + s_indent + "\tRange = new[,]" + s_nl + s_indent + "\t{" + s_nl + objectData.RangeStream;
                 p += s_nl + s_indent + "\t}";
             }
 
             //handle UI control definitions
-            if (!string.IsNullOrEmpty(objectData.PropertyData.Controls))
+            if (objectData.ControlStream.Length > 0)
             {
-                p += s_nl + s_indent + "\tControls = new UIControl[]" + s_nl + s_indent + "\t{ " + s_nl + objectData.PropertyData.Controls;
+                p += s_nl + s_indent + "\tControls = new UIControl[]" + s_nl + s_indent + "\t{ " + s_nl + objectData.ControlStream;
                 p += s_nl + s_indent + "\t}";
             }
 
@@ -218,8 +217,7 @@ namespace WDL2CS
         {
             //Current implementation is not compatible with preprocessor directives - most likely not relevant for any A3 game ever created
             Property property;
-            PropertyData data = new PropertyData();
-            //workaround build synonym definition in property
+            //workaround: build synonym definition in property
             //Type declares datatype of Synonym
             property = active.Properties.Where(x => x.Name.Equals("Type")).FirstOrDefault();
             if (property != null)
@@ -236,7 +234,8 @@ namespace WDL2CS
                 if (synType.Equals("Wall") || synType.Equals("Thing") || synType.Equals("Actor"))
                     synType = "BaseObject";
 
-                data.Properties = synType + " " + m_name;
+                //data.Properties = synType + " " + m_name;
+                active.PropertyStream.Append(synType + " " + m_name);
 
                 //Default declares default assignment of Synonym (optional)
                 property = active.Properties.Where(x => x.Name.Equals("Default")).FirstOrDefault();
@@ -244,18 +243,14 @@ namespace WDL2CS
                 {
                     if (!property.Values[0].Equals("null"))
                     {
-                        data.Properties += " = " + Formatter.FormatIdentifier(property.Values[0]);
+                        active.PropertyStream.Append(" = " + Formatter.FormatIdentifier(property.Values[0]));
                     }
                 }
             }
-
-            active.PropertyData = data;
         }
 
         private void ProcessProperties(ObjectData active)
         {
-            PropertyData data = new PropertyData();
-
             List<string> ranges = new List<string>();
             List<string> controls = new List<string>();
             List<string> properties = new List<string>();
@@ -291,17 +286,15 @@ namespace WDL2CS
                 indent = s_indentInit;
             //create comma separated list of ranges
             ranges.Sort();
-            data.Ranges += string.Join(s_nl, ranges.Select(x => indent + "\t\t" + x + ","));
+            active.RangeStream.Append(string.Join(s_nl, ranges.Select(x => indent + "\t\t" + x + ",")));
 
             //create comma separated list of controls
             controls.Sort();
-            data.Controls += string.Join(s_nl, controls.Select(x => indent + "\t\t" + x + ","));
+            active.ControlStream.Append(string.Join(s_nl, controls.Select(x => indent + "\t\t" + x + ",")));
 
             //create comma separated list of properties
             properties.Sort();
-            data.Properties += string.Join(s_nl, properties.Select(x => indent + "\t" + x + ","));
-
-            active.PropertyData = data;
+            active.PropertyStream.Append(string.Join(s_nl, properties.Select(x => indent + "\t" + x + ",")));
         }
 
         private void AddProperty(Property property, List<Property> properties)

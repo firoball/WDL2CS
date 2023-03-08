@@ -7,21 +7,22 @@ namespace WDL2CS
 {
     class ObjectData : PreProcessorData
     {
-        private static readonly string s_nl = Environment.NewLine;
-
         private List<Property> m_properties;
-        private PropertyData m_propertyData;
+        //private PropertyData m_propertyData;
 
-        public ObjectData() : base()
+        public ObjectData() : base(3)
         {
             m_properties = new List<Property>();
-            m_propertyData = new PropertyData();
+            //m_propertyData = new PropertyData();
         }
 
         public List<Property> Properties { get => m_properties; set => m_properties = value; }
-        public PropertyData PropertyData { get => m_propertyData; set => m_propertyData = value; }
+        public StringBuilder RangeStream { get => m_streams[0]; }
+        public StringBuilder ControlStream { get => m_streams[1]; }
+        public StringBuilder PropertyStream { get => m_streams[2]; }
+        //public PropertyData PropertyData { get => m_propertyData; set => m_propertyData = value; }
 
-        public override void Add(PreProcessorData data)
+        /*public override void Add(PreProcessorData data)
         {
             if ((data != null) && data is ObjectData)
             {
@@ -88,7 +89,7 @@ namespace WDL2CS
                 if (!string.IsNullOrEmpty(m_propertyData.Properties))
                     m_propertyData.Properties += s_nl + s_end;
             }
-        }
+        }*/
 
     }
 }
