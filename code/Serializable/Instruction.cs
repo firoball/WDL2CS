@@ -125,8 +125,7 @@ namespace WDL2CS
                         o = $"{m_parameters[0]}.Drop();";
                         break;
 
-                    //TODO: distinguish else-command from else{}-condition properly - is this still required or already working?
-                    case "Else":
+                    case "Else": //"else" instrruction is distinguished from "Else" command via casew sensitivity
                         o = $"else";
                         break;
 
@@ -246,15 +245,15 @@ namespace WDL2CS
                         o = $"Media.Midi_com({m_parameters[0]}, {m_parameters[1]}, {m_parameters[2]});";
                         break;
 
-                    case "Next_my":
+                    case "Next_my": //TODO: this needs to be updated
                         o = $"Globals.My = Globals.My.Next();";
                         break;
 
-                    case "Next_my_there":
+                    case "Next_my_there": //TODO: this needs to be updated
                         o = $"Globals.My = Globals.My.Next_there();";
                         break;
 
-                    case "Next_there":
+                    case "Next_there": //TODO: this needs to be updated
                         o = $"Globals.There = Globals.There.Next();";
                         break;
 

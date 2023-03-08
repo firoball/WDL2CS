@@ -144,6 +144,7 @@ namespace WDL2CS
             string p = string.Empty;
             PreProcessorStack<ObjectData> stack = new PreProcessorStack<ObjectData>();
             ObjectData objectData = stack.Content;
+            objectData.Parent = this; //required for callback in objectData.Format()
 
             foreach (Property property in m_properties)
             {
@@ -152,20 +153,19 @@ namespace WDL2CS
                     case "#if":
                         //update preprocessor stack and obtain new dataset
                         objectData = stack.Update(property.Name, property.Values[0]);
+                        objectData.Parent = this; //required for callback in objectData.Format()
                         break;
 
                     case "#else":
-                        //move all previously collected properties into data list
-                        ProcessObjectData(objectData);
                         //update preprocessor stack and move to else branch of active dataset
                         objectData = stack.Update(property.Name);
+                        objectData.Parent = this; //required for callback in objectData.Format()
                         break;
 
                     case "#endif":
-                        //move all previously collected properties into data list
-                        ProcessObjectData(objectData);
                         //update preprocessor stack, get previous dataset
                         objectData = stack.Update(property.Name);
+                        objectData.Parent = this; //required for callback in objectData.Format()
                         break;
 
                     default:
@@ -173,12 +173,6 @@ namespace WDL2CS
                         AddProperty(property, objectData.Properties);
                         break;
                 }
-            }
-
-            //take care of properties not enclosed by any preprocessor directive
-            if (string.IsNullOrEmpty(stack.Condition))
-            {
-                ProcessObjectData(objectData);
             }
 
             objectData = stack.Merge();
@@ -203,7 +197,7 @@ namespace WDL2CS
             return p;
         }
 
-        private void ProcessObjectData(ObjectData active)
+        public void ProcessObjectData(ObjectData active)
         {
             //Synonyms need special treatment: convert from WDL object with properties to C# object reference
             if (m_type.Equals("Synonym"))
@@ -213,13 +207,13 @@ namespace WDL2CS
 
         }
 
-        private void ProcessSynonym(ObjectData active)
+        private void ProcessSynonym(ObjectData objectData)
         {
             //Current implementation is not compatible with preprocessor directives - most likely not relevant for any A3 game ever created
             Property property;
             //workaround: build synonym definition in property
             //Type declares datatype of Synonym
-            property = active.Properties.Where(x => x.Name.Equals("Type")).FirstOrDefault();
+            property = objectData.Properties.Where(x => x.Name.Equals("Type")).FirstOrDefault();
             if (property != null)
             {
                 string synType = Formatter.FormatObject(property.Values[0]);
@@ -234,28 +228,27 @@ namespace WDL2CS
                 if (synType.Equals("Wall") || synType.Equals("Thing") || synType.Equals("Actor"))
                     synType = "BaseObject";
 
-                //data.Properties = synType + " " + m_name;
-                active.PropertyStream.Append(synType + " " + m_name);
+                objectData.PropertyStream.Append(synType + " " + m_name);
 
                 //Default declares default assignment of Synonym (optional)
-                property = active.Properties.Where(x => x.Name.Equals("Default")).FirstOrDefault();
+                property = objectData.Properties.Where(x => x.Name.Equals("Default")).FirstOrDefault();
                 if (property != null)
                 {
                     if (!property.Values[0].Equals("null"))
                     {
-                        active.PropertyStream.Append(" = " + Formatter.FormatIdentifier(property.Values[0]));
+                        objectData.PropertyStream.Append(" = " + Formatter.FormatIdentifier(property.Values[0]));
                     }
                 }
             }
         }
 
-        private void ProcessProperties(ObjectData active)
+        private void ProcessProperties(ObjectData objectData)
         {
             List<string> ranges = new List<string>();
             List<string> controls = new List<string>();
             List<string> properties = new List<string>();
 
-            foreach (Property property in active.Properties)
+            foreach (Property property in objectData.Properties)
             {
                 switch (property.Name)
                 {
@@ -286,15 +279,15 @@ namespace WDL2CS
                 indent = s_indentInit;
             //create comma separated list of ranges
             ranges.Sort();
-            active.RangeStream.Append(string.Join(s_nl, ranges.Select(x => indent + "\t\t" + x + ",")));
+            objectData.RangeStream.Append(string.Join(s_nl, ranges.Select(x => indent + "\t\t" + x + ",")));
 
             //create comma separated list of controls
             controls.Sort();
-            active.ControlStream.Append(string.Join(s_nl, controls.Select(x => indent + "\t\t" + x + ",")));
+            objectData.ControlStream.Append(string.Join(s_nl, controls.Select(x => indent + "\t\t" + x + ",")));
 
             //create comma separated list of properties
             properties.Sort();
-            active.PropertyStream.Append(string.Join(s_nl, properties.Select(x => indent + "\t" + x + ",")));
+            objectData.PropertyStream.Append(string.Join(s_nl, properties.Select(x => indent + "\t" + x + ",")));
         }
 
         private void AddProperty(Property property, List<Property> properties)

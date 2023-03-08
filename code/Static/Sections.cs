@@ -118,7 +118,7 @@ namespace WDL2CS
         {
             //Console.WriteLine(stream);
             List<ISerializable> sections = Section.DeserializeList(stream);
-            ProcessSections(sections); //TODO: right place to call?
+            ProcessSections(sections);
         }
 
         private static void ProcessSections(List<ISerializable> sections)
@@ -140,15 +140,11 @@ namespace WDL2CS
                             break;
 
                         case "#else":
-                            //move all previously collected sections into data list
-                            ProcessSectionData(serializableData);
                             //update preprocessor stack and move to else branch of active dataset
                             serializableData = stack.Update(pre.Name);
                             break;
 
                         case "#endif":
-                            //move all previously collected properties into data list
-                            ProcessSectionData(serializableData);
                             //update preprocessor stack, get previous dataset
                             serializableData = stack.Update(pre.Name);
                             break;
@@ -161,14 +157,8 @@ namespace WDL2CS
                 else
                 {
                     //add property to active dataset
-                    AddSection(section, serializableData.Sections);
+                    AddSection(stack, section, serializableData.Sections);
                 }
-            }
-
-            //take care of properties not enclosed by any preprocessor directive
-            if (string.IsNullOrEmpty(stack.Condition))
-            {
-                ProcessSectionData(serializableData);
             }
 
             serializableData = stack.Merge();
@@ -177,30 +167,10 @@ namespace WDL2CS
             s_serializableData = serializableData;
         }
 
-        private static void ProcessSectionData(SerializableData active)
+        private static void AddSection(PreProcessorStack<SerializableData> stack, ISerializable section, List<ISerializable> sections)
         {
-            List<string> sections = new List<string>();
-            List<string> initSections = new List<string>();
-
-            foreach (ISerializable section in active.Sections)
-            {
-                if (section.IsInitialized())
-                    initSections.Add(section.Format());
-                else
-                    sections.Add(section.Format());
-            }
-
-            //sections.Sort(); //TODO: this is dangerous - introduce sort by type
-            active.SectionStream.Append(string.Join(s_nl, sections));
-
-            //initSections.Sort(); //TODO: this is dangerous - introduce sort by type
-            active.InitSectionStream.Append(string.Join(s_nl, initSections));
-        }
-
-        private static void AddSection(ISerializable section, List<ISerializable> sections)
-        {
-            List<string> sectionNames = sections.Select(x => x.Name).ToList();
-            if (sectionNames.Contains(section.Name))
+            IEnumerable<string> sectionNames = sections.Select(x => x.Name);
+            if (sectionNames.Contains(section.Name) || stack.Contains(section.Name)) //TODO: review stack.Contains function for identification of shadow definitions
             {
                 Console.WriteLine("(W) SECTIONS ignore double definition: " + section.Name);
             }

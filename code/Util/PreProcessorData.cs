@@ -24,6 +24,18 @@ namespace WDL2CS
             }
         }
 
+        public virtual void Format()
+        {
+            //replace witch formatting code for sata structure
+        }
+
+        //TODO: review stack.Contains function for identification of shadow definitions
+        public virtual bool Contains(string name)
+        {
+            //replace witch code to check data structure for existing elements
+            return false;
+        }
+
         private void AddStream(StringBuilder ownData, StringBuilder otherData)
         {
             //append nested data if available
@@ -68,25 +80,11 @@ namespace WDL2CS
 
         public void Merge(string condition, PreProcessorData ifData, PreProcessorData elseData)
         {
-            if (ifData != null)
+            if ((ifData != null) && (elseData != null))
             {
-
-                StringBuilder[] elseStreams;
-                if (elseData != null)
-                {
-                    elseStreams = elseData.m_streams;
-                }
-                else
-                {
-                    //no #else branch available; make it empty
-                    elseStreams = new StringBuilder[m_streams.Length];
-                    for (int i = 0; i < elseStreams.Length; i++)
-                        elseStreams[i] = new StringBuilder();
-                }
-
                 for (int i = 0; i < m_streams.Length; i++)
                 {
-                    MergeStream(m_streams[i], condition, ifData.m_streams[i], elseStreams[i]);
+                    MergeStream(m_streams[i], condition, ifData.m_streams[i], elseData.m_streams[i]);
                 }
             }
         }
