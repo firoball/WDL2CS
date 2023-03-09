@@ -109,7 +109,7 @@ namespace WDL2CS
 
         //Targets are not detected specifically in the parser due to complexity limit
         //Therefore, hard code the different targets here
-        private static string[] s_targets = new[] { "move", "bullet", "stick", "follow", "repel", "vertex", "node1", "node2", "hold", "null" };
+        private static string[] s_targets = new[] { "move", "bullet", "drop", "stick", "follow", "repel", "vertex", "node1", "node2", "hold", "null" };
         public static string FormatActorTarget(string s)
         {
             if (s_targets.Contains(s))

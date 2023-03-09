@@ -74,6 +74,12 @@ namespace WDL2CS
                 //TODO: add prefix patch for integer asset IDs for all asset types
                 switch (m_name)
                 {
+                    case "Default":
+                        //Skill only: rename "Default" property to "Val" (undocumented)
+                        if (obj.Equals("Skill"))
+                            m_name = "Val";
+                        goto default;
+
                     case "Type":
                         p = m_name + " = " + Formatter.FormatSkillType(m_values[0]);
                         break;
@@ -136,7 +142,7 @@ namespace WDL2CS
                     case "Offset_x":
                     case "Offset_y":
                         //for Wall only these properties are one-dimensional
-                        if (!string.Equals(obj, "Wall"))
+                        if (!obj.Equals("Wall"))
                         {
                             p = m_name + " = " + "new Var[] { " + string.Join(", ", m_values) + " }";
                         }
@@ -148,7 +154,7 @@ namespace WDL2CS
 
                     case "String":
                         //fix name ambiguity for Text objects
-                        if (string.Equals(obj, "Text"))
+                        if (obj.Equals("Text"))
                         {
                             p = "String_array = new string[] { " + string.Join(", ", m_values) + " }";
                         }
