@@ -9,7 +9,7 @@ using WDL2CS;
 namespace VCCCompiler
 {
     /// <summary>
-    /// Zusammenfassung für MyCompiler.
+    /// Zusammenfassung fÃ¼r MyCompiler.
     /// </summary>
     class MyCompiler
     {
@@ -282,7 +282,7 @@ namespace VCCCompiler
 
 
         /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
+        /// Der Haupteinstiegspunkt fÃ¼r die Anwendung.
         /// </summary>
         [STAThread]
         static int Main(string[] args)
