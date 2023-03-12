@@ -46,11 +46,6 @@ namespace WDL2CS
         public T Content { get => m_layer.Content; }
         public string Condition { get => m_layer.Condition; }
 
-        public bool Contains(string name)
-        {
-            return m_layer.ParentContains(name);
-        }
-
         public T Merge()
         {
             return m_head.Merge();
@@ -69,46 +64,17 @@ namespace WDL2CS
             public string Condition { get => m_condition; }
             public T Content { get => m_isElse ? m_contentElse : m_contentIf; }
 
-            public Layer() : this(string.Empty) { }
+            public Layer() : this(string.Empty, null) { }
+            public Layer(string condition) : this(condition, null) { }
 
-            public Layer(string condition)
+            public Layer(string condition, T contentParent)
             {
                 m_condition = condition;
                 m_isElse = false;
-                m_contentIf = new T() { };
+                m_contentIf = new T() { Parent = contentParent };
+                m_contentElse = new T() { Parent = contentParent };
                 m_nextIf = new List<Layer>();
                 m_nextElse = new List<Layer>();
-
-                m_contentElse = new T() { };
-
-            }
-
-            public bool ParentContains(string name)
-            {
-                if (m_prev != null)
-                    return m_prev.Contains(name);
-                else
-                    return false; //reached stack head - there won't be any other duplicates
-            }
-
-            private bool Contains(string name)
-            {
-                bool found = false;
-                //check the parent layers recurively for matching name
-                //if the name already exists in a parent layer, the current layer shadows that definition in case the #define is set
-                if (m_isElse)
-                {
-                    found = m_contentElse.Contains(name);
-                }
-                else
-                {
-                    found = m_contentIf.Contains(name);
-                }
-
-                if (found)
-                    return true;
-                else
-                    return ParentContains(name);
             }
 
             public Layer Add(string condition)
@@ -121,7 +87,7 @@ namespace WDL2CS
                     Layer next = m_nextElse.Where(x => x.m_condition == condition).FirstOrDefault();
                     if (next == null)
                     {
-                        next = new Layer(condition)
+                        next = new Layer(condition, m_contentElse)
                         {
                             m_prev = this
                         };
@@ -134,7 +100,7 @@ namespace WDL2CS
                     Layer next = m_nextIf.Where(x => x.m_condition == condition).FirstOrDefault();
                     if (next == null)
                     {
-                        next = new Layer(condition)
+                        next = new Layer(condition, m_contentIf)
                         {
                             m_prev = this
                         };
@@ -157,6 +123,7 @@ namespace WDL2CS
 
             public T Merge()
             {
+                //Step 1: format layer contents and merge sub layer contents
                 T next;
                 m_contentIf.Format();
                 foreach (Layer layer in m_nextIf)
@@ -170,6 +137,8 @@ namespace WDL2CS
                     next = layer.Merge();
                     m_contentElse.Add(next);
                 }
+
+                //Step 2: merge all layer contents and preprocessor conditions
                 T content = new T();
                 content.Merge(m_condition, m_contentIf, m_contentElse);
                 return content;

@@ -365,6 +365,10 @@ namespace WDL2CS
                         o = $"Environment.Save({m_parameters[0]}, {m_parameters[1]}, true);";
                         break;
 
+                    case "Scan":
+                        o = $"Environment.Scan({m_parameters[0]});";
+                        break;
+
                     case "Screenshot":
                         o = $"Environment.Screenshot({m_parameters[0]}, {m_parameters[1]});";
                         break;

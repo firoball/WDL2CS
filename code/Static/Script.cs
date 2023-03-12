@@ -7,7 +7,7 @@ namespace WDL2CS
 {
     class Script
     {
-        public static string Format(string stream)
+        public static string Format(string className, string stream)
         {
             Sections.Deserialize(stream);
             string s = string.Empty;
@@ -19,7 +19,7 @@ using Acknex3.Api;
 
 namespace Acknex3.Script
 {
-	class Script
+	class " + Formatter.FormatClass(className) + @"
 	{
 		public void Initialize()
 		{

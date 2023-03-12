@@ -14,6 +14,9 @@ namespace WDL2CS
         protected static readonly string s_nl = Environment.NewLine;
 
         protected StringBuilder[] m_streams;
+        protected PreProcessorData m_parent;
+
+        public PreProcessorData Parent { set => m_parent = value; }
 
         public PreProcessorData(int streams)
         {
@@ -22,14 +25,30 @@ namespace WDL2CS
             {
                 m_streams[i] = new StringBuilder();
             }
+            m_parent = null;
+        }
+
+        public bool ParentContains(string name)
+        {
+            /* nested preprocessor sections may contain layered definitions
+             * when formatting objects, ascend through parents in order to
+             * identify double definitions.
+             * In case a parent data structure already contains the object in questions
+             * special action can be taken in the object's Format() routine
+             */
+            if (m_parent == null)
+                return false;
+            else if (m_parent.Contains(name))
+                return true;
+            else 
+                return m_parent.ParentContains(name);
         }
 
         public virtual void Format()
         {
-            //replace witch formatting code for sata structure
+            //replace witch formatting code for data structure
         }
 
-        //TODO: review stack.Contains function for identification of shadow definitions
         public virtual bool Contains(string name)
         {
             //replace witch code to check data structure for existing elements

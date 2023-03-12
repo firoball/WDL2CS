@@ -144,7 +144,7 @@ namespace WDL2CS
             string p = string.Empty;
             PreProcessorStack<ObjectData> stack = new PreProcessorStack<ObjectData>();
             ObjectData objectData = stack.Content;
-            objectData.Parent = this; //required for callback in objectData.Format()
+            objectData.ParentObject = this; //required for callback in objectData.Format()
 
             foreach (Property property in m_properties)
             {
@@ -153,24 +153,24 @@ namespace WDL2CS
                     case "#if":
                         //update preprocessor stack and obtain new dataset
                         objectData = stack.Update(property.Name, property.Values[0]);
-                        objectData.Parent = this; //required for callback in objectData.Format()
+                        objectData.ParentObject = this; //required for callback in objectData.Format()
                         break;
 
                     case "#else":
                         //update preprocessor stack and move to else branch of active dataset
                         objectData = stack.Update(property.Name);
-                        objectData.Parent = this; //required for callback in objectData.Format()
+                        objectData.ParentObject = this; //required for callback in objectData.Format()
                         break;
 
                     case "#endif":
                         //update preprocessor stack, get previous dataset
                         objectData = stack.Update(property.Name);
-                        objectData.Parent = this; //required for callback in objectData.Format()
+                        objectData.ParentObject = this; //required for callback in objectData.Format()
                         break;
 
                     default:
                         //add property to active dataset
-                        AddProperty(stack, property, objectData.Properties);
+                        AddProperty(property, objectData.Properties);
                         break;
                 }
             }
@@ -197,13 +197,13 @@ namespace WDL2CS
             return p;
         }
 
-        public void ProcessObjectData(ObjectData active)
+        public void ProcessObjectData(ObjectData objectData)
         {
             //Synonyms need special treatment: convert from WDL object with properties to C# object reference
             if (m_type.Equals("Synonym"))
-                ProcessSynonym(active);
+                ProcessSynonym(objectData);
             else
-                ProcessProperties(active);
+                ProcessProperties(objectData);
 
         }
 
@@ -250,6 +250,11 @@ namespace WDL2CS
 
             foreach (Property property in objectData.Properties)
             {
+                if (objectData.ParentContains(property.Name))
+                {
+                    //TODO: modify formatting accordingly
+                    Console.WriteLine("(W) OBJECT found shadow property: " + property.Name);
+                }
                 switch (property.Name)
                 {
                     case "Range":
@@ -290,15 +295,10 @@ namespace WDL2CS
             objectData.PropertyStream.Append(string.Join(s_nl, properties.Select(x => indent + "\t" + x + ",")));
         }
 
-        private void AddProperty(PreProcessorStack<ObjectData> stack, Property property, List<Property> properties)
+        private void AddProperty(Property property, List<Property> properties)
         {
             List<string> propertyNames = properties.Select(x => x.Name).ToList();
-            if (stack.Contains(property.Name) && !property.AllowMerge && !property.AllowMultiple)
-            {
-                //TODO: find out whether 1st (delete) or last (move to Initialize routine) definition is the one evaluated by A3
-                Console.WriteLine("(W) OBJECTS ignore double definition of property: " + property.Name);
-            }
-            else if (propertyNames.Contains(property.Name))
+            if (propertyNames.Contains(property.Name))
             {
                 //Eliminate double definitions of properties only where their values can be merged
                 if (property.AllowMerge)

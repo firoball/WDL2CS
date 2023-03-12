@@ -8,7 +8,7 @@ namespace WDL2CS
     class ObjectData : PreProcessorData
     {
         private List<Property> m_properties;
-        private Object m_parent;
+        private Object m_parentObject;
 
         public ObjectData() : base(3)
         {
@@ -19,7 +19,7 @@ namespace WDL2CS
         public StringBuilder RangeStream { get => m_streams[0]; }
         public StringBuilder ControlStream { get => m_streams[1]; }
         public StringBuilder PropertyStream { get => m_streams[2]; }
-        public Object Parent { set => m_parent = value; }
+        public Object ParentObject { set => m_parentObject = value; }
 
         public override bool Contains(string name)
         {
@@ -29,12 +29,17 @@ namespace WDL2CS
         public override void Format()
         {
             //if/else branch may not have been populated and therefore m_parent may be null
-            if (m_parent != null)
+            if (m_parentObject != null)
             {
                 //Formatting is done in Object class itself due to dependency on internal parameters
-                m_parent.ProcessObjectData(this);
-                m_parent = null; //decouple for GC
+                m_parentObject.ProcessObjectData(this);
+                m_parentObject = null; //decouple for GC
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Join("; ", m_properties.Select(x => x.Name));
         }
     }
 }

@@ -107,9 +107,20 @@ namespace WDL2CS
             return "A3Flags." + FormatProperty(s);
         }
 
+        public static string FormatVideo(string s)
+        {
+            //somewhat dirty workaround due to"base" identifier being patched to avoid clash with C' language
+            //remove leading underscores and capitalize first char
+            while (s[0] == '_')
+                s = s.Substring(1);
+
+            s = "\"" + s + "\"";
+            return s;
+        }
+
         //Targets are not detected specifically in the parser due to complexity limit
         //Therefore, hard code the different targets here
-        private static string[] s_targets = new[] { "move", "bullet", "drop", "stick", "follow", "repel", "vertex", "node1", "node2", "hold", "null" };
+        private static string[] s_targets = new[] { "move", "bullet", "drop", "stick", "follow", "repel", "vertex", "node0", "node1", "hold", "null" };
         public static string FormatActorTarget(string s)
         {
             if (s_targets.Contains(s))
@@ -190,6 +201,12 @@ namespace WDL2CS
         public static string FormatPreprocessor(string preproc)
         {
             return preproc.ToUpperInvariant();
+        }
+
+        public static string FormatClass(string s)
+        {
+            s = Ucfirst(s);
+            return s;
         }
 
         private static string Ucfirst(string s)

@@ -8,15 +8,15 @@ using WDL2CS;
 
 namespace VCCCompiler
 {
-        /// <summary>
-        /// Zusammenfassung für MyCompiler.
-        /// </summary>
-        class MyCompiler
+    /// <summary>
+    /// Zusammenfassung für MyCompiler.
+    /// </summary>
+    class MyCompiler
+    {
+        List<int> tList = new List<int>();
+        List<Regex> rList = new List<Regex>();
+        MyCompiler()
         {
-			List<int> tList = new List<int>();
-			List<Regex> rList = new List<Regex>();
-			MyCompiler()
-			{
             tList.Add(t_IFDEF);
             rList.Add(new Regex("^((?i)IFDEF)"));
             tList.Add(t_Char59);
@@ -122,7 +122,7 @@ namespace VCCCompiler
             tList.Add(t_list);
             rList.Add(new Regex("^((?i)((EACH_TICK|EACH_SEC|PANELS|LAYERS|MESSAGES)\\.(1[0-6]|[1-9])))"));
             tList.Add(t_skill);
-            rList.Add(new Regex("^((?i)(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FLOOR_MODE|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRAME_COLOR|FRICTION|HALF_PI|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|INV_DIST|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|JOY4|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS_[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|MY_(X[1-2]|Y[1-2]|Z[1-2]|X|Y)|NODE|PANEL_LAYER|PI|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|MSIN|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REAL_SPEED|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(CORR|FAC)|TOUCH_(DIST|MODE|STATE)|TWO_PI|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE|PALANIM_DELAY))"));
+            rList.Add(new Regex("^((?i)(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FLOOR_MODE|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRAME_COLOR|FRICTION|HALF_PI|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|INV_DIST|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|JOY4|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|MY_(X[1-2]|Y[1-2]|Z[1-2]|X|Y)|NODE|PANEL_LAYER|PI|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|MSIN|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REAL_SPEED|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(CORR|FAC)|TOUCH_(DIST|MODE|STATE)|TWO_PI|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE|PALANIM_DELAY))"));
             tList.Add(t_synonym);
             rList.Add(new Regex("^((?i)(THERE|MY|HIT|TOUCH_TEXT|TOUCHED|TOUCH_TEX|TOUCH_REG|COMMAND_LINE))"));
             tList.Add(t_ambigChar95globalChar95property);
@@ -158,51 +158,52 @@ namespace VCCCompiler
             tList.Add(t_ignore);
             rList.Add(new Regex("^([\\r\\n\\t\\s]|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))"));
         }
-                YYARec[] yya;
-                YYARec[] yyg;
-                YYRRec[] yyr;
-                int[] yyd;
-                int[] yyal;
-                int[] yyah;
-                int[] yygl;
-                int[] yygh;
+        YYARec[] yya;
+        YYARec[] yyg;
+        YYRRec[] yyr;
+        int[] yyd;
+        int[] yyal;
+        int[] yyah;
+        int[] yygl;
+        int[] yygh;
 
-                int yyn = 0;
-                int yystate = 0;
-                int yychar = -1;
-                int yynerrs = 0;
-                int yyerrflag = 0;
-                int yysp = 0;
-                int yymaxdepth = 4096;
-                int yyflag = 0;
-                int yyfnone   = 0;
-                int[] yys = new int[4096];
-                string[] yyv = new string[4096];
+        int yyn = 0;
+        int yystate = 0;
+        int yychar = -1;
+        int yynerrs = 0;
+        int yyerrflag = 0;
+        int yysp = 0;
+        int yymaxdepth = 4096;
+        int yyflag = 0;
+        int yyfnone = 0;
+        int[] yys = new int[4096];
+        string[] yyv = new string[4096];
 
-                string yyval = "";
+        string yyval = "";
 
-                FileStream OutputStream;
-                //StreamWriter Output;
-                TextWriter Output;
-				bool DeserializeOutput = false;
+        FileStream OutputStream;
+        //StreamWriter Output;
+        TextWriter Output;
+        bool DeserializeOutput = false;
+        string Scriptname = "Script";
 
-                class YYARec
-                {
-                        public int sym;
-                        public int act;
-                        public YYARec (int s, int a){ sym = s; act = a; }
-                }
+        class YYARec
+        {
+            public int sym;
+            public int act;
+            public YYARec(int s, int a) { sym = s; act = a; }
+        }
 
-                class YYRRec
-                {
-                        public int len;
-                        public int sym;
-                        public YYRRec (int l, int s){ sym = s; len = l; }
-                }
+        class YYRRec
+        {
+            public int len;
+            public int sym;
+            public YYRRec(int l, int s) { sym = s; len = l; }
+        }
 
-                ////////////////////////////////////////////////////////////////
-                /// Constant values / tokens
-                ////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
+        /// Constant values / tokens
+        ////////////////////////////////////////////////////////////////
                 int t_IFDEF = 257;
                 int t_Char59 = 258;
                 int t_IFNDEF = 259;
@@ -280,87 +281,97 @@ namespace VCCCompiler
 ///////////////////////////////////////////////////////////
 
 
-                /// <summary>
-                /// Der Haupteinstiegspunkt für die Anwendung.
-                /// </summary>
-                [STAThread]
-                static int Main(string[] args)
+        /// <summary>
+        /// Der Haupteinstiegspunkt für die Anwendung.
+        /// </summary>
+        [STAThread]
+        static int Main(string[] args)
+        {
+
+            bool ShowTokens = false;
+            string InputFilename = "";
+            string OutputFilename = "";
+            string Scriptname = "";
+
+            foreach (string s in args)
+            {
+                if (s.ToLower() == "-t")
                 {
-
-                        bool ShowTokens = false;
-                        string InputFilename = "";
-                        string OutputFilename = "";
-
-                        foreach (string s in args)
-                        {
-                                if (s.ToLower() == "-t")
-                                {
-                                        ShowTokens = true;
-                                }
-                                else
-                                {
-                                        if (InputFilename == "")  InputFilename = s; else
-                                        if (OutputFilename == "") OutputFilename = s; else
-                                        {
-                                                Console.WriteLine("Too many arguments!");
-                                                return 1;
-                                        }
-                                }
-                        }
-                        if (InputFilename == "")
-                        {
-                                System.Console.WriteLine("You need to specify input and outputfile: compiler.exe input.txt output.txt");
-                                return 1;
-                        }
-
-                        StreamReader in_s = File.OpenText(InputFilename);
-                        string inputstream = in_s.ReadToEnd();
-                        in_s.Close();
-
-                        ////////////////////////////////////////////////////////////////
-                        /// Compiler Code:
-                        ////////////////////////////////////////////////////////////////
-                        MyCompiler compiler = new MyCompiler();
-                        compiler.Output = null;
-                        compiler.DeserializeOutput = true;
-                        if (OutputFilename != "")
-                        {
-                                File.Delete(OutputFilename);
-                                compiler.OutputStream = File.OpenWrite(OutputFilename);
-                                compiler.Output = new StreamWriter(compiler.OutputStream,new System.Text.UTF8Encoding(false));
-                        }
-                        else
-                        {
-                                compiler.Output = new StreamWriter(Console.OpenStandardOutput(),new System.Text.UTF8Encoding(false));
-
-                        }
-
-//                        if (!compiler.Scanner(inputstream)) return 1;
-                        if (!compiler.ScannerOpt(inputstream)) return 1;
-                        if (ShowTokens)
-                        {
-                                foreach (AToken t in compiler.TokenList)
-                                {
-                                        Console.WriteLine("TokenID: "+t.token+"  =  "+t.val);
-                                }
-                        }
-                        compiler.InitTables();
-                        if (!compiler.yyparse()) return 1;
-
-                        if (compiler.Output != null) compiler.Output.Close();
-			return 0;
+                    ShowTokens = true;
                 }
-                public void yyaction (int yyruleno)
+                else
                 {
-                        switch (yyruleno)
-                        {
-                                ////////////////////////////////////////////////////////////////
-                                /// YYAction code:
-                                ////////////////////////////////////////////////////////////////
+                    if (InputFilename == "") InputFilename = s;
+                    else
+                    if (OutputFilename == "") OutputFilename = s;
+                    else
+                    if (Scriptname == "") Scriptname = s;
+                    else
+                    {
+                        Console.WriteLine("Too many arguments!");
+                        return 1;
+                    }
+                }
+            }
+            if (InputFilename == "")
+            {
+                System.Console.WriteLine("You need to specify input and (optional) outputfile: compiler.exe input.txt [output.txt] [C# Class Identifier]");
+                return 1;
+            }
+            if (Scriptname == "")
+            {
+                Scriptname = Path.GetFileNameWithoutExtension(InputFilename);
+            }
+
+            StreamReader in_s = File.OpenText(InputFilename);
+            string inputstream = in_s.ReadToEnd();
+            in_s.Close();
+
+            ////////////////////////////////////////////////////////////////
+            /// Compiler Code:
+            ////////////////////////////////////////////////////////////////
+            MyCompiler compiler = new MyCompiler();
+            compiler.Output = null;
+            compiler.DeserializeOutput = true;
+            compiler.Scriptname = Scriptname;
+            if (OutputFilename != "")
+            {
+                File.Delete(OutputFilename);
+                compiler.OutputStream = File.OpenWrite(OutputFilename);
+                compiler.Output = new StreamWriter(compiler.OutputStream, new System.Text.UTF8Encoding(false));
+            }
+            else
+            {
+                compiler.Output = new StreamWriter(Console.OpenStandardOutput(), new System.Text.UTF8Encoding(false));
+
+            }
+
+            //                        if (!compiler.Scanner(inputstream)) return 1;
+            if (!compiler.ScannerOpt(inputstream)) return 1;
+            if (ShowTokens)
+            {
+                foreach (AToken t in compiler.TokenList)
+                {
+                    Console.WriteLine("TokenID: " + t.token + "  =  " + t.val);
+                }
+            }
+            compiler.InitTables();
+            if (!compiler.yyparse()) return 1;
+
+            if (compiler.Output != null) compiler.Output.Close();
+            return 0;
+        }
+        public void yyaction(int yyruleno)
+        {
+            switch (yyruleno)
+            {
+                ////////////////////////////////////////////////////////////////
+                /// YYAction code:
+                ////////////////////////////////////////////////////////////////
 							case    1 : 
          yyval = yyv[yysp-0];
          if (DeserializeOutput)
-         Output.WriteLine(Script.Format(yyval));
+         Output.WriteLine(Script.Format(Scriptname, yyval));
          else
          Output.Write(yyval);
          
@@ -1257,15 +1268,15 @@ namespace VCCCompiler
          yyval = Formatter.FormatString(yyv[yysp-0]);
          
        break;
-                                default : return;
-                        }
-                }
+               default: return;
+            }
+        }
 
-                public void InitTables()
-                {
-                        ////////////////////////////////////////////////////////////////
-                        /// Init Table code:
-                        ////////////////////////////////////////////////////////////////
+        public void InitTables()
+        {
+            ////////////////////////////////////////////////////////////////
+            /// Init Table code:
+            ////////////////////////////////////////////////////////////////
 
 					int yynacts   = 2079;
 					int yyngotos  = 906;
@@ -6126,210 +6137,214 @@ namespace VCCCompiler
 					yyr[yyrc] = new YYRRec(1,-48);yyrc++; 
 					yyr[yyrc] = new YYRRec(1,-25);yyrc++; 
 					yyr[yyrc] = new YYRRec(1,-23);yyrc++;
-                }
+        }
 
-                public bool yyact(int state, int sym , ref int act)
+        public bool yyact(int state, int sym, ref int act)
+        {
+            int k = yyal[state];
+            while (k <= yyah[state] && yya[k].sym != sym) k++;
+            if (k > yyah[state]) return false;
+            act = yya[k].act;
+            return true;
+        }
+        public bool yygoto(int state, int sym, ref int nstate)
+        {
+            int k = yygl[state];
+            while (k <= yygh[state] && yyg[k].sym != sym) k++;
+            if (k > yygh[state]) return false;
+            nstate = yyg[k].act;
+            return true;
+        }
+
+        public void yyerror(string s)
+        {
+            System.Console.Write(s);
+        }
+
+        int yylexpos = -1;
+        string yylval = "";
+
+        public int yylex()
+        {
+            yylexpos++;
+            if (yylexpos >= TokenList.Count)
+            {
+                yylval = "";
+                return 0;
+            }
+            else
+            {
+                yylval = ((AToken)TokenList[yylexpos]).val;
+                return ((AToken)TokenList[yylexpos]).token;
+            }
+        }
+
+        public bool yyparse()
+        {
+
+            parse:
+
+            yysp++;
+            if (yysp >= yymaxdepth)
+            {
+                yyerror("yyparse stack overflow");
+                goto abort;
+            }
+
+            yys[yysp] = yystate;
+            yyv[yysp] = yyval;
+
+            next:
+
+            if (yyd[yystate] == 0 && yychar == -1)
+            {
+                yychar = yylex();
+                if (yychar < 0) yychar = 0;
+            }
+
+            yyn = yyd[yystate];
+            if (yyn != 0) goto reduce;
+
+
+            if (! yyact(yystate, yychar, ref yyn)) goto error;
+            else if (yyn>0) goto shift;
+            else if (yyn<0) goto reduce;
+            else            goto accept;
+
+            error:
+
+            if (yyerrflag==0) yyerror("syntax error");
+
+            errlab:
+
+            if (yyerrflag==0) yynerrs++;
+
+            if (yyerrflag<=2)
+            {
+                yyerrflag = 3;
+                while (yysp > 0 && !(yyact(yys[yysp], 255, ref yyn) && yyn > 0)) yysp--;
+
+                if (yysp == 0) goto abort;
+                yystate = yyn;
+                goto parse;
+            }
+            else
+            {
+                if (yychar == 0) goto abort;
+                yychar = -1; goto next;
+            }
+
+            shift:
+
+            yystate = yyn;
+            yychar = -1;
+            yyval = yylval;
+            if (yyerrflag > 0) yyerrflag--;
+            goto parse;
+
+            reduce:
+
+            yyflag = yyfnone;
+            yyaction(-yyn);
+            yysp -= yyr[-yyn].len;
+
+            if (yygoto(yys[yysp], yyr[-yyn].sym, ref yyn)) yystate = yyn;
+
+            switch (yyflag)
+            {
+                case 1: goto accept;
+                case 2: goto abort;
+                case 3: goto errlab;
+            }
+
+            goto parse;
+
+            accept:
+
+            return true;
+
+            abort:
+
+            return false;
+        }
+        ////////////////////////////////////////////////////////////////
+        /// Scanner - Optimized
+        ////////////////////////////////////////////////////////////////
+
+        public bool ScannerOpt(string Input)
+        {
+            if (Input.Length == 0) return true;
+            TokenList = new ArrayList();
+            while (1 == 1)
+            {
+                AToken lasttoken = FindTokenOpt(Input);
+                if (lasttoken.token == 0) break;
+                if (lasttoken.token != t_ignore) TokenList.Add(lasttoken);
+                if (Input.Length > lasttoken.val.Length)
+                    Input = Input.Substring(lasttoken.val.Length);
+                else return true;
+            }
+            System.Console.WriteLine(Input);
+            System.Console.WriteLine();
+            System.Console.WriteLine("No matching token found!");
+            return false;
+        }
+        public AToken FindTokenOpt(string Rest)
+        {
+            ArrayList Results = new ArrayList();
+            ArrayList ResultsV = new ArrayList();
+            Match m;
+            try
+            {
+
+                for (int idx = 0; idx < tList.Count; idx++)
                 {
-                        int k = yyal[state];
-                        while ( k <= yyah[state] && yya[k].sym != sym) k++;
-                        if (k > yyah[state]) return false;
-                        act = yya[k].act;
-                        return true;
+                    m = rList[idx].Match(Rest);
+                    if (m.Success)
+                    {
+                        Results.Add(tList[idx]);
+                        ResultsV.Add(m.Value);
+                    }
                 }
-                public bool yygoto(int state, int sym , ref int nstate)
+
+            }
+            catch { }
+            int maxlength = 0;
+            int besttoken = 0;
+            AToken ret = new AToken();
+            ret.token = besttoken;
+            for (int i = 0; i < Results.Count; i++)
+            {
+                if (ResultsV[i].ToString().Length > maxlength)
                 {
-                        int k = yygl[state];
-                        while ( k <= yygh[state] && yyg[k].sym != sym) k++;
-                        if (k > yygh[state]) return false;
-                        nstate = yyg[k].act;
-                        return true;
+                    maxlength = ResultsV[i].ToString().Length;
+                    besttoken = (int)Results[i];
+                    ret.token = besttoken;
+                    if (besttoken != 0)
+                        ret.val = ResultsV[i].ToString();
                 }
+            }
+            return ret;
+        }
+        public static string SubScanner(string file)
+        {
+            StreamReader in_s = File.OpenText(file);
+            string inputstream = in_s.ReadToEnd();
+            in_s.Close();
 
-                public void yyerror (string s)
-                {
-                        System.Console.Write(s);
-                }
+            MyCompiler compiler = new MyCompiler();
+            StringBuilder sb = new StringBuilder();
+            compiler.Output = new StringWriter(sb);
+            if (!compiler.ScannerOpt(inputstream))
+                return string.Empty;
+            compiler.InitTables();
+            if (!compiler.yyparse())
+                return string.Empty;
 
-                int yylexpos = -1;
-                string yylval = "";
-
-                public int yylex ()
-                {
-                        yylexpos++;
-                        if(yylexpos >= TokenList.Count)
-                        {
-                                yylval = "";
-                                return 0;
-                        }
-                        else
-                        {
-                                yylval = ((AToken)TokenList[yylexpos]).val;
-                                return ((AToken)TokenList[yylexpos]).token;
-                        }
-                }
-
-                public bool yyparse ()
-                {
-
-                        parse:
-
-                                yysp++;
-                        if (yysp>=yymaxdepth)
-                        {
-                                yyerror("yyparse stack overflow");
-                                goto abort;
-                        }
-
-                        yys[yysp] = yystate;
-                        yyv[yysp] = yyval;
-
-                        next:
-
-                                if (yyd[yystate]==0 && yychar==-1)
-                                {
-                                        yychar = yylex();
-                                        if (yychar<0) yychar = 0;
-                                }
-
-                        yyn = yyd[yystate];
-                        if (yyn != 0) goto reduce;
-
-
-                        if (! yyact(yystate, yychar, ref yyn)) goto error;
-                        else if (yyn>0) goto shift;
-                        else if (yyn<0) goto reduce;
-                        else            goto accept;
-
-                        error:
-
-                                if (yyerrflag==0) yyerror("syntax error");
-
-                        errlab:
-
-                                if (yyerrflag==0) yynerrs++;
-
-                        if (yyerrflag<=2)
-                        {
-                                yyerrflag = 3;
-                                while (yysp>0 && !(yyact(yys[yysp], 255, ref yyn) && yyn > 0)) yysp--;
-
-                                if (yysp==0) goto abort;
-                                yystate = yyn;
-                                goto parse;
-                        }
-                        else
-                        {
-                                if (yychar==0) goto abort;
-                                yychar = -1; goto next;
-                        }
-
-                        shift:
-
-                        yystate = yyn;
-                        yychar = -1;
-                        yyval = yylval;
-                        if (yyerrflag>0) yyerrflag--;
-                        goto parse;
-
-                        reduce:
-
-                        yyflag = yyfnone;
-                        yyaction(-yyn);
-                        yysp -= yyr[-yyn].len;
-
-                        if (yygoto(yys[yysp], yyr[-yyn].sym, ref yyn)) yystate = yyn;
-
-                        switch (yyflag)
-                        {
-                                case 1 : goto accept;
-                                case 2 : goto abort;
-                                case 3 : goto errlab;
-                        }
-
-                        goto parse;
-
-                        accept:
-
-                                return true;
-
-                        abort:
-
-                                return false;
-                }
-		////////////////////////////////////////////////////////////////
-		/// Scanner - Optimized
-		////////////////////////////////////////////////////////////////
-
-		public bool ScannerOpt (string Input)
-		{
-			if (Input.Length == 0) return true;
-			TokenList = new ArrayList();
-			while (1==1)
-			{
-				AToken lasttoken = FindTokenOpt(Input);
-				if (lasttoken.token == 0) break;
-				if (lasttoken.token != t_ignore) TokenList.Add(lasttoken);
-				if (Input.Length > lasttoken.val.Length)
-				Input = Input.Substring(lasttoken.val.Length); else return true;
-			}
-			System.Console.WriteLine(Input);
-			System.Console.WriteLine();
-			System.Console.WriteLine("No matching token found!");
-			return false;
-		}
-		public AToken FindTokenOpt (string Rest)
-		{
-			ArrayList Results  = new ArrayList();
-			ArrayList ResultsV = new ArrayList();
-			Match m;
-			try{
-
-				for (int idx = 0; idx < tList.Count; idx++)
-				{
-					m = rList[idx].Match(Rest);
-					if (m.Success)
-					{
-						Results.Add(tList[idx]);
-						ResultsV.Add(m.Value);
-					}
-				}
-
-			}catch{}
-			int maxlength = 0;
-			int besttoken = 0;
-			AToken ret = new AToken();
-			ret.token = besttoken;
-			for (int i = 0; i < Results.Count; i++){
-				if (ResultsV[i].ToString().Length > maxlength)
-				{
-					maxlength = ResultsV[i].ToString().Length;
-					besttoken = (int)Results[i];
-					ret.token = besttoken;
-					if (besttoken != 0)
-						ret.val   = ResultsV[i].ToString();
-				}
-			}
-			return ret;
-		}
-		public static string SubScanner(string file)
-		{
-			StreamReader in_s = File.OpenText(file);
-			string inputstream = in_s.ReadToEnd();
-			in_s.Close();
-
-			MyCompiler compiler = new MyCompiler();
-			StringBuilder sb = new StringBuilder();
-			compiler.Output = new StringWriter(sb);
-			if (!compiler.ScannerOpt(inputstream))
-				return string.Empty;
-			compiler.InitTables();
-			if (!compiler.yyparse())
-				return string.Empty;
-
-			if (compiler.Output != null)
-				compiler.Output.Close();
-			return sb.ToString();
-		}
+            if (compiler.Output != null)
+                compiler.Output.Close();
+            return sb.ToString();
+        }
 		////////////////////////////////////////////////////////////////
 		/// Scanner
 		////////////////////////////////////////////////////////////////
@@ -6573,9 +6588,9 @@ namespace VCCCompiler
 				Results.Add (t_list);
 				ResultsV.Add(Regex.Match(Rest,"^((?i)((EACH_TICK|EACH_SEC|PANELS|LAYERS|MESSAGES)\\.(1[0-6]|[1-9])))").Value);}
 
-			if (Regex.IsMatch(Rest,"^((?i)(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FLOOR_MODE|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRAME_COLOR|FRICTION|HALF_PI|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|INV_DIST|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|JOY4|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS_[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|MY_(X[1-2]|Y[1-2]|Z[1-2]|X|Y)|NODE|PANEL_LAYER|PI|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|MSIN|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REAL_SPEED|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(CORR|FAC)|TOUCH_(DIST|MODE|STATE)|TWO_PI|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE|PALANIM_DELAY))")){
+			if (Regex.IsMatch(Rest,"^((?i)(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FLOOR_MODE|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRAME_COLOR|FRICTION|HALF_PI|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|INV_DIST|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|JOY4|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|MY_(X[1-2]|Y[1-2]|Z[1-2]|X|Y)|NODE|PANEL_LAYER|PI|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|MSIN|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REAL_SPEED|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(CORR|FAC)|TOUCH_(DIST|MODE|STATE)|TWO_PI|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE|PALANIM_DELAY))")){
 				Results.Add (t_skill);
-				ResultsV.Add(Regex.Match(Rest,"^((?i)(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FLOOR_MODE|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRAME_COLOR|FRICTION|HALF_PI|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|INV_DIST|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|JOY4|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS_[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|MY_(X[1-2]|Y[1-2]|Z[1-2]|X|Y)|NODE|PANEL_LAYER|PI|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|MSIN|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REAL_SPEED|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(CORR|FAC)|TOUCH_(DIST|MODE|STATE)|TWO_PI|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE|PALANIM_DELAY))").Value);}
+				ResultsV.Add(Regex.Match(Rest,"^((?i)(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FLOOR_MODE|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRAME_COLOR|FRICTION|HALF_PI|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|INV_DIST|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|JOY4|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|MY_(X[1-2]|Y[1-2]|Z[1-2]|X|Y)|NODE|PANEL_LAYER|PI|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|MSIN|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REAL_SPEED|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(CORR|FAC)|TOUCH_(DIST|MODE|STATE)|TWO_PI|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE|PALANIM_DELAY))").Value);}
 
 			if (Regex.IsMatch(Rest,"^((?i)(THERE|MY|HIT|TOUCH_TEXT|TOUCHED|TOUCH_TEX|TOUCH_REG|COMMAND_LINE))")){
 				Results.Add (t_synonym);

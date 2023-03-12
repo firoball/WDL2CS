@@ -79,7 +79,7 @@ namespace WDL2CS
                 string parameter = m_parameters[0];
                 //Patch for video mode definition
                 if (m_name.Contains("Video"))
-                    parameter = "\"" + parameter + "\"";
+                    parameter = Formatter.FormatVideo(parameter);
                 o += s_indent + m_name + " = " + parameter + ";";
             }
             return o;

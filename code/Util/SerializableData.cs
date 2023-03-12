@@ -25,11 +25,18 @@ namespace WDL2CS
 
         public override void Format()
         {
+            //TODO: should this code be somewhere in Sections class?
             List<string> sections = new List<string>();
             List<string> initSections = new List<string>();
 
             foreach (ISerializable section in m_sections)
             {
+                if (ParentContains(section.Name))
+                {
+                    //TODO: modify formatting accordingly 
+                    Console.WriteLine("(W) SERIALIZABLEDATA found shadow property: " + section.Name);
+                }
+
                 if (section.IsInitialized())
                     initSections.Add(section.Format());
                 else
