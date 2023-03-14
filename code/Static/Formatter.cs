@@ -71,6 +71,12 @@ namespace WDL2CS
 
         public static string FormatIdentifier(string s)
         {
+            //somewhat dirty workaround due to Keywords which aer identical to Object Defs.
+            //These have been prefixed with leading underscores in a previous formatting step.
+            //remove leading underscores again so proper identifier can be derived
+            while (s[0] == '_')
+                s = s.Substring(1);
+
             s = s.ToLower();
             //patch all identifiers conflicting with C# language
             CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
@@ -99,7 +105,7 @@ namespace WDL2CS
 
         public static string FormatFlag(string s)
         {
-            //somewhat dirty workaround due to"base" identifier being patched to avoid clash with C' language
+            //somewhat dirty workaround due to"base" identifier being patched to avoid clash with C# language
             //remove leading underscores and capitalize first char
             while (s[0] == '_')
                 s = s.Substring(1);
@@ -109,7 +115,7 @@ namespace WDL2CS
 
         public static string FormatVideo(string s)
         {
-            //somewhat dirty workaround due to"base" identifier being patched to avoid clash with C' language
+            //somewhat dirty workaround due to identifier starting with number being patched to avoid clash with C' language
             //remove leading underscores and capitalize first char
             while (s[0] == '_')
                 s = s.Substring(1);
@@ -183,7 +189,7 @@ namespace WDL2CS
         {
             //parser grammar needs to avoid shift/reduce conflicts
             //due to this some specific patches for ambiguous keywords are required to be applied
-            if (string.Compare(obj, "random", true) == 0)
+            if (obj.Equals("random"))
                 return FormatSkill(obj);
             else
                 return obj;
@@ -207,6 +213,15 @@ namespace WDL2CS
         {
             s = Ucfirst(s);
             return s;
+        }
+
+        public static string FormatGotoLabel(string marker)
+        {
+            //Workaround
+            //make sure any falsly added prefix is discarded (parser cannot distinguish properly for goto)
+            int g = marker.LastIndexOf('.');
+            string label = g < 0 ? marker : marker.Substring(g + 1);
+            return label.ToLowerInvariant();
         }
 
         private static string Ucfirst(string s)

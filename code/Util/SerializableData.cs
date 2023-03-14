@@ -25,6 +25,7 @@ namespace WDL2CS
 
         public override void Format()
         {
+            //TODO: add support for "Load" section here
             //TODO: should this code be somewhere in Sections class?
             List<string> sections = new List<string>();
             List<string> initSections = new List<string>();
@@ -33,11 +34,11 @@ namespace WDL2CS
             {
                 if (ParentContains(section.Name))
                 {
-                    //TODO: modify formatting accordingly 
-                    Console.WriteLine("(W) SERIALIZABLEDATA found shadow property: " + section.Name);
+                    Console.WriteLine("(I) SERIALIZABLEDATA found shadow: " + section.Name);
+                    //Workaround: treat shadow (redefined) sections like initialized objects
+                    //initSections.Add(section.Format()); -- TODO: add on-the-fly-switch for "init" mode
                 }
-
-                if (section.IsInitialized())
+                else if (section.IsInitialized())
                     initSections.Add(section.Format());
                 else
                     sections.Add(section.Format());

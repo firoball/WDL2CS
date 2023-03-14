@@ -194,6 +194,12 @@ namespace WDL2CS
                 p += s_nl + s_indent + "\t}";
             }
 
+            //report any shadow properties (workaround: C# does not allow double-init on construction)
+            if (objectData.ShadowStream.Length > 0)
+            {
+                Sections.ShadowDefinitions += s_nl + objectData.ShadowStream;
+            }
+
             return p;
         }
 
@@ -247,18 +253,31 @@ namespace WDL2CS
             List<string> ranges = new List<string>();
             List<string> controls = new List<string>();
             List<string> properties = new List<string>();
+            List<string> shadows = new List<string>();
 
             foreach (Property property in objectData.Properties)
             {
+                bool isShadow = false;
                 if (objectData.ParentContains(property.Name))
                 {
-                    //TODO: modify formatting accordingly
-                    Console.WriteLine("(W) OBJECT found shadow property: " + property.Name);
+                    Console.WriteLine("(I) OBJECT found shadow property: " + property.Name);
+                    isShadow = true;
                 }
                 switch (property.Name)
                 {
+                    case "Flags":
+                        if (!isShadow)
+                            goto default;
+                        else
+                            shadows.Add($"{m_name}.{property.Format(m_type).Replace("=", "|=")}"); //apply patch for shadow definition
+                        break;
+
                     case "Range":
-                        ranges.Add(property.Format(m_type));
+                        if (!isShadow)
+                            ranges.Add(property.Format(m_type));
+                        else
+                            //shadows.Add($"{m_name}.{property.Name}.Concat({property.Format(m_type)})"); -- not supported by C# for 2D arrays
+                            Console.WriteLine("(W) OBJECT unable to build shadow property: " + property.Name);
                         break;
 
                     case "Digits":
@@ -269,7 +288,10 @@ namespace WDL2CS
                     case "Picture":
                     case "Window":
                     case "Button":
-                        controls.Add(property.Format(m_type));
+                        if (!isShadow)
+                            controls.Add(property.Format(m_type));
+                        else
+                            shadows.Add($"{m_name}.Controls.Concat(new UIControl[] {{ {property.Format(m_type)} }})"); //apply patch for shadow definition
                         break;
 
                     default:
@@ -293,6 +315,10 @@ namespace WDL2CS
             //create comma separated list of properties
             properties.Sort();
             objectData.PropertyStream.Append(string.Join(s_nl, properties.Select(x => indent + "\t" + x + ",")));
+
+            //create semicolon separated list of shadow properties (workaround: these need to be set in initialization routine of script)
+            shadows.Sort();
+            objectData.ShadowStream.Append(string.Join(s_nl, shadows.Select(x => s_indentInit + x + ";")));
         }
 
         private void AddProperty(Property property, List<Property> properties)

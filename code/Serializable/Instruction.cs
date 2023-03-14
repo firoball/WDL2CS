@@ -165,10 +165,7 @@ namespace WDL2CS
                         break;
 
                     case "Goto":
-                        //make sure any falsly added prefix is discarded (parser cannot distinguish properly for goto)
-                        int g = m_parameters[0].LastIndexOf('.');
-                        string label = g < 0 ? m_parameters[0] : m_parameters[0].Substring(g + 1);
-                        o = $"goto {label.ToLowerInvariant()};";
+                        o = $"goto {Formatter.FormatGotoLabel(m_parameters[0])};";
                         break;
 
                     case "if":
@@ -177,10 +174,14 @@ namespace WDL2CS
 
                     case "If_above":
                         o = $"if ({m_parameters[0]} > {m_parameters[1]})";
+                        if(m_parameters.Count > 2)
+                            o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_below":
                         o = $"if ({m_parameters[0]} < {m_parameters[1]})";
+                        if (m_parameters.Count > 2)
+                            o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_equal":
@@ -189,6 +190,8 @@ namespace WDL2CS
                             o = $"if ({m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
                         else
                             o = $"if ({m_parameters[0]} == {m_parameters[1]})";
+                        if (m_parameters.Count > 2)
+                            o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_nequal":
@@ -197,14 +200,20 @@ namespace WDL2CS
                             o = $"if (!{m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
                         else
                             o = $"if ({m_parameters[0]} != {m_parameters[1]})";
+                        if (m_parameters.Count > 2)
+                            o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_max":
                         o = $"if ({m_parameters[0]} >= {m_parameters[0]}.Max)";
+                        if (m_parameters.Count > 2)
+                            o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_min":
                         o = $"if ({m_parameters[0]} <= {m_parameters[0]}.Min)";
+                        if (m_parameters.Count > 2)
+                            o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "Inkey":
@@ -489,6 +498,7 @@ namespace WDL2CS
                         break;
 
                     case "Waitt":
+                    case "Wait_ticks": //undocumented
                         o = $"yield return Waitt({m_parameters[0]});";
                         break;
 

@@ -157,7 +157,8 @@ namespace WDL2CS
                 }
 
                 //add brackets for "If_..." instructions, since these are transformed to bare "if"
-                if (m_instructions[i].Command.StartsWith("If_") ||
+                //don't do this in case of a third partameter is supplied. In this special case an goto instruction got inserted already - no brackets needed
+                if ((m_instructions[i].Command.StartsWith("If_") && (m_instructions[i].Parameters.Count < 3)) ||
                     (m_instructions[i].Command.StartsWith("Else") && (i < m_instructions.Count - 1) && (m_instructions[i + 1].Command[0] != '{')))
                 {
                     if (i < m_instructions.Count - 1)

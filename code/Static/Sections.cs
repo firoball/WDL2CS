@@ -10,6 +10,9 @@ namespace WDL2CS
 
         private static readonly string s_nl = Environment.NewLine;
         private static SerializableData s_serializableData;
+        private static string s_shadowDefinitions = string.Empty;
+
+        public static string ShadowDefinitions { get => s_shadowDefinitions; set => s_shadowDefinitions = value; }
 
         public static string CreatePreProcIfNotCondition(string expr, string stream)
         {
@@ -105,7 +108,7 @@ namespace WDL2CS
 
         public static string FormatInit()
         {
-            return s_serializableData.InitSectionStream.ToString();
+            return s_serializableData.InitSectionStream.Append(s_shadowDefinitions).ToString();
         }
 
         public static string Format()

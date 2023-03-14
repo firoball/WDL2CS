@@ -10,7 +10,7 @@ namespace WDL2CS
         private List<Property> m_properties;
         private Object m_parentObject;
 
-        public ObjectData() : base(3)
+        public ObjectData() : base(4)
         {
             m_properties = new List<Property>();
         }
@@ -19,6 +19,7 @@ namespace WDL2CS
         public StringBuilder RangeStream { get => m_streams[0]; }
         public StringBuilder ControlStream { get => m_streams[1]; }
         public StringBuilder PropertyStream { get => m_streams[2]; }
+        public StringBuilder ShadowStream { get => m_streams[3]; }
         public Object ParentObject { set => m_parentObject = value; }
 
         public override bool Contains(string name)
@@ -37,9 +38,5 @@ namespace WDL2CS
             }
         }
 
-        public override string ToString()
-        {
-            return string.Join("; ", m_properties.Select(x => x.Name));
-        }
     }
 }
