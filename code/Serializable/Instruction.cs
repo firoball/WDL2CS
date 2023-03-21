@@ -134,7 +134,7 @@ namespace WDL2CS
                         break;
 
                     case "Exclusive":
-                        o = $"Globals.My.Exclusive();";
+                        o = $"My.Exclusive();";
                         break;
 
                     case "Exec_rules":
@@ -325,7 +325,17 @@ namespace WDL2CS
                         {
                             o = $"Media.Play_sound({m_parameters[0]}, {m_parameters[1]});";
                         }
+                        break;
 
+                    case "Play_soundfile":
+                        if (m_parameters.Count > 2)
+                        {
+                            o = $"Media.Play_sound({m_parameters[0]}, {m_parameters[1]}, {m_parameters[2]});";
+                        }
+                        else
+                        {
+                            o = $"Media.Play_sound({m_parameters[0]}, {m_parameters[1]});";
+                        }
                         break;
 
                     case "Print":

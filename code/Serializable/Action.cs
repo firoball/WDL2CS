@@ -163,7 +163,7 @@ namespace WDL2CS
                 {
                     if (i < m_instructions.Count - 1)
                     {
-                        m_instructions.Insert(i + 2, new Instruction("}", false));
+                        m_instructions.Insert(i + 2, new Instruction("}", false)); //TODO: place closing bracket correctly for nested ifs
                         m_instructions.Insert(i + 1, new Instruction("{", false));
                     }
                     else
