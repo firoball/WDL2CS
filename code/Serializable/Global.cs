@@ -60,6 +60,13 @@ namespace WDL2CS
 
             if (m_parameters.Count > 1)
             {
+                //make sure parameter list is extended to 16
+                int count = m_parameters.Count;
+                for (int i = count; i < 16; i++)
+                {
+                    m_parameters.Add(Formatter.FormatNull());
+                }
+
                 //identify data type for array definition
                 string type = string.Empty;
                 if (m_name.Contains("Each_"))

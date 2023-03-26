@@ -1,7 +1,8 @@
 Start -> Sections
 
 Sections -> Section Sections | EPSILON
-Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor
+Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor | }
+%Superfluous closing curly braces may be put - capture these as dummy section
 
 Preprocessor -> IFDEF DefIdentifier ; PreprocessorSection ; | IFNDEF DefIdentifier ; PreprocessorSection ;
 PreprocessorSection -> Sections ENDIF | Sections IFELSE ; Sections ENDIF
@@ -16,8 +17,8 @@ DefIdentifier -> Identifier | Skill
 DefParameter -> Number | Keyword | File | String | List
 Include -> INCLUDE File ;
 
-GlobalDef -> Global GlobalParameter ; | Event ObjectIdList ;
-Global -> global | ambig_global_property | ambig_global_synonym_property
+GlobalDef -> Global Sep GlobalParameter ; | Event Sep ObjectIdList ;
+Global -> global | ambig_global_property | ambig_global_synonym_property | Skill
 Event -> event | ambig_event_property
 ObjectIdList -> ObjectId Sep ObjectIdList | ObjectId Sep
 GlobalParameter -> Number | File | String | Identifier
@@ -32,7 +33,7 @@ Object -> ObjectRef | ambig_object_flag
 PropertyDefs -> PropertyDef ; PropertyDefs | PreprocProp PropertyDefs | EPSILON
 PropertyDef -> Property Sep PropertyValueList
 PropertyValueList -> PropertyValue Sep PropertyValueList | PropertyValue Sep 
-PropertyValue -> Number | Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Function | File | String | NULL
+PropertyValue -> Number | Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Function | File | String
 
 FunctionDef -> Function FunctionId Sep { Instructions }
 Function -> function
@@ -76,7 +77,7 @@ Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expressio
 
 %Due to parallel grammar pathes caused by ambiguous identifiers, some expected relations are not added here - they already exist implicitly
 %This is required in order to avoid shift/reduce conflicts in generated transpiler code
-Keyword -> Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Event | NULL
+Keyword -> Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Event
 Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag
 %Properties must also allow redefinitions (= identifier)
 %Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
@@ -100,7 +101,7 @@ Skill -> skill | ambig_skill_property
 Synonym -> synonym | ambig_synonym_flag | ambig_global_synonym_property
 %WDL allows usage of reserved keywords as object identifiers (list is derived from test runs on a collection of WDL files)
 %Changing this can easily cause more shift/reduce conflicts
-ObjectId -> identifier | AssetRef | Math | flag | Skill | property | CommandAsId | global
+ObjectId -> identifier | AssetRef | Math | flag | Skill | property | CommandAsId | global | NULL
 FunctionId -> ObjectId | ObjectRef
 GotoMarker -> ObjectId | synonym
 
@@ -125,3 +126,5 @@ String -> string
 %Comma separator may be put at end of instruction right before ;. 
 %A false ; may be put right after closing curly brace.
 %File name may have leading and traling spaces e.g. <file.wdl >. TODO: cleaner filename detection
+%skills may be defined like global definitions
+%SET instruction allows := instead of , as assignment operator

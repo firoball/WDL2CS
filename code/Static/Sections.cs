@@ -106,6 +106,12 @@ namespace WDL2CS
                 return string.Empty;
         }
 
+        public static string AddDummySection(string stream)
+        {
+            Console.WriteLine("(W) SECTIONS ignore invalid section: " + stream);
+            return string.Empty;
+        }
+
         public static string FormatInit()
         {
             return s_serializableData.InitSectionStream.Append(s_shadowDefinitions).ToString();

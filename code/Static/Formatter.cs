@@ -41,11 +41,17 @@ namespace WDL2CS
             return Defines.CheckTransform(s);
         }
 
+        //Lists are not detected specifically in the parser due to complexity limit
+        //Therefore, hard code the different targets here
+        private static string[] s_lists = { "Each_tick", "Each_sec", "Panels", "Messages", "Layers"};
         public static string FormatEvent(string s)
         {
             if (!string.IsNullOrEmpty(s))
                 s = FormatProperty(s);
-            return "Events." + s;
+            if (s_lists.Contains(s))
+                return "Globals." + s;
+            else
+                return "Events." + s;
         }
 
         public static string FormatProperty(string s)
@@ -144,7 +150,7 @@ namespace WDL2CS
 
         //Targets are not detected specifically in the parser due to complexity limit
         //Therefore, hard code the different targets here
-        private static string[] s_targets = new[] { "move", "bullet", "drop", "stick", "follow", "repel", "vertex", "node0", "node1", "hold", "null" };
+        private static string[] s_targets = new[] { "move", "bullet", "drop", "stick", "straight", "follow", "repel", "vertex", "node0", "node1", "hold", "null" };
         public static string FormatActorTarget(string s)
         {
             if (s_targets.Contains(s))

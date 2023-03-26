@@ -18,6 +18,7 @@ namespace WDL2CS
         private readonly bool m_isInitialized;
         private readonly string m_serializedProperties;
         private List<Property> m_properties;
+        private Object m_way; //"inlined" Way object
 
         public string Name { get => m_name; set => m_name = value; }
 
@@ -132,6 +133,11 @@ namespace WDL2CS
                             o += indent + "}";
                         }
                         o += ";";
+                    }
+                    //if "inlined" Way definition was found earlier, prepend Way definition here 
+                    if (m_way != null)
+                    {
+                        o = m_way.Format() + s_nl + o;
                     }
                     break;
             }
@@ -293,6 +299,17 @@ namespace WDL2CS
                         else
                             shadows.Add($"{m_name}.Controls.Concat(new UIControl[] {{ {property.Format(m_type)} }})"); //apply patch for shadow definition
                         break;
+
+                    case "Way":
+                        //Ways can be "inlined" in object definitions
+                        //if way is not yet defined, create and register it outside of serialized parser stream
+                        //during formatting, formatted way object will be printend along with this object
+                        if (!Objects.Is("Way", property.Values[0]))
+                        {
+                            Console.WriteLine("(I) OBJECT add missing Way definition for: " + property.Values[0]);
+                            m_way = Deserialize(Objects.AddObject("Way", property.Values[0]));
+                        }
+                        goto default;
 
                     default:
                         properties.Add(property.Format(m_type));

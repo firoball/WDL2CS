@@ -173,13 +173,13 @@ namespace WDL2CS
                         break;
 
                     case "If_above":
-                        o = $"if ({m_parameters[0]} > {m_parameters[1]})";
+                        o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} > {Formatter.FormatTargetSkill(m_parameters[1])})";
                         if(m_parameters.Count > 2)
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_below":
-                        o = $"if ({m_parameters[0]} < {m_parameters[1]})";
+                        o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} < {Formatter.FormatTargetSkill(m_parameters[1])})";
                         if (m_parameters.Count > 2)
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
@@ -189,7 +189,7 @@ namespace WDL2CS
                         if (m_parameters[0].EndsWith(".Target"))
                             o = $"if ({m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
                         else
-                            o = $"if ({m_parameters[0]} == {m_parameters[1]})";
+                            o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} == {Formatter.FormatTargetSkill(m_parameters[1])})";
                         if (m_parameters.Count > 2)
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
@@ -199,19 +199,19 @@ namespace WDL2CS
                         if (m_parameters[0].EndsWith(".Target"))
                             o = $"if (!{m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
                         else
-                            o = $"if ({m_parameters[0]} != {m_parameters[1]})";
+                            o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} != {Formatter.FormatTargetSkill(m_parameters[1])})";
                         if (m_parameters.Count > 2)
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_max":
-                        o = $"if ({m_parameters[0]} >= {m_parameters[0]}.Max)";
+                        o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} >= {m_parameters[0]}.Max)";
                         if (m_parameters.Count > 2)
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_min":
-                        o = $"if ({m_parameters[0]} <= {m_parameters[0]}.Min)";
+                        o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} <= {m_parameters[0]}.Min)";
                         if (m_parameters.Count > 2)
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;

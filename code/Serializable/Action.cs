@@ -136,29 +136,38 @@ namespace WDL2CS
                 }
 
                 //Transform "Skip" to "goto" and jump marker
-                if (m_instructions[i].Command.StartsWith("Skip"))
+                else if (m_instructions[i].Command.StartsWith("Skip"))
                 {
                     //Console.WriteLine(name);
                     int index = FindIndex(i, Convert.ToInt32(m_instructions[i].Parameters[0]));
-                    //Add additional parameter carrying the jump label
-                    m_instructions[i].Parameters.Add("skip" + i + "to" + index);
-                    //create new instruction for jump marker which is to be inserted
-                    Instruction marker = new Instruction(Formatter.FormatMarker(m_instructions[i].Parameters[1]), false);
-                    //instruction needs to be inserted above current one. Buffer and insert later
-                    //otherwise iteration can break on direct insertion
-                    if (index < i)
+                    if (index > -1)
                     {
-                        inserts.Add(index, marker);
+                        //Add additional parameter carrying the jump label
+                        m_instructions[i].Parameters.Add("skip" + i + "to" + index);
+                        //create new instruction for jump marker which is to be inserted
+                        Instruction marker = new Instruction(Formatter.FormatMarker(m_instructions[i].Parameters[1]), false);
+                        //instruction needs to be inserted above current one. Buffer and insert later
+                        //otherwise iteration can break on direct insertion
+                        if (index < i)
+                        {
+                            inserts.Add(index, marker);
+                        }
+                        else
+                        {
+                            m_instructions.Insert(index, marker);
+                        }
                     }
                     else
                     {
-                        m_instructions.Insert(index, marker);
+                        //Skip tries to jump outside instruction list - throw warning and remove instruction
+                        Console.WriteLine("(W) ACTION remove invalid statement in " + m_name + ": " + m_instructions[i].Command + " " + m_instructions[i].Parameters[0]);
+                        m_instructions.RemoveAt(i);
                     }
                 }
 
                 //add brackets for "If_..." instructions, since these are transformed to bare "if"
                 //don't do this in case of a third partameter is supplied. In this special case an goto instruction got inserted already - no brackets needed
-                if ((m_instructions[i].Command.StartsWith("If_") && (m_instructions[i].Parameters.Count < 3)) ||
+                else if ((m_instructions[i].Command.StartsWith("If_") && (m_instructions[i].Parameters.Count < 3)) ||
                     (m_instructions[i].Command.StartsWith("Else") && (i < m_instructions.Count - 1) && (m_instructions[i + 1].Command[0] != '{')))
                 {
                     if (i < m_instructions.Count - 1)
@@ -171,7 +180,7 @@ namespace WDL2CS
                     else
                     {
                         //in case no instruction follows after if_*, remove instruction
-                        Console.WriteLine("(W) INSTRUCTIONS remove incomplete statement: " + m_instructions[i].Format(m_name));
+                        Console.WriteLine("(W) ACTION remove incomplete statement in "+ m_name + ": " + m_instructions[i].Format(m_name));
                         m_instructions.RemoveAt(i);
                     }
                 }
@@ -252,6 +261,11 @@ namespace WDL2CS
             while (progress != count)
             {
                 i += Math.Sign(count);
+
+                //something is very wrong here -abort
+                if (i >= m_instructions.Count || i < 0)
+                    return -1;
+
                 if (m_instructions[i].Count)
                     progress += Math.Sign(count);
             }
