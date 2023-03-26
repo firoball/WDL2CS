@@ -163,7 +163,9 @@ namespace WDL2CS
                 {
                     if (i < m_instructions.Count - 1)
                     {
-                        m_instructions.Insert(i + 2, new Instruction("}", false)); //TODO: place closing bracket correctly for nested ifs
+                        //check for nested "if" blocks and advance instruction counter for closig bracket accordingly
+                        int j = CountInstructionGroup(i + 1);
+                        m_instructions.Insert(j, new Instruction("}", false));
                         m_instructions.Insert(i + 1, new Instruction("{", false));
                     }
                     else
@@ -189,6 +191,21 @@ namespace WDL2CS
                 m_instructions.Add(new Instruction("yield break;", false));
 
             return interruptable;
+        }
+
+        //identify nested "IF_" instructions and test for opening brackets
+        //brackets are guaranteed to have been added already due to traversing instruction list backwards
+        //this will NOT capture nested "IF_" with actual "if" instructions.
+        //a wild mix of these instruction types so far has not been observed in the WDL wilderness
+        private int CountInstructionGroup(int pos)
+        {
+            int endpos = pos + 1;
+            //nested "if" with brackets found
+            if (m_instructions[pos].Command.StartsWith("If_") && (pos < m_instructions.Count - 1) && (m_instructions[pos + 1].Command[0] == '{'))
+            {
+                endpos = CountInstructionGroup(pos + 2);
+            }
+            return endpos;
         }
 
         private string UpdateIndent(string s)

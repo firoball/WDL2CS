@@ -156,7 +156,7 @@ namespace VCCCompiler
             tList.Add(t_string);
             rList.Add(new Regex("^(\"(.|[\\r\\n])*?\")"));
             tList.Add(t_ignore);
-            rList.Add(new Regex("^([\\r\\n\\t\\s]|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))"));
+            rList.Add(new Regex("^([\\r\\n\\t\\s\\x00]|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))"));
         }
         YYARec[] yya;
         YYARec[] yyg;
