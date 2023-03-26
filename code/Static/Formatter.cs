@@ -69,14 +69,32 @@ namespace WDL2CS
             return s;
         }
 
+        public static string FormatPatchFunction(string s)
+        {
+            //somewhat dirty workaround due to Keywords which are identical to Object Defs.
+            //These get prefixed with two leading underscores in order to avoid conflicts with class names.
+            //on restoring, a valid identifier will be built, since parser handles function and object names the same.
+            //handled by: FormatRestoreFunctionIdentifier
+            return "__" + FormatFunction(s);
+        }
+
+        public static string FormatRestoreFunctionIdentifier(string s)
+        {
+            //somewhat dirty workaround due to Keywords which are identical to Object Defs.
+            //These have been prefixed with two leading underscores in a previous formatting step.
+            //remove leading underscores again so proper identifier can be derived
+            //identifier and object names are handled the same by the parser, therefore function names which serve as
+            //C# class identifiers need to be converted
+            //CAUTION: this may break if __function style names are used in the original WDL
+            //Accompanying patch routine: FormatPatchFunction
+            if (s[0] == '_' && s[1] == '_') 
+                s = s.Substring(2);
+
+            return FormatIdentifier(s);
+        }
+
         public static string FormatIdentifier(string s)
         {
-            //somewhat dirty workaround due to Keywords which aer identical to Object Defs.
-            //These have been prefixed with leading underscores in a previous formatting step.
-            //remove leading underscores again so proper identifier can be derived
-            while (s[0] == '_')
-                s = s.Substring(1);
-
             s = s.ToLower();
             //patch all identifiers conflicting with C# language
             CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");

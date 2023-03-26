@@ -63,7 +63,7 @@ namespace WDL2CS
         {
             string s = string.Empty;
             bool interruptable = false;
-            string instName = Formatter.FormatIdentifier(m_name);
+            string instName = Formatter.FormatRestoreFunctionIdentifier(m_name);
 
             //Update instruction list in order to make it compatible to C#
             interruptable = ProcessInstructions();
