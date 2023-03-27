@@ -92,6 +92,28 @@ High-level road map:
 * [ ] export C# scripts <-- __HERE__
 * [ ] test exported code against AckexCSApi <-- __HERE__
 
+## Compatibility
+
+Following Acknex3 games have been transpiled successfully:
+
+* Abiventure 2 (Crew99)
+* Adeptus (Conitec)
+* Angst (ManMachine Games)
+* Deathman's Island (Lutz Hüls)
+* Floriansdorf (BigByte Software)
+* Lord of Lightning (Alex Seifriz)
+* Nightfreeze (Dennis Lenz)
+* oPDemo3 (oP Group Germany)
+* Skaphander Demo (oP Group Germany)
+* Streetlife (Madhouse Games)
+* Tyrannizer Demo (Viper Byte Software)
+* Vampira (CWR-Spiele)
+* Varghina Incident / Alien Anarchy (ESA map) (Perceptum Informática)
+* VRDemo (oP Group Germany)
+* VVL (CWR-Spiele) 
+* World of Kandoria - Contest version (mine)
+
+Source code is not freely available for all of the listed games, therefore transpiled code is not uploaded to GitHub.
 
 ## Legal stuff
 
