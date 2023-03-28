@@ -90,7 +90,7 @@ High-level road map:
 * [x] define WDL API for C# (separate project, in progress)
 * [x] add token to script generator logic
 * [ ] export C# scripts <-- __HERE__
-* [ ] test exported code against AckexCSApi <-- __HERE__
+* [ ] test exported code against AcknexCSApi <-- __HERE__
 
 ## Compatibility
 
@@ -110,17 +110,17 @@ Following Acknex3 games have been transpiled successfully:
 * Tasty Temple Challenge
 * Tyrannizer Demo (Viper Byte Software)
 * Vampira (CWR-Spiele)
-* Varghina Incident / Alien Anarchy (except SDROME map) (Perceptum Informática)
+* Varghina Incident / Alien Anarchy (Perceptum Informática)
 * VRDemo (oP Group Germany)
 * VVL (CWR-Spiele) 
 * World of Kandoria - Contest version (mine)
-
-Source code is not freely available for all of the listed games, therefore transpiled code is not uploaded to GitHub.
 
 Following Acknex3 games currently are **not** supported by the transpiler:
 
 * Der Name des Bruders (huge WDL files lead to breakdown of parser)
 * VR Messe (Name clashes between different object types and actions)
+
+Source code is not freely available for all of the listed games, therefore transpiled code is not uploaded to GitHub.
 
 ## Legal stuff
 

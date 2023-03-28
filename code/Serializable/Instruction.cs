@@ -174,13 +174,13 @@ namespace WDL2CS
 
                     case "If_above":
                         o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} > {Formatter.FormatTargetSkill(m_parameters[1])})";
-                        if(m_parameters.Count > 2)
+                        if(m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_below":
                         o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} < {Formatter.FormatTargetSkill(m_parameters[1])})";
-                        if (m_parameters.Count > 2)
+                        if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
@@ -190,7 +190,7 @@ namespace WDL2CS
                             o = $"if ({m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
                         else
                             o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} == {Formatter.FormatTargetSkill(m_parameters[1])})";
-                        if (m_parameters.Count > 2)
+                        if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
@@ -200,19 +200,19 @@ namespace WDL2CS
                             o = $"if (!{m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
                         else
                             o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} != {Formatter.FormatTargetSkill(m_parameters[1])})";
-                        if (m_parameters.Count > 2)
+                        if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_max":
                         o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} >= {m_parameters[0]}.Max)";
-                        if (m_parameters.Count > 2)
+                        if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_min":
                         o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} <= {m_parameters[0]}.Min)";
-                        if (m_parameters.Count > 2)
+                        if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
