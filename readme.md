@@ -104,16 +104,23 @@ Following Acknex3 games have been transpiled successfully:
 * Lord of Lightning (Alex Seifriz)
 * Nightfreeze (Dennis Lenz)
 * oPDemo3 (oP Group Germany)
+* Pibbgame
 * Skaphander Demo (oP Group Germany)
 * Streetlife (Madhouse Games)
+* Tasty Temple Challenge
 * Tyrannizer Demo (Viper Byte Software)
 * Vampira (CWR-Spiele)
-* Varghina Incident / Alien Anarchy (ESA map) (Perceptum Informática)
+* Varghina Incident / Alien Anarchy (except SDROME map) (Perceptum Informática)
 * VRDemo (oP Group Germany)
 * VVL (CWR-Spiele) 
 * World of Kandoria - Contest version (mine)
 
 Source code is not freely available for all of the listed games, therefore transpiled code is not uploaded to GitHub.
+
+Following Acknex3 games currently are **not** supported by the transpiler:
+
+* Der Name des Bruders (huge WDL files lead to breakdown of parser)
+* VR Messe (Name clashes between different object types and actions)
 
 ## Legal stuff
 
