@@ -1,13 +1,13 @@
 Start -> Sections
 
 Sections -> Section Sections | EPSILON
-Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor | }
+Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor | } | ;
 %Superfluous closing curly braces may be put - capture these as dummy section
 
 Preprocessor -> IFDEF DefIdentifier ; PreprocessorSection ; | IFNDEF DefIdentifier ; PreprocessorSection ;
 PreprocessorSection -> Sections ENDIF | Sections IFELSE ; Sections ENDIF
-PreprocInst -> IFDEF DefIdentifier ; PreprocInstSection ; | IFNDEF DefIdentifier ; PreprocInstSection ;
-PreprocInstSection -> Instructions ENDIF | Instructions IFELSE ; Instructions ENDIF
+PreprocInst -> IFDEF DefIdentifier PreprocInstSection | IFNDEF DefIdentifier PreprocInstSection
+PreprocInstSection -> Instructions ENDIF | Instructions IFELSE Instructions ENDIF
 PreprocProp -> IFDEF DefIdentifier ; PreprocPropSection ; | IFNDEF DefIdentifier ; PreprocPropSection ;
 PreprocPropSection -> PropertyDefs ENDIF | PropertyDefs IFELSE ; PropertyDefs ENDIF
 
@@ -38,8 +38,8 @@ PropertyValue -> Number | Object | ObjectId | ObjectId . Property | ObjectId . F
 FunctionDef -> Function FunctionId Sep { Instructions }
 Function -> function
 %Compatibility patch - Goto markers may also be terminated by ; instead of : (use ifddentifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
-Instructions -> Instruction ; Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
-Instruction -> Command | Command Sep ParameterList | Rule
+Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
+Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | ;
 
 ParameterList -> Parameter Sep ParameterList | Parameter Sep
 Parameter -> Number | Keyword | File | String | List

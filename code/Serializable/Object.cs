@@ -294,10 +294,11 @@ namespace WDL2CS
                     case "Picture":
                     case "Window":
                     case "Button":
-                        if (!isShadow)
+                        //does not work for definitions with "allowMultiple" flag.
+                        //if (!isShadow)
                             controls.Add(property.Format(m_type));
-                        else
-                            shadows.Add($"{m_name}.Controls.Concat(new UIControl[] {{ {property.Format(m_type)} }})"); //apply patch for shadow definition
+                        //else
+                        //    shadows.Add($"{m_name}.Controls.Concat(new UIControl[] {{ {property.Format(m_type)} }})"); //apply patch for shadow definition
                         break;
 
                     case "Way":

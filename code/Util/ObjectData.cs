@@ -24,7 +24,8 @@ namespace WDL2CS
 
         public override bool Contains(string name)
         {
-            return m_properties.Where(x => x.Name.Equals(name)).FirstOrDefault() != null;
+            //skip all properties with "AllowMultiple" flag since it would give false alert - multiple occurences are allowed, shadow property cannot be identified
+            return m_properties.Where(x => x.Name.Equals(name) && !x.AllowMultiple).FirstOrDefault() != null;
         }
 
         public override void Format()

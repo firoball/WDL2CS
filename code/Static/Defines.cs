@@ -13,7 +13,8 @@ namespace WDL2CS
 
         private static Dictionary<string, string> s_redefines = new Dictionary<string, string>();
         public static List<string> s_consts = new List<string>();
-        private static bool s_transform = false;
+        private static bool s_transformProperty = false;
+        private static bool s_transformIdentifier = false;
         private static string s_const = string.Empty;
         private static string s_original = string.Empty;
 
@@ -37,9 +38,12 @@ namespace WDL2CS
             int i = redefine.LastIndexOf('.');
             redefine = i < 0 ? redefine : redefine.Substring(i+1);
 
-            if (s_transform)
+            if (s_transformProperty || s_transformIdentifier)
             {
-                redefine = Formatter.FormatProperty(redefine);
+                if (s_transformProperty)
+                    redefine = Formatter.FormatProperty(redefine);
+                if (s_transformIdentifier)
+                    redefine = Formatter.FormatIdentifier(redefine);
                 if (!s_redefines.ContainsKey(redefine))
                 {
                     s_redefines.Add(redefine, s_original);
@@ -69,7 +73,8 @@ namespace WDL2CS
 
             //Reset settings
             s_const = string.Empty;
-            s_transform = false;
+            s_transformProperty = false;
+            s_transformIdentifier = false;
 
             return s;
         }
@@ -92,6 +97,13 @@ namespace WDL2CS
             s_original = s;
         }
 
+        public static void AddListDefine(string s)
+        {
+            //lists must be assigned directly, references (Synonyms) won't work here
+            s_transformIdentifier = true;
+            s_original = s;
+        }
+
         public static void AddKeywordDefine(string s)
         {
             if (Objects.Identify(out string obj, s))
@@ -109,7 +121,7 @@ namespace WDL2CS
             else
             {
                 //must be some renamed property
-                s_transform = true;
+                s_transformProperty = true;
                 s_original = Formatter.FormatProperty(s);
             }
         }
