@@ -20,7 +20,7 @@ namespace VCCCompiler
 #warning Place tList and rList init in MyCompiler(){} constructor for tokens and their regular expressions. Keeping order of generated constants is essential.
 //Example:
 //                tList.Add(t_IFDEF);
-//                rList.Add(new Regex("^((?i)IFDEF)"));
+//                rList.Add(new Regex("\\G((?i)IFDEF)"));
 //Correct order can be retrieved from generated FindToken() function
         }
         YYARec[] yya;
@@ -38,11 +38,11 @@ namespace VCCCompiler
         int yynerrs = 0;
         int yyerrflag = 0;
         int yysp = 0;
-        int yymaxdepth = 4096;
+        int yymaxdepth = 10000;
         int yyflag = 0;
         int yyfnone = 0;
-        int[] yys = new int[4096];
-        string[] yyv = new string[4096];
+        int[] yys = new int[10000];
+        string[] yyv = new string[10000];
 
         string yyval = "";
 
@@ -279,7 +279,12 @@ namespace VCCCompiler
 
             yyflag = yyfnone;
             yyaction(-yyn);
-            yysp -= yyr[-yyn].len;
+            int l = yyr[-yyn].len;
+            for (int z = yysp; z > yysp - l; z--)
+                yyv[z] = null;
+
+            yysp -= l;
+//            yysp -= yyr[-yyn].len;
 
             if (yygoto(yys[yysp], yyr[-yyn].sym, ref yyn)) yystate = yyn;
 
@@ -308,55 +313,48 @@ namespace VCCCompiler
         {
             if (Input.Length == 0) return true;
             TokenList = new ArrayList();
+            int pos = 0;
             while (1 == 1)
             {
-                AToken lasttoken = FindTokenOpt(Input);
+                AToken lasttoken = FindTokenOpt(Input, pos);
                 if (lasttoken.token == 0) break;
                 if (lasttoken.token != t_ignore) TokenList.Add(lasttoken);
-                if (Input.Length > lasttoken.val.Length)
-                    Input = Input.Substring(lasttoken.val.Length);
-                else return true;
+                pos += lasttoken.val.Length;
+                if (Input.Length <= pos)
+                    return true;
             }
             System.Console.WriteLine(Input);
             System.Console.WriteLine();
             System.Console.WriteLine("No matching token found!");
             return false;
         }
-        public AToken FindTokenOpt(string Rest)
+        public AToken FindTokenOpt(string Rest, int startpos)
         {
-            ArrayList Results = new ArrayList();
-            ArrayList ResultsV = new ArrayList();
             Match m;
+            int maxlength = 0;
+            int besttoken = 0;
+            AToken ret = new AToken();
             try
             {
 
                 for (int idx = 0; idx < tList.Count; idx++)
                 {
-                    m = rList[idx].Match(Rest);
+                    m = rList[idx].Match(Rest, startpos);
                     if (m.Success)
                     {
-                        Results.Add(tList[idx]);
-                        ResultsV.Add(m.Value);
+                        if (m.Value.Length > maxlength)
+                        {
+                            maxlength = m.Value.Length;
+                            besttoken = tList[idx];
+                            ret.token = besttoken;
+                            if (besttoken != 0)
+                                ret.val = m.Value;
+                        }
                     }
                 }
 
             }
             catch { }
-            int maxlength = 0;
-            int besttoken = 0;
-            AToken ret = new AToken();
-            ret.token = besttoken;
-            for (int i = 0; i < Results.Count; i++)
-            {
-                if (ResultsV[i].ToString().Length > maxlength)
-                {
-                    maxlength = ResultsV[i].ToString().Length;
-                    besttoken = (int)Results[i];
-                    ret.token = besttoken;
-                    if (besttoken != 0)
-                        ret.val = ResultsV[i].ToString();
-                }
-            }
             return ret;
         }
         public static string SubScanner(string file)
