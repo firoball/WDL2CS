@@ -28,8 +28,9 @@ namespace WDL2CS
             return "null";
         }
 
-        
-        public static string FormatFunction(string s)
+
+        //todo: treat function as an identifier by default, and only format when generating class definition
+        public static string FormatFunction(string s) // -> FormatFunctionClass
         {
             s = Ucfirst(s);
             return Defines.CheckTransform(s);
@@ -75,7 +76,8 @@ namespace WDL2CS
             return s;
         }
 
-        public static string FormatPatchFunction(string s)
+        //todo: treat function as an identifier by default, and only format when generating class definition
+        public static string FormatPatchFunction(string s) // -> FormatFunction or remove
         {
             //somewhat dirty workaround due to Keywords which are identical to Object Defs.
             //These get prefixed with two leading underscores in order to avoid conflicts with class names.
@@ -84,7 +86,8 @@ namespace WDL2CS
             return "__" + FormatFunction(s);
         }
 
-        public static string FormatRestoreFunctionIdentifier(string s)
+        //todo: treat function as an identifier by default, and only format when generating class definition
+        public static string FormatRestoreFunctionIdentifier(string s) // -> remove
         {
             //somewhat dirty workaround due to Keywords which are identical to Object Defs.
             //These have been prefixed with two leading underscores in a previous formatting step.
@@ -182,7 +185,7 @@ namespace WDL2CS
                     (target.StartsWith("Skills.") || target.Contains(".Skill")) &&
                     !(target.EndsWith(".Min") || target.EndsWith(".Max"))
                 ) ||
-                    Objects.Is("Skill", target)
+                    Objects.Is("Skill", Defines.GetConstReference(target)) //resolve const references in order to detect redefined skills as well
                 )
                 target += ".Val";
 
@@ -246,6 +249,14 @@ namespace WDL2CS
             int g = marker.LastIndexOf('.');
             string label = g < 0 ? marker : marker.Substring(g + 1);
             return label.ToLowerInvariant();
+        }
+
+        public static string FormatDefine(string define)
+        {
+            //Workaround
+            //make sure any falsly added prefix is discarded (parser cannot distinguish properly for defines)
+            int g = define.LastIndexOf('.');
+            return g < 0 ? define : define.Substring(g + 1);
         }
 
         private static string Ucfirst(string s)

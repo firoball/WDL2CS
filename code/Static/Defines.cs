@@ -12,7 +12,7 @@ namespace WDL2CS
         private static List<string> s_defines = new List<string>();
 
         private static Dictionary<string, string> s_redefines = new Dictionary<string, string>();
-        public static List<string> s_consts = new List<string>();
+        public static Dictionary<string, string> s_consts = new Dictionary<string, string>();
         private static bool s_transformProperty = false;
         private static bool s_transformIdentifier = false;
         private static string s_const = string.Empty;
@@ -22,7 +22,7 @@ namespace WDL2CS
         {
             string o = string.Empty;
 
-            foreach(string s in s_defines)
+            foreach (string s in s_defines)
             {
                 o += "#define " + s + s_nl;
             }
@@ -36,7 +36,7 @@ namespace WDL2CS
 
             //patch away global skills - formatting gets inherited due to grammar of parser
             int i = redefine.LastIndexOf('.');
-            redefine = i < 0 ? redefine : redefine.Substring(i+1);
+            redefine = i < 0 ? redefine : redefine.Substring(i + 1);
 
             if (s_transformProperty || s_transformIdentifier)
             {
@@ -58,9 +58,9 @@ namespace WDL2CS
             {
                 //format constants as identifiers instead of preprocessor definition
                 redefine = Formatter.FormatIdentifier(redefine);
-                if (!s_consts.Contains(redefine))
+                if (!s_consts.ContainsKey(redefine))
                 {
-                    s_consts.Add(redefine);
+                    s_consts.Add(redefine, s_original);
                 }
                 else
                 {
@@ -106,10 +106,14 @@ namespace WDL2CS
 
         public static void AddKeywordDefine(string s)
         {
+            s = Formatter.FormatDefine(s);
             if (Objects.Identify(out string obj, s))
             {
                 //identified as some specific object, declare data type accordingly
-                s_const = obj;
+                if (obj.Equals("String"))
+                    s_const = "string"; //special case - C# string type is used instead of custom object
+                else
+                    s_const = obj;
                 s_original = s;
             }
             else if (Assets.Identify(out string asset, s))
@@ -142,7 +146,7 @@ namespace WDL2CS
             //#undef directives are not supported by C# in the same way as in WDL, transpilation may fail here
             if (s_redefines.ContainsKey(define))
                 s_redefines.Remove(define);
-            
+
             if (s_defines.Contains(define))
                 s_defines.Remove(define);
 
@@ -165,7 +169,7 @@ namespace WDL2CS
             //format constants as identifiers instead of preprocessor definition
             constId = Formatter.FormatIdentifier(constId);
 
-            if (s_consts.Contains(constId))
+            if (s_consts.ContainsKey(constId))
             {
                 return constId;
             }
@@ -176,5 +180,17 @@ namespace WDL2CS
 
         }
 
+        public static string GetConstReference(string constId)
+        {
+            if (s_consts.TryGetValue(constId, out string reference))
+            {
+                return reference;
+            }
+            else
+            {
+                return constId;
+            }
+
+        }
     }
 }
