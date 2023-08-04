@@ -63,12 +63,13 @@ namespace WDL2CS
         {
             string s = string.Empty;
             bool interruptable = false;
-            string instName = Formatter.FormatRestoreFunctionIdentifier(m_name);
+            string className = Formatter.FormatFunctionClass(m_name);
+            string instName = m_name;
 
             //Update instruction list in order to make it compatible to C#
             interruptable = ProcessInstructions();
 
-            s += UpdateIndent("private class " + m_name + " : Function<" + m_name + ">");
+            s += UpdateIndent("private class " + className + " : Function<" + className + ">");
             s += UpdateIndent("{");
             s += UpdateIndent("public override IEnumerator Logic()");
             s += UpdateIndent("{");
@@ -104,7 +105,7 @@ namespace WDL2CS
             }
             s += UpdateIndent("}");
             s += UpdateIndent("}");
-            string c = "public static Function " + instName + " = new " + m_name + "()";
+            string c = "public static Function " + instName + " = new " + className + "()";
 
             //flag any action which was identified as interruptable
             if (interruptable)

@@ -402,7 +402,7 @@ namespace WDL2CS
                         //special case: function assignments to each_tick and each_sec (not applicable for Set_all)
                         else if (m_parameters[0].StartsWith(Formatter.FormatGlobal("Each_")))
                         {
-                            string p = Formatter.FormatFunction(m_parameters[1]);
+                            string p = Formatter.FormatIdentifier(m_parameters[1]);
                             //if function assigns itself, use existing instance
                             if (string.Compare(function, p) == 0)
                                 o = $"{m_parameters[0]} = this;";

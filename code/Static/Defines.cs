@@ -106,7 +106,7 @@ namespace WDL2CS
 
         public static void AddKeywordDefine(string s)
         {
-            s = Formatter.FormatDefine(s);
+            s = Formatter.FormatDefine(s); //due to limitations of parser, any keyword define needs to be reformatted explicitly
             if (Objects.Identify(out string obj, s))
             {
                 //identified as some specific object, declare data type accordingly

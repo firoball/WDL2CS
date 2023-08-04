@@ -1886,7 +1886,7 @@ $$ = Actions.CreateWhileCondition($2, $4);
                 <RULE name="ObjectRef"/>
                 <CODE>
                     //$$ = $1;
-$$ = Formatter.FormatPatchFunction($1);
+$$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1894,7 +1894,7 @@ $$ = Formatter.FormatPatchFunction($1);
                 <RULE name="ObjectId"/>
                 <CODE>
                     //$$ = $1;
-$$ = Formatter.FormatFunction($1);
+$$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>

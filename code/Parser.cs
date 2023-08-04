@@ -173,11 +173,11 @@ namespace VCCCompiler
         int yynerrs = 0;
         int yyerrflag = 0;
         int yysp = 0;
-        int yymaxdepth = 10000;
+        int yymaxdepth = 20000;
         int yyflag = 0;
         int yyfnone = 0;
-        int[] yys = new int[10000];
-        string[] yyv = new string[10000];
+        int[] yys = new int[20000];
+        string[] yyv = new string[20000];
 
         string yyval = "";
 
@@ -1255,12 +1255,12 @@ namespace VCCCompiler
        break;
 							case  207 : 
          //yyval = yyv[yysp-0];
-         yyval = Formatter.FormatPatchFunction(yyv[yysp-0]);
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  208 : 
          //yyval = yyv[yysp-0];
-         yyval = Formatter.FormatFunction(yyv[yysp-0]);
+         yyval = Formatter.FormatIdentifier(yyv[yysp-0]);
          
        break;
 							case  209 : 

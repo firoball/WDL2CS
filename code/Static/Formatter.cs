@@ -29,13 +29,11 @@ namespace WDL2CS
         }
 
 
-        //todo: treat function as an identifier by default, and only format when generating class definition
-        public static string FormatFunction(string s) // -> FormatFunctionClass
+        public static string FormatFunctionClass(string s)
         {
-            s = Ucfirst(s);
-            return Defines.CheckTransform(s);
+            return "Action__" + s;
         }
-        
+
         public static string FormatObject(string s)
         {
             s = Ucfirst(s);
@@ -74,32 +72,6 @@ namespace WDL2CS
             else
                 s = "0";
             return s;
-        }
-
-        //todo: treat function as an identifier by default, and only format when generating class definition
-        public static string FormatPatchFunction(string s) // -> FormatFunction or remove
-        {
-            //somewhat dirty workaround due to Keywords which are identical to Object Defs.
-            //These get prefixed with two leading underscores in order to avoid conflicts with class names.
-            //on restoring, a valid identifier will be built, since parser handles function and object names the same.
-            //handled by: FormatRestoreFunctionIdentifier
-            return "__" + FormatFunction(s);
-        }
-
-        //todo: treat function as an identifier by default, and only format when generating class definition
-        public static string FormatRestoreFunctionIdentifier(string s) // -> remove
-        {
-            //somewhat dirty workaround due to Keywords which are identical to Object Defs.
-            //These have been prefixed with two leading underscores in a previous formatting step.
-            //remove leading underscores again so proper identifier can be derived
-            //identifier and object names are handled the same by the parser, therefore function names which serve as
-            //C# class identifiers need to be converted
-            //CAUTION: this may break if __function style names are used in the original WDL
-            //Accompanying patch routine: FormatPatchFunction
-            if (s[0] == '_' && s[1] == '_') 
-                s = s.Substring(2);
-
-            return FormatIdentifier(s);
         }
 
         public static string FormatIdentifier(string s)
