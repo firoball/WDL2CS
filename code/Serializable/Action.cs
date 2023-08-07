@@ -272,8 +272,12 @@ namespace WDL2CS
             }
             if (count > 0)
             {
-                //correct index by one for positive skips only
-                i++;
+                //correct index by one for positive skips only - make sure marker is never placed directly behind "If"
+                if (!m_instructions[i].Command.StartsWith("If"))
+                    i++;
+                else //code tries to jump into if block - C# does not allow this; at least make file compilable by moving marker up
+                    Console.WriteLine("(W) ACTION patch invalid jump marker after " + m_name + ": " + m_instructions[i].Command + " " + m_instructions[i].Parameters[0]);
+
                 //make sure marker is not placed before closing bracket, but moved after
                 while ((i < m_instructions.Count) && m_instructions[i].Command.StartsWith("}"))
                     i++;

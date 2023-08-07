@@ -58,7 +58,31 @@ namespace WDL2CS
         {
             string o = string.Empty;
 
-            if (m_parameters.Count > 1)
+            bool forceMulti = false;
+            //identify data type for array definition
+            string type = string.Empty;
+            if (m_name.Contains("Each_"))
+            {
+                type = "Function";
+                forceMulti = true;
+            }
+            if (m_name.Contains("Panels"))
+            {
+                type = "Panel";
+                forceMulti = true;
+            }
+            if (m_name.Contains("Layers"))
+            {
+                type = "Overlay";
+                forceMulti = true;
+            }
+            if (m_name.Contains("Messages"))
+            {
+                type = "Text";
+                forceMulti = true;
+            }
+
+            if (m_parameters.Count > 1 || forceMulti)
             {
                 //make sure parameter list is extended to 16
                 int count = m_parameters.Count;
@@ -66,17 +90,6 @@ namespace WDL2CS
                 {
                     m_parameters.Add(Formatter.FormatNull());
                 }
-
-                //identify data type for array definition
-                string type = string.Empty;
-                if (m_name.Contains("Each_"))
-                    type = "Function";
-                if (m_name.Contains("Panels"))
-                    type = "Panel";
-                if (m_name.Contains("Layers"))
-                    type = "Overlay";
-                if (m_name.Contains("Messages"))
-                    type = "Text";
 
                 string parameters = string.Join(", ", m_parameters);
                 o += s_indent + m_name + " = new " + type + "[] {" + parameters + "};";
