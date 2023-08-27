@@ -1,5 +1,6 @@
 /*.pptx
 /code/wdl
-obj
+/code/obj
 .vs
 *.bak
+/code/bin
