@@ -291,6 +291,7 @@ namespace WDL2CS
                         break;
 
                     case "Play_flic":
+                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
                         o = $"Media.Play_flic({m_parameters[0]});";
                         break;
 
@@ -299,14 +300,20 @@ namespace WDL2CS
                         break;
 
                     case "Play_song":
+                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
+                        m_parameters[1] = Formatter.FormatTargetSkill(m_parameters[1]);
                         o = $"Media.Play_song({m_parameters[0]}, {m_parameters[1]}, true);";
                         break;
 
                     case "Play_song_once":
+                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
+                        m_parameters[1] = Formatter.FormatTargetSkill(m_parameters[1]);
                         o = $"Media.Play_song({m_parameters[0]}, {m_parameters[1]}, false);";
                         break;
 
                     case "Play_sound":
+                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
+                        m_parameters[1] = Formatter.FormatTargetSkill(m_parameters[1]);
                         if (m_parameters.Count > 2)
                         {
                             //check for specific properties containing an object, e.g. <object>.Genius - checking for dot may lead to false positives

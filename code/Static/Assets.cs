@@ -59,6 +59,8 @@ namespace WDL2CS
 
         public static string AddAsset(string type, string name, string file)
         {
+            type = Formatter.FormatObject(type);
+            name = Formatter.FormatAssetId(name);
             Register(type, name);
             string a = new Asset(type, name, file, s_parameters).Serialize();
 

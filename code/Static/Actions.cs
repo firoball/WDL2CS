@@ -11,6 +11,7 @@ namespace WDL2CS
 
         public static string AddAction(string name, string stream)
         {
+            name = Formatter.FormatActionId(name);
             string a = new Action(name, stream).Serialize();
 
             return a;
@@ -21,7 +22,7 @@ namespace WDL2CS
         {
             string s = string.Empty;
 
-            s += new Instruction(Formatter.FormatMarker(name), false).Serialize();
+            s += new Instruction(Formatter.FormatGotoMarker(name), false).Serialize();
             s += stream;
 
             return s;
@@ -127,5 +128,13 @@ namespace WDL2CS
             s_parameters.Insert(0, param);
         }
 
+        public static string CreateInvalidInstruction(string type)
+        {
+            //Clean up
+            s_parameters.Clear();
+
+            Console.WriteLine("(W) ACTIONS ignore invalid command: " + type);
+            return string.Empty;
+        }
     }
 }

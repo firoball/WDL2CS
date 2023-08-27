@@ -2,7 +2,7 @@ Start -> Sections
 
 Sections -> Section Sections | EPSILON
 Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor | } | ;
-%Superfluous closing curly braces may be put - capture these as dummy section
+%Superfluous closing curly braces and semicolons may be put - capture these as dummy section
 
 Preprocessor -> IFDEF DefIdentifier ; PreprocessorSection ; | IFNDEF DefIdentifier ; PreprocessorSection ;
 PreprocessorSection -> Sections ENDIF | Sections IFELSE ; Sections ENDIF
@@ -13,7 +13,9 @@ PreprocPropSection -> PropertyDefs ENDIF | PropertyDefs IFELSE ; PropertyDefs EN
 
 Define -> DEFINE DefIdentifier , DefParameter ; | DEFINE DefIdentifier ; | UNDEF DefIdentifier ;
 %Allow ambiguity between predefined skills and defines. WDL allowed it.
+%TODO: is this suffcient or more general approach needed? Just allow "BasicKeyword"?
 DefIdentifier -> Identifier | Skill
+%TODO
 DefParameter -> Number | Keyword | File | String | List
 Include -> INCLUDE File ;
 
@@ -29,20 +31,23 @@ AssetRef -> asset
 
 ObjectDef -> Object ObjectId ; | Object ObjectId Sep { PropertyDefs } | Object ObjectId Sep String ;
 ObjectRef -> object
+%TODO is this special case still required?
 Object -> ObjectRef | ambig_object_flag 
 PropertyDefs -> PropertyDef ; PropertyDefs | PreprocProp PropertyDefs | EPSILON
 PropertyDef -> Property Sep PropertyValueList
 PropertyValueList -> PropertyValue Sep PropertyValueList | PropertyValue Sep 
-PropertyValue -> Number | Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Function | File | String
+PropertyValue -> Number | File | String | Keyword
 
 FunctionDef -> Function FunctionId Sep { Instructions }
 Function -> function
-%Compatibility patch - Goto markers may also be terminated by ; instead of : (use ifddentifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
-Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | PreprocInst Instructions | | { Instructions } Instructions | EPSILON
-Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | ;
+%Compatibility patch - Goto markers may also be terminated by ; instead of : (use identifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
+Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | PreprocInst Instructions | { Instructions } Instructions | EPSILON
+%Compatibility patch - UNDEF can be placed inside functions - A3 allows bogus instructions (capture as Identifier)
+%Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | ;
+Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | UNDEF DefIdentifier ; | Identifier Sep ParameterList ; | ;
 
 ParameterList -> Parameter Sep ParameterList | Parameter Sep
-Parameter -> Number | Keyword | File | String | List
+Parameter -> Number | File | String | Keyword | List
 
 %Compatibility patch - WDL parser allows leaving/adding commas
 Sep -> , | EPSILON
@@ -72,19 +77,15 @@ OpAssign -> = | += | -= | *= | /=
 Math -> math | ambig_math_command | ambig_math_skill_property
 
 %Compatibility patch - WDL parser accepts isolated ELSE ... Needs to be taken care of by code generator
-%Flow -> IF Expression{ Instructions } | IF Expression { Instructions } ELSE { Instructions } | WHILE Expression { Instructions }
+%Flow -> IF Expression { Instructions } | IF Expression { Instructions } ELSE { Instructions } | WHILE Expression { Instructions }
 Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expression { Instructions }
 
-%Due to parallel grammar pathes caused by ambiguous identifiers, some expected relations are not added here - they already exist implicitly
-%This is required in order to avoid shift/reduce conflicts in generated transpiler code
-Keyword -> Object | ObjectId | ObjectId . Property | ObjectId . Flag | Synonym | Synonym . Property | Synonym . Flag | Event
+Keyword -> BasicKeyword | BasicKeyword . Property | BasicKeyword . Flag
 Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag
-%Properties must also allow redefinitions (= identifier)
+%Properties must also allow redefinitions (= identifier) TODO: is "Identifier" sufficient?
 %Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
 Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property | Identifier
-Command -> CommandAsId | ambig_math_command | ELSE
-%commands can also be used as object identifiers. Define reduced CommandAsId subset for ObjectId rule in order to avoid shift/reduce conflicts.
-CommandAsId -> command | ambig_command_flag | ambig_command_property 
+Command -> command | ambig_command_flag | ambig_command_property | ambig_math_command | ELSE
 Number -> Integer | Fixed
 UnNumber -> integer | fixed
 Integer -> OpUn integer | integer
@@ -92,39 +93,38 @@ Fixed -> OpUn fixed | fixed
 Identifier -> identifier
 List -> list
 
-%Note: Asset identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
-%AssetId -> identifier | integer
-AssetId -> ObjectId | integer
-Skill -> skill | ambig_skill_property 
-%| ambig_math_skill_property - implicitly via Math (avoid shift/reduce conflicts)
+Skill -> skill | ambig_skill_property | ambig_math_skill_property
 
-Synonym -> synonym | ambig_synonym_flag | ambig_global_synonym_property
-%WDL allows usage of reserved keywords as object identifiers (list is derived from test runs on a collection of WDL files)
-%Changing this can easily cause more shift/reduce conflicts
-ObjectId -> identifier | AssetRef | Math | flag | Skill | property | CommandAsId | global | NULL
-FunctionId -> ObjectId | ObjectRef
-GotoMarker -> ObjectId | synonym
+%TODO
+%Synonym -> synonym | ambig_synonym_flag | ambig_global_synonym_property
+
+EngineKeywords -> event | global | asset | object | function | math | flag | property | command | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command | ambig_command_flag | ambig_command_property
+EngineObjects -> skill | synonym | ambig_math_skill_property | ambig_synonym_flag | ambig_skill_property | ambig_global_synonym_property
+BasicKeyword -> EngineKeywords | EngineObjects | Identifier | NULL
+ObjectId -> BasicKeyword
+FunctionId -> BasicKeyword
+%Note: Asset identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
+AssetId -> BasicKeyword | integer
+GotoMarker -> BasicKeyword
 
 %Complex Regex terminals must be added at end of token list
 File -> file
 String -> string
 
 %Ambiguous keyword lists - used in case some keywords are used multiple times in different contexts
-%ambig_event_property
-%ambig_skill_property
-%ambig_global_property
-%ambig_global_synonym_property
-%ambig_synonym_flag
-%ambig_object_flag
-%ambig_math_command
-%ambig_math_skill_property
-%ambig_command_property
+%- ambig_event_property
+%- ambig_skill_property
+%- ambig_global_property
+%- ambig_global_synonym_property
+%- ambig_synonym_flag
+%- ambig_object_flag
+%- ambig_math_command
+%- ambig_math_skill_property
+%- ambig_command_property
 
 %Regex patches - Odd behavior captured with regex and needs to be taken care of by code generator
-%Combined assign operators += etc. may have spaces inbetween. 
-%Command terminator ; may be put multiple times without error. 
-%Comma separator may be put at end of instruction right before ;. 
-%A false ; may be put right after closing curly brace.
-%File name may have leading and traling spaces e.g. <file.wdl >. TODO: cleaner filename detection
-%skills may be defined like global definitions
-%SET instruction allows := instead of , as assignment operator
+%- Combined assign operators += etc. may have spaces inbetween. 
+%- Comma separator may be put at end of instruction right before ;. 
+%- File name may have leading and traling spaces e.g. <file.wdl >. TODO: cleaner filename detection
+%- skills may be defined like global definitions
+%- SET instruction allows := instead of , as assignment operator

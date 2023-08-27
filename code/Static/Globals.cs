@@ -43,6 +43,7 @@ namespace WDL2CS
 
         public static void AddParameter(string parameter)
         {
+            parameter = Formatter.FormatActionId(parameter); //Events always take action references as parameter
             //parser does not explicitly take care of null parameters, therefore patch these manually
             if (parameter.Equals(Formatter.FormatIdentifier("null")))
                 parameter = Formatter.FormatNull();

@@ -79,6 +79,8 @@ namespace WDL2CS
 
         public static string AddStringObject(string type, string name, string text)
         {
+            type = Formatter.FormatObject(type);
+            name = Formatter.FormatObjectId(name);
             Register(type, name);
             string o = new Object(type, name, text, true).Serialize();
 
@@ -92,6 +94,8 @@ namespace WDL2CS
 
         public static string AddObject(string type, string name, string stream)
         {
+            type = Formatter.FormatObject(type);
+            name = Formatter.FormatObjectId(name);
             Register(type, name);
             string o = new Object(type, name, stream).Serialize();
 

@@ -123,13 +123,6 @@ else
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Include"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <RULE name="GlobalDef"/>
                 <CODE>
                     $$ = Sections.AddGlobalSection($1);
@@ -144,9 +137,16 @@ else
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Define"/>
+                <RULE name="Include"/>
                 <CODE>
-                    $$ = Sections.AddDefineSection($1);
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="FunctionDef"/>
+                <CODE>
+                    $$ = Sections.AddActionSection($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -158,9 +158,9 @@ else
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="FunctionDef"/>
+                <RULE name="Define"/>
                 <CODE>
-                    $$ = Sections.AddActionSection($1);
+                    $$ = Sections.AddDefineSection($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -378,6 +378,7 @@ Defines.AddStringDefine($1);
                 <RULE name="List"/>
                 <CODE>
                     //$$ = $1;
+$$ = "";
 Defines.AddListDefine($1);
 
                 </CODE>
@@ -386,6 +387,7 @@ Defines.AddListDefine($1);
                 <RULE name="File"/>
                 <CODE>
                     //$$ = $1;
+$$ = "";
 Defines.AddFileDefine($1);
 
                 </CODE>
@@ -394,6 +396,7 @@ Defines.AddFileDefine($1);
                 <RULE name="Number"/>
                 <CODE>
                     //$$ = $1;
+$$ = "";
 Defines.AddNumberDefine($1);
 
                 </CODE>
@@ -402,6 +405,7 @@ Defines.AddNumberDefine($1);
                 <RULE name="Keyword"/>
                 <CODE>
                     //$$ = $1;
+$$ = "";
 Defines.AddKeywordDefine($1);
 
                 </CODE>
@@ -590,7 +594,7 @@ Assets.AddParameter($1);
             <RIGHTSIDE>
                 <TOKEN name="asset"/>
                 <CODE>
-                    $$ = Formatter.FormatObject($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -645,14 +649,14 @@ $$ = Objects.AddObject($1, $2);
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95objectChar95flag"/>
                 <CODE>
-                    $$ = Formatter.FormatObject($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectRef"/>
                 <CODE>
-                    $$ = Formatter.FormatObject($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -718,42 +722,6 @@ $$ = "";
         </RULE>
         <RULE name="PropertyValue" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <TOKEN name="Char46"/>
-                <RULE name="Flag"/>
-                <CODE>
-                    $$ = $1 + "." + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Synonym"/>
-                <TOKEN name="Char46"/>
-                <RULE name="Property"/>
-                <CODE>
-                    $$ = $1 + "." + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Synonym"/>
-                <TOKEN name="Char46"/>
-                <RULE name="Flag"/>
-                <CODE>
-                    $$ = $1 + "." + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <TOKEN name="Char46"/>
-                <RULE name="Property"/>
-                <CODE>
-                    $$ = $1 + "." + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <RULE name="String"/>
                 <CODE>
                     $$ = $1;
@@ -761,21 +729,7 @@ $$ = "";
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="File"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Function"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Object"/>
+                <RULE name="Keyword"/>
                 <CODE>
                     $$ = $1;
 
@@ -789,16 +743,9 @@ $$ = "";
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Synonym"/>
+                <RULE name="File"/>
                 <CODE>
                     $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <CODE>
-                    $$ = Formatter.FormatPropertyValue($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -860,11 +807,10 @@ $$ = Actions.CreateMarker($1, $3);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Instruction"/>
+                <RULE name="Flow"/>
                 <RULE name="Instructions"/>
                 <CODE>
-                    //$$ = $1 + $2;
-$$ = $1 + $2;
+                    $$ = $1 + $2;
 
                 </CODE>
             </RIGHTSIDE>
@@ -877,7 +823,7 @@ $$ = $1 + $2;
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Flow"/>
+                <RULE name="Instruction"/>
                 <RULE name="Instructions"/>
                 <CODE>
                     $$ = $1 + $2;
@@ -893,17 +839,11 @@ $$ = $1 + $2;
         </RULE>
         <RULE name="Instruction" color="#FFE1FF">
             <RIGHTSIDE>
+                <TOKEN name="UNDEF"/>
+                <RULE name="DefIdentifier"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = "";
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Rule"/>
-                <TOKEN name="Char59"/>
-                <CODE>
-                    $$ = $1;
+                    $$ = Defines.RemoveDefine($2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -919,11 +859,37 @@ $$ = Actions.CreateInstruction($1);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <RULE name="Identifier"/>
+                <RULE name="Sep"/>
+                <RULE name="ParameterList"/>
+                <TOKEN name="Char59"/>
+                <CODE>
+                    //Capture and discard bogus code
+$$ = Actions.CreateInvalidInstruction($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <RULE name="Command"/>
                 <TOKEN name="Char59"/>
                 <CODE>
                     //$$ = $1;
 $$ = Actions.CreateInstruction($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Rule"/>
+                <TOKEN name="Char59"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="Char59"/>
+                <CODE>
+                    $$ = "";
 
                 </CODE>
             </RIGHTSIDE>
@@ -953,7 +919,7 @@ Actions.AddInstructionParameter($1);
         </RULE>
         <RULE name="Parameter" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="String"/>
+                <RULE name="Keyword"/>
                 <CODE>
                     $$ = $1;
 
@@ -967,7 +933,7 @@ Actions.AddInstructionParameter($1);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="File"/>
+                <RULE name="String"/>
                 <CODE>
                     $$ = $1;
 
@@ -981,7 +947,7 @@ Actions.AddInstructionParameter($1);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Keyword"/>
+                <RULE name="File"/>
                 <CODE>
                     $$ = $1;
 
@@ -1465,7 +1431,7 @@ $$ = Actions.CreateWhileCondition($2, $4);
         </RULE>
         <RULE name="Keyword" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="ObjectId"/>
+                <RULE name="BasicKeyword"/>
                 <TOKEN name="Char46"/>
                 <RULE name="Flag"/>
                 <CODE>
@@ -1474,16 +1440,7 @@ $$ = Actions.CreateWhileCondition($2, $4);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Synonym"/>
-                <TOKEN name="Char46"/>
-                <RULE name="Flag"/>
-                <CODE>
-                    $$ = $1 + "." + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Synonym"/>
+                <RULE name="BasicKeyword"/>
                 <TOKEN name="Char46"/>
                 <RULE name="Property"/>
                 <CODE>
@@ -1492,37 +1449,7 @@ $$ = Actions.CreateWhileCondition($2, $4);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <TOKEN name="Char46"/>
-                <RULE name="Property"/>
-                <CODE>
-                    $$ = $1 + "." + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Event"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Object"/>
-                <CODE>
-                    $$ = Formatter.FormatObjectId(Formatter.FormatIdentifier($1));
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <CODE>
-                    $$ = Formatter.FormatObjectId($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Synonym"/>
+                <RULE name="BasicKeyword"/>
                 <CODE>
                     $$ = $1;
 
@@ -1640,6 +1567,20 @@ $$ = Actions.CreateWhileCondition($2, $4);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <TOKEN name="ambigChar95commandChar95flag"/>
+                <CODE>
+                    $$ = Formatter.FormatCommand($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="ambigChar95commandChar95property"/>
+                <CODE>
+                    $$ = Formatter.FormatCommand($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <TOKEN name="ambigChar95mathChar95command"/>
                 <CODE>
                     $$ = Formatter.FormatCommand($1);
@@ -1647,32 +1588,9 @@ $$ = Actions.CreateWhileCondition($2, $4);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="CommandAsId"/>
-                <CODE>
-                    $$ = Formatter.FormatCommand($1);
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="CommandAsId" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95commandChar95flag"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95commandChar95property"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <TOKEN name="command"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatCommand($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1761,23 +1679,14 @@ $$ = Actions.CreateWhileCondition($2, $4);
                 </CODE>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="AssetId" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="integer"/>
-                <CODE>
-                    $$ = Formatter.FormatAssetId($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
         <RULE name="Skill" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="ambigChar95mathChar95skillChar95property"/>
+                <CODE>
+                    $$ = Formatter.FormatSkill($1);
+
+                </CODE>
+            </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95skillChar95property"/>
                 <CODE>
@@ -1793,30 +1702,70 @@ $$ = Actions.CreateWhileCondition($2, $4);
                 </CODE>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Synonym" color="#FFE1FF">
+        <RULE name="EngineKeywords" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
+                <TOKEN name="ambigChar95commandChar95flag"/>
+                <CODE>
+                    $$ = Formatter.FormatIdentifier($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="ambigChar95commandChar95property"/>
+                <CODE>
+                    $$ = Formatter.FormatIdentifier($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="ambigChar95eventChar95property"/>
+                <CODE>
+                    $$ = Formatter.FormatEvent($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="ambigChar95globalChar95property"/>
                 <CODE>
                     $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="ambigChar95synonymChar95flag"/>
+                <TOKEN name="ambigChar95mathChar95command"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="synonym"/>
+                <TOKEN name="ambigChar95objectChar95flag"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
-        </RULE>
-        <RULE name="ObjectId" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="asset"/>
+                <CODE>
+                    $$ = Formatter.FormatIdentifier($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="command"/>
+                <CODE>
+                    $$ = Formatter.FormatIdentifier($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="event"/>
+                <CODE>
+                    $$ = Formatter.FormatEvent($1);
+
+                </CODE>
+            </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="flag"/>
                 <CODE>
@@ -1825,14 +1774,28 @@ $$ = Actions.CreateWhileCondition($2, $4);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="global"/>
+                <TOKEN name="function"/>
                 <CODE>
                     $$ = Formatter.FormatIdentifier($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="identifier"/>
+                <TOKEN name="global"/>
+                <CODE>
+                    $$ = Formatter.FormatGlobal($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="math"/>
+                <CODE>
+                    $$ = Formatter.FormatIdentifier($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="object"/>
                 <CODE>
                     $$ = Formatter.FormatIdentifier($1);
 
@@ -1845,34 +1808,52 @@ $$ = Actions.CreateWhileCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
+        </RULE>
+        <RULE name="EngineObjects" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="CommandAsId"/>
+                <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="AssetRef"/>
+                <TOKEN name="ambigChar95mathChar95skillChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = Formatter.FormatSkill($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Math"/>
+                <TOKEN name="ambigChar95skillChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = Formatter.FormatSkill($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Skill"/>
+                <TOKEN name="ambigChar95synonymChar95flag"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="skill"/>
+                <CODE>
+                    $$ = Formatter.FormatSkill($1);
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="synonym"/>
+                <CODE>
+                    $$ = Formatter.FormatGlobal($1);
+
+                </CODE>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="BasicKeyword" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="NULL"/>
                 <CODE>
@@ -1880,37 +1861,67 @@ $$ = Actions.CreateWhileCondition($2, $4);
 
                 </CODE>
             </RIGHTSIDE>
-        </RULE>
-        <RULE name="FunctionId" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="ObjectRef"/>
+                <RULE name="Identifier"/>
                 <CODE>
-                    //$$ = $1;
-$$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="ObjectId"/>
+                <RULE name="EngineKeywords"/>
                 <CODE>
-                    //$$ = $1;
-$$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="EngineObjects"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="ObjectId" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="BasicKeyword"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="FunctionId" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="BasicKeyword"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="AssetId" color="#FFE1FF">
+            <RIGHTSIDE>
+                <TOKEN name="integer"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="BasicKeyword"/>
+                <CODE>
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
         </RULE>
         <RULE name="GotoMarker" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="synonym"/>
+                <RULE name="BasicKeyword"/>
                 <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <CODE>
-                    $$ = $1;
+                    $$ = $1; //TODO: FormatIdentifier?
 
                 </CODE>
             </RIGHTSIDE>

@@ -63,7 +63,7 @@ namespace WDL2CS
         {
             string s = string.Empty;
             bool interruptable = false;
-            string className = Formatter.FormatFunctionClass(m_name);
+            string className = Formatter.FormatActionClass(m_name);
             string instName = m_name;
 
             //Update instruction list in order to make it compatible to C#
@@ -77,31 +77,34 @@ namespace WDL2CS
             Instruction lastif = null;
             Instruction last = null;
 
-            foreach (Instruction inst in m_instructions)
+            if (m_instructions != null)
             {
-                //WDL allows isolated "else" (bug of scripting language)
-                //keep track of the last if, so the isolated "else" can be fixed with a negated condition
-                if (inst.Command.StartsWith("if"))
+                foreach (Instruction inst in m_instructions)
                 {
-                    lastif = inst;
-                }
-                //special case: "else" was found without previous closing bracket
-                //take last stored "if"-condiftion, negate it and replace "else" with an "if"
-                if ((last != null) && !last.Command.StartsWith("}") && inst.Command.StartsWith("else"))
-                {
-                    Instruction patch = new Instruction(lastif.Command, "(!" + lastif.Parameters[0] + ")");
-                    s += UpdateIndent(patch.Command, patch.Format(instName));
-                }
-                //regular path
-                else
-                {
-                    string f = inst.Format(instName);
-                    if (!string.IsNullOrEmpty(f))
-                        s += UpdateIndent(inst.Command, f);
-                }
-                
+                    //WDL allows isolated "else" (bug of scripting language)
+                    //keep track of the last if, so the isolated "else" can be fixed with a negated condition
+                    if (inst.Command.StartsWith("if"))
+                    {
+                        lastif = inst;
+                    }
+                    //special case: "else" was found without previous closing bracket
+                    //take last stored "if"-condiftion, negate it and replace "else" with an "if"
+                    if ((last != null) && !last.Command.StartsWith("}") && inst.Command.StartsWith("else"))
+                    {
+                        Instruction patch = new Instruction(lastif.Command, "(!" + lastif.Parameters[0] + ")");
+                        s += UpdateIndent(patch.Command, patch.Format(instName));
+                    }
+                    //regular path
+                    else
+                    {
+                        string f = inst.Format(instName);
+                        if (!string.IsNullOrEmpty(f))
+                            s += UpdateIndent(inst.Command, f);
+                    }
 
-                last = inst;
+
+                    last = inst;
+                }
             }
             s += UpdateIndent("}");
             s += UpdateIndent("}");
@@ -126,6 +129,11 @@ namespace WDL2CS
         private bool ProcessInstructions()
         {
             bool interruptable = false;
+
+            //no instructions in action
+            if (m_instructions == null)
+                return interruptable;
+
             Dictionary<int, Instruction> inserts = new Dictionary<int, Instruction>();
 
             //iterate through instruction list from end, so that new instructions can be inserted directly
@@ -146,7 +154,7 @@ namespace WDL2CS
                         //Add additional parameter carrying the jump label
                         m_instructions[i].Parameters.Add("skip" + i + "to" + index);
                         //create new instruction for jump marker which is to be inserted
-                        Instruction marker = new Instruction(Formatter.FormatMarker(m_instructions[i].Parameters[1]), false);
+                        Instruction marker = new Instruction(Formatter.FormatGotoMarker(m_instructions[i].Parameters[1]), false);
                         //instruction needs to be inserted above current one. Buffer and insert later
                         //otherwise iteration can break on direct insertion
                         if (index < i)

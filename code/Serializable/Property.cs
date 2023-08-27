@@ -70,6 +70,9 @@ namespace WDL2CS
 
             try
             {
+                //Sanitize property values
+                m_values = m_values.Select(x => Formatter.FormatPropertyValue(x)).ToList();
+                
                 //TODO: add List length checks for explicite array access
                 //TODO: add prefix patch for integer asset IDs for all asset types
                 switch (m_name)
@@ -131,12 +134,12 @@ namespace WDL2CS
                     case "Bmap":
                     case "Bmaps":
                         //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                        p = "Bmaps = new Bmap[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatAssetId(x))) + " }";
+                        p = "Bmaps = new Bmap[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatAssetIdRef(x))) + " }";
                         break;
 
                     case "Ovlys":
                         //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                        p = "Ovlys = new Ovly[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatAssetId(x))) + " }";
+                        p = "Ovlys = new Ovly[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatAssetIdRef(x))) + " }";
                         break;
 
                     case "Offset_x":
