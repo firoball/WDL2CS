@@ -229,11 +229,11 @@ namespace WDL2CS
                         break;
 
                     case "Load":
-                        o = $"Environment.Load({m_parameters[0]}, {m_parameters[1]}, false);";
+                        o = $"Environment.Load({Formatter.FormatFile(m_parameters[0])}, {m_parameters[1]}, false);";
                         break;
 
                     case "Load_info":
-                        o = $"Environment.Load({m_parameters[0]}, {m_parameters[1]}, true);";
+                        o = $"Environment.Load({Formatter.FormatFile(m_parameters[0])}, {m_parameters[1]}, true);";
                         break;
 
                     case "Locate":
@@ -245,7 +245,7 @@ namespace WDL2CS
 
                     case "Map":
                         if (m_parameters.Count > 0)
-                            o = $"Environment.Map({m_parameters[0]});";
+                            o = $"Environment.Map({Formatter.FormatFile(m_parameters[0])});";
                         else
                             o = $"Environment.Map();";
                         break;
@@ -271,7 +271,7 @@ namespace WDL2CS
                         break;
 
                     case "Level":
-                        o = $"Environment.Level({m_parameters[0]});";
+                        o = $"Environment.Level({Formatter.FormatFile(m_parameters[0])});";
                         break;
 
                     case "outport":
@@ -287,7 +287,7 @@ namespace WDL2CS
                         break;
 
                     case "Play_demo":
-                        o = $"Environment.Play_demo({m_parameters[0]}, {m_parameters[1]}, true);";
+                        o = $"Environment.Play_demo({Formatter.FormatFile(m_parameters[0])}, {m_parameters[1]}, true);";
                         break;
 
                     case "Play_flic":
@@ -380,15 +380,15 @@ namespace WDL2CS
                         break;
 
                     case "Save":
-                        o = $"Environment.Save({m_parameters[0]}, {m_parameters[1]}, false);";
+                        o = $"Environment.Save({Formatter.FormatFile(m_parameters[0])}, {m_parameters[1]}, false);";
                         break;
 
                     case "Save_demo":
-                        o = $"Environment.Save({m_parameters[0]}, {m_parameters[1]});";
+                        o = $"Environment.Save({Formatter.FormatFile(m_parameters[0])}, {m_parameters[1]});";
                         break;
 
                     case "Save_info":
-                        o = $"Environment.Save({m_parameters[0]}, {m_parameters[1]}, true);";
+                        o = $"Environment.Save({Formatter.FormatFile(m_parameters[0])}, {m_parameters[1]}, true);";
                         break;
 
                     case "Scan":
@@ -396,7 +396,7 @@ namespace WDL2CS
                         break;
 
                     case "Screenshot":
-                        o = $"Environment.Screenshot({m_parameters[0]}, {m_parameters[1]});";
+                        o = $"Environment.Screenshot({Formatter.FormatFile(m_parameters[0])}, {m_parameters[1]});";
                         break;
 
                     case "Set":
