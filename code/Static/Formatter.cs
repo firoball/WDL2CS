@@ -98,6 +98,12 @@ namespace WDL2CS
             s = s.ToLower();
             s = s.Replace('<', '"');
             s = s.Replace('>', '"');
+            //Workaround for some very old wdl scripts where quotation marks for file names were omitted
+            if (!s.StartsWith("@")) //preoperly detected strings are prefixed with @ - these never need patching
+            {
+                if (!s.StartsWith("\"")) s = "\"" + s;
+                if (!s.EndsWith("\"")) s += "\"";
+            }
             return s;
         }
 

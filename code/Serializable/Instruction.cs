@@ -156,6 +156,10 @@ namespace WDL2CS
                         o = $"{m_parameters[0]}.Fade({m_parameters[1]});";
                         break;
 
+                    case "Find":
+                        o = $"{m_parameters[0]}.Find({m_parameters[1]});";
+                        break;
+
                     case "Freeze":
                         o = $"Environment.Freeze({m_parameters[0]}, {m_parameters[1]});";
                         break;
@@ -435,7 +439,14 @@ namespace WDL2CS
                         }
                         else
                         {
-                            o = $"foreach (var instance in {target}) instance{Formatter.FormatTargetSkill(property)} = {m_parameters[1]};";
+                            if (!string.IsNullOrEmpty(property))
+                                o = $"foreach (var instance in {target}) instance{Formatter.FormatTargetSkill(property)} = {m_parameters[1]};";
+                            else
+                            {
+                                //special case: no property has been given
+                                o = $"{target} = {m_parameters[1]};";
+                                Console.WriteLine($"(W) INSTRUCTION malformed SET_ALL instruction replaced with: {o}");
+                            }
                         }
                         break;
 

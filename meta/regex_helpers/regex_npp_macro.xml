@@ -1,6 +1,6 @@
         <Macro name="WDL2CS: convert regex to lists" Ctrl="no" Alt="no" Shift="no" Key="0">
             <Action type="3" message="1700" wParam="0" lParam="0" sParam="" />
-            <Action type="3" message="1601" wParam="0" lParam="0" sParam="^(&#x0009;&#x0009;&#x0009;if )(.*)$\r\n" />
+            <Action type="3" message="1601" wParam="0" lParam="0" sParam="^(&\t\t\tif )(.*)$\r\n" />
             <Action type="3" message="1625" wParam="0" lParam="2" sParam="" />
             <Action type="3" message="1602" wParam="0" lParam="0" sParam="" />
             <Action type="3" message="1702" wParam="0" lParam="768" sParam="" />
@@ -18,7 +18,7 @@
             <Action type="3" message="1702" wParam="0" lParam="768" sParam="" />
             <Action type="3" message="1701" wParam="0" lParam="1609" sParam="" />
             <Action type="3" message="1700" wParam="0" lParam="0" sParam="" />
-            <Action type="3" message="1601" wParam="0" lParam="0" sParam=".Value);}&#x000D;&#x000A;" />
+            <Action type="3" message="1601" wParam="0" lParam="0" sParam=".Value);}\r\n" />
             <Action type="3" message="1625" wParam="0" lParam="0" sParam="" />
             <Action type="3" message="1602" wParam="0" lParam="0" sParam=");" />
             <Action type="3" message="1702" wParam="0" lParam="768" sParam="" />
