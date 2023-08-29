@@ -7109,13 +7109,6 @@ namespace VCCCompiler
                     return true;
             }
             System.Console.WriteLine(Input);
-foreach (char c in Input)
-            {
-                if (c == 10 || c == 13 || c == 32 || c == 9)
-                    Console.Write(" ");
-                else
-                Console.Write(c+"("+(int)c+")");
-            }
             System.Console.WriteLine();
             System.Console.WriteLine("No matching token found!");
             return false;
