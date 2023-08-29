@@ -37,8 +37,8 @@ ObjectDef -> Object ObjectId ; | Object ObjectId Sep { PropertyDefs } | Object O
 ObjectRef -> object
 %TODO is this special case still required?
 Object -> ObjectRef | ambig_object_flag 
-PropertyDefs -> PropertyDef ; PropertyDefs | PreprocProp PropertyDefs | EPSILON
-PropertyDef -> Property Sep PropertyValueList
+PropertyDefs -> PropertyDef PropertyDefs | PreprocProp PropertyDefs | EPSILON
+PropertyDef -> Property Sep PropertyValueList ; | ;
 PropertyValueList -> PropertyValue Sep PropertyValueList | PropertyValue Sep 
 PropertyValue -> Number | File | String | KeywordPar
 
@@ -67,7 +67,9 @@ Comparison -> Comparison OpCmp Term | Term
 Term -> Term OpTerm Factor | Factor 
 Factor -> Factor OpFac Unary | Unary 
 Unary -> OpUn Unary | Primary
-Primary -> UnNumber | Keyword | ( Expression ) | Math ( Expression ) | List
+%add stupid SKILL 6 <--> SKILL6 workaround
+%Primary -> UnNumber | Keyword | ( Expression ) | Math ( Expression ) | List
+Primary -> UnNumber | Keyword | ( Expression ) | Math ( Expression ) | List | Keyword integer
 
 OpEq -> == | !=
 OpCmp -> <= | >= | < | > 
@@ -103,10 +105,15 @@ Skill -> skill | ambig_skill_property | ambig_math_skill_property
 EngineKeywords -> event | global | asset | object | function | math | flag | property | command | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command | ambig_command_flag | ambig_command_property
 EngineObjects -> skill | synonym | ambig_math_skill_property | ambig_synonym_flag | ambig_skill_property | ambig_global_synonym_property | ambig_skill_flag
 BasicKeyword -> EngineKeywords | EngineObjects | Identifier | NULL
-ObjectId -> BasicKeyword
-FunctionId -> BasicKeyword
+%add stupid "identifier-name" workaround
+HackKeyword -> BasicKeyword | identifier - identifier
+%ObjectId -> BasicKeyword
+ObjectId -> HackKeyword
+%FunctionId -> BasicKeyword
+FunctionId -> HackKeyword
 %Note: Asset identifiers may start with numbers in WDL. Needs to be captured with regex and taken care of by code generator
-AssetId -> BasicKeyword | integer
+%AssetId -> BasicKeyword | integer
+AssetId -> HackKeyword | integer
 GotoMarker -> BasicKeyword
 
 %Complex Regex terminals must be added at end of token list

@@ -142,8 +142,10 @@ namespace WDL2CS
 
         public static string FormatIdentifier(string s)
         {
-            //remove unknown characters and lower case
-            s = s.Replace("?", "").ToLower();
+            //remove unknown and non-allowed characters
+            s = s.Replace("-", "");
+            s = s.Replace("?", "");
+            s = s.ToLower();
             //patch all identifiers conflicting with C# language
             CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
             if (!provider.IsValidIdentifier(s))

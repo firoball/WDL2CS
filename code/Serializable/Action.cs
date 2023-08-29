@@ -129,22 +129,22 @@ namespace WDL2CS
                         Console.WriteLine("(E) ACTION unexpected number of parameters: " + instName + " " + inst.Command);
                     }
                 }
-                s += UpdateIndent("}");
-                s += UpdateIndent("}");
-                string c = "public static Function " + instName + " = new " + className + "()";
+            }
+            s += UpdateIndent("}");
+            s += UpdateIndent("}");
+            string c = "public static Function " + instName + " = new " + className + "()";
 
-                //flag any action which was identified as interruptable
-                if (interruptable)
-                {
-                    s += UpdateIndent(c);
-                    s += UpdateIndent("{");
-                    s += UpdateIndent("Interruptable = true");
-                    s += UpdateIndent("};");
-                }
-                else
-                {
-                    s += UpdateIndent(c + ";");
-                }
+            //flag any action which was identified as interruptable
+            if (interruptable)
+            {
+                s += UpdateIndent(c);
+                s += UpdateIndent("{");
+                s += UpdateIndent("Interruptable = true");
+                s += UpdateIndent("};");
+            }
+            else
+            {
+                s += UpdateIndent(c + ";");
             }
             return s;
         }
@@ -153,93 +153,97 @@ namespace WDL2CS
         {
             bool interruptable = false;
 
-            //no instructions in action
-            if (m_instructions == null || (m_instructions.Count == 0))
-                return interruptable;
-
-            Dictionary<int, Instruction> inserts = new Dictionary<int, Instruction>();
-
-            //iterate through instruction list from end, so that new instructions can be inserted directly
-            for (int i = m_instructions.Count - 1; i >= 0; i--)
+            //any instructions in action
+            if (m_instructions != null)
             {
-                if (m_instructions[i].Command.StartsWith("Wait") || m_instructions[i].Command.StartsWith("Inkey"))
-                {
-                    interruptable = true;
-                }
+                Dictionary<int, Instruction> inserts = new Dictionary<int, Instruction>();
 
-                //Transform "Skip" to "goto" and jump marker
-                else if (m_instructions[i].Command.StartsWith("Skip"))
+                //iterate through instruction list from end, so that new instructions can be inserted directly
+                for (int i = m_instructions.Count - 1; i >= 0; i--)
                 {
-                    //standard case: Skip comes with number of lines to skip as parameter
-                    if (Int32.TryParse(m_instructions[i].Parameters[0], out int num))
+                    if (m_instructions[i].Command.StartsWith("Wait") || m_instructions[i].Command.StartsWith("Inkey"))
                     {
-                        //Console.WriteLine(name);
-                        int index = FindIndex(i, num);
-                        if (index > -1)
+                        interruptable = true;
+                    }
+
+                    //Transform "Skip" to "goto" and jump marker
+                    else if (m_instructions[i].Command.StartsWith("Skip"))
+                    {
+                        //standard case: Skip comes with number of lines to skip as parameter
+                        if (Int32.TryParse(m_instructions[i].Parameters[0], out int num))
                         {
-                            //Add additional parameter carrying the jump label
-                            m_instructions[i].Parameters.Add("skip" + i + "to" + index);
-                            //create new instruction for jump marker which is to be inserted
-                            Instruction marker = new Instruction(Formatter.FormatGotoMarker(m_instructions[i].Parameters[1]), false);
-                            //instruction needs to be inserted above current one. Buffer and insert later
-                            //otherwise iteration can break on direct insertion
-                            if (index < i)
+                            //Console.WriteLine(name);
+                            int index = FindIndex(i, num);
+                            if (index > -1)
                             {
-                                inserts.Add(index, marker);
+                                //Add additional parameter carrying the jump label
+                                m_instructions[i].Parameters.Add("skip" + i + "to" + index);
+                                //create new instruction for jump marker which is to be inserted
+                                Instruction marker = new Instruction(Formatter.FormatGotoMarker(m_instructions[i].Parameters[1]), false);
+                                //instruction needs to be inserted above current one. Buffer and insert later
+                                //otherwise iteration can break on direct insertion
+                                if (index < i)
+                                {
+                                    inserts.Add(index, marker);
+                                }
+                                else
+                                {
+                                    m_instructions.Insert(index, marker);
+                                }
                             }
                             else
                             {
-                                m_instructions.Insert(index, marker);
+                                //Skip tries to jump outside instruction list - throw warning and remove instruction
+                                Console.WriteLine("(W) ACTION remove invalid statement in " + m_name + ": " + m_instructions[i].Command + " " + m_instructions[i].Parameters[0]);
+                                m_instructions.RemoveAt(i);
                             }
                         }
                         else
                         {
-                            //Skip tries to jump outside instruction list - throw warning and remove instruction
-                            Console.WriteLine("(W) ACTION remove invalid statement in " + m_name + ": " + m_instructions[i].Command + " " + m_instructions[i].Parameters[0]);
+                            //special case: skip is used like goto with label instead of number - Add additional parameter carrying the copied jump label to appease the formatter
+                            m_instructions[i].Parameters.Add(m_instructions[i].Parameters[0]);
+                        }
+                    }
+
+                    //add brackets for "If_..." instructions, since these are transformed to bare "if"
+                    //don't do this in case of a third partameter is supplied. In this special case an goto instruction got inserted already - no brackets needed
+                    else if ((m_instructions[i].Command.StartsWith("If_") && (m_instructions[i].Parameters.Count < 3)) ||
+                        (m_instructions[i].Command.StartsWith("Else") && (i < m_instructions.Count - 1) && (m_instructions[i + 1].Command[0] != '{')))
+                    {
+                        if (i < m_instructions.Count - 1)
+                        {
+                            //check for nested "if" blocks and advance instruction counter for closig bracket accordingly
+                            int j = CountInstructionGroup(i + 1);
+                            m_instructions.Insert(j, new Instruction("}", false));
+                            m_instructions.Insert(i + 1, new Instruction("{", false));
+                        }
+                        else
+                        {
+                            //in case no instruction follows after if_*, remove instruction
+                            Console.WriteLine("(W) ACTION remove incomplete statement in " + m_name + ": " + m_instructions[i].Format(m_name));
                             m_instructions.RemoveAt(i);
                         }
                     }
-                    else
-                    {
-                        //special case: skip is used like goto with label instead of number - Add additional parameter carrying the copied jump label to appease the formatter
-                        m_instructions[i].Parameters.Add(m_instructions[i].Parameters[0]);
-                    }
-                }
 
-                //add brackets for "If_..." instructions, since these are transformed to bare "if"
-                //don't do this in case of a third partameter is supplied. In this special case an goto instruction got inserted already - no brackets needed
-                else if ((m_instructions[i].Command.StartsWith("If_") && (m_instructions[i].Parameters.Count < 3)) ||
-                    (m_instructions[i].Command.StartsWith("Else") && (i < m_instructions.Count - 1) && (m_instructions[i + 1].Command[0] != '{')))
-                {
-                    if (i < m_instructions.Count - 1)
+                    //check if any buffered instructions need to be inserted at current position
+                    if (inserts.TryGetValue(i, out Instruction insert))
                     {
-                        //check for nested "if" blocks and advance instruction counter for closig bracket accordingly
-                        int j = CountInstructionGroup(i + 1);
-                        m_instructions.Insert(j, new Instruction("}", false));
-                        m_instructions.Insert(i + 1, new Instruction("{", false));
-                    }
-                    else
-                    {
-                        //in case no instruction follows after if_*, remove instruction
-                        Console.WriteLine("(W) ACTION remove incomplete statement in " + m_name + ": " + m_instructions[i].Format(m_name));
-                        m_instructions.RemoveAt(i);
+                        m_instructions.Insert(i, insert);
                     }
                 }
-
-                //check if any buffered instructions need to be inserted at current position
-                if (inserts.TryGetValue(i, out Instruction insert))
-                {
-                    m_instructions.Insert(i, insert);
-                }
+                //always yield at end of function!
+                if (!m_instructions.Last().Command.Equals("Branch") &&
+                    !m_instructions.Last().Command.Equals("End") &&
+                    !m_instructions.Last().Command.Equals("Goto") &&
+                    !m_instructions.Last().Command.Equals("Exit")
+                    )
+                    m_instructions.Add(new Instruction("yield break;", false));
             }
-            //always yield at end of function!
-            if (!m_instructions.Last().Command.Equals("Branch") &&
-                !m_instructions.Last().Command.Equals("End") &&
-                !m_instructions.Last().Command.Equals("Goto") &&
-                !m_instructions.Last().Command.Equals("Exit")
-                )
+            else //function is empty - at least yield.
+            {
+                m_instructions = new List<Instruction>();
                 m_instructions.Add(new Instruction("yield break;", false));
-
+            }
             return interruptable;
         }
 
