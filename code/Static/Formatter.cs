@@ -114,7 +114,11 @@ namespace WDL2CS
             while (s[0] == '_')
                 s = s.Substring(1);
 
-            return "A3Flags." + FormatProperty(s);
+            //flags may be named identical to globals and events - strip global prefix and dissolve ambiguity
+            int g = s.LastIndexOf('.');
+            string flag = g < 0 ? s : s.Substring(g + 1);
+
+            return "A3Flags." + FormatProperty(flag);
         }
 
         public static string FormatGlobal(string s)
@@ -183,13 +187,13 @@ namespace WDL2CS
             return FormatProperty(s);
         }
 
-        public static string FormatObjectId(string obj)
+        public static string FormatObjectId(string obj, string type)
         {
             //parser grammar needs to avoid shift/reduce conflicts
             //due to this some specific patches for ambiguous keywords are required to be applied
             if (obj.Equals("random"))
                 return FormatSkill(obj);
-            else if (obj.StartsWith("Skills.")) //Global Skills are a special case and prefix needs to be preserved
+            else if (obj.StartsWith("Skills.") && type.Equals("Skill")) //Global Skills are a special case and prefix needs to be preserved
                 return obj;
             else
             {

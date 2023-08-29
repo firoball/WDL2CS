@@ -16,7 +16,7 @@ Define -> DEFINE DefIdentifier , DefParameter ; | DEFINE DefIdentifier ; | UNDEF
 %TODO: is this suffcient or more general approach needed? Just allow "BasicKeyword"?
 DefIdentifier -> Identifier | Skill
 %TODO
-DefParameter -> Number | Keyword | File | String | List
+DefParameter -> Number | KeywordPar | File | String | List
 Include -> INCLUDE File ;
 
 GlobalDef -> Global Sep GlobalParameter ; | Event Sep ObjectIdList ;
@@ -36,7 +36,7 @@ Object -> ObjectRef | ambig_object_flag
 PropertyDefs -> PropertyDef ; PropertyDefs | PreprocProp PropertyDefs | EPSILON
 PropertyDef -> Property Sep PropertyValueList
 PropertyValueList -> PropertyValue Sep PropertyValueList | PropertyValue Sep 
-PropertyValue -> Number | File | String | Keyword
+PropertyValue -> Number | File | String | KeywordPar
 
 FunctionDef -> Function FunctionId Sep { Instructions }
 Function -> function
@@ -47,7 +47,7 @@ Instructions -> Instruction Instructions | GotoMarker : Instructions | identifie
 Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | UNDEF DefIdentifier ; | Identifier Sep ParameterList ; | ;
 
 ParameterList -> Parameter Sep ParameterList | Parameter Sep
-Parameter -> Number | File | String | Keyword | List
+Parameter -> Number | File | String | KeywordPar | List
 
 %Compatibility patch - WDL parser allows leaving/adding commas
 Sep -> , | EPSILON
@@ -63,7 +63,7 @@ Comparison -> Comparison OpCmp Term | Term
 Term -> Term OpTerm Factor | Factor 
 Factor -> Factor OpFac Unary | Unary 
 Unary -> OpUn Unary | Primary
-Primary -> UnNumber | Keyword | ( Expression ) | Math ( Expression )
+Primary -> UnNumber | Keyword | ( Expression ) | Math ( Expression ) | List
 
 OpEq -> == | !=
 OpCmp -> <= | >= | < | > 
@@ -81,7 +81,8 @@ Math -> math | ambig_math_command | ambig_math_skill_property
 Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expression { Instructions }
 
 Keyword -> BasicKeyword | BasicKeyword . Property | BasicKeyword . Flag
-Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag
+KeywordPar -> OpUn Keyword | Keyword
+Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag | ambig_skill_flag
 %Properties must also allow redefinitions (= identifier) TODO: is "Identifier" sufficient?
 %Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
 Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property | Identifier
@@ -95,11 +96,8 @@ List -> list
 
 Skill -> skill | ambig_skill_property | ambig_math_skill_property
 
-%TODO
-%Synonym -> synonym | ambig_synonym_flag | ambig_global_synonym_property
-
 EngineKeywords -> event | global | asset | object | function | math | flag | property | command | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command | ambig_command_flag | ambig_command_property
-EngineObjects -> skill | synonym | ambig_math_skill_property | ambig_synonym_flag | ambig_skill_property | ambig_global_synonym_property
+EngineObjects -> skill | synonym | ambig_math_skill_property | ambig_synonym_flag | ambig_skill_property | ambig_global_synonym_property | ambig_skill_flag
 BasicKeyword -> EngineKeywords | EngineObjects | Identifier | NULL
 ObjectId -> BasicKeyword
 FunctionId -> BasicKeyword
@@ -121,10 +119,11 @@ String -> string
 %- ambig_math_command
 %- ambig_math_skill_property
 %- ambig_command_property
+%- ambig_skill_flag
 
 %Regex patches - Odd behavior captured with regex and needs to be taken care of by code generator
 %- Combined assign operators += etc. may have spaces inbetween. 
-%- Comma separator may be put at end of instruction right before ;. 
+%- Comma separator may be put multiple times and at end of instruction right before ;. 
 %- File name may have leading and traling spaces e.g. <file.wdl >. TODO: cleaner filename detection
 %- skills may be defined like global definitions
 %- SET instruction allows := instead of , as assignment operator

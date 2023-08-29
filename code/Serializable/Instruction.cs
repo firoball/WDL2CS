@@ -125,7 +125,7 @@ namespace WDL2CS
                         o = $"{m_parameters[0]}.Drop();";
                         break;
 
-                    case "Else": //"else" instrruction is distinguished from "Else" command via casew sensitivity
+                    case "Else": //"else" instruction is distinguished from "Else" command via case sensitivity
                         o = $"else";
                         break;
 
@@ -350,11 +350,13 @@ namespace WDL2CS
                         break;
 
                     case "Print":
-                        o = $"Diag.Print({m_parameters[0]})";
+                    case "Print_value":
+                    case "Print_string":
+                        o = $"Diag.Print({m_parameters[0]});";
                         break;
 
                     case "Printfile":
-                        o = $"Diag.Print({m_parameters[0]}, {m_parameters[1]})";
+                        o = $"Diag.Printfile({m_parameters[0]}, {m_parameters[1]});";
                         break;
 
                     case "Push":

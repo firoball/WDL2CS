@@ -15,6 +15,7 @@ namespace WDL2CS
         private string m_name;
         private readonly string m_serializedInstructions;
         private List<Instruction> m_instructions;
+        private Dictionary<int, string> s_conditions = new Dictionary<int, string>();
 
         public string Name { get => m_name; set => m_name = value; }
 
@@ -74,55 +75,76 @@ namespace WDL2CS
             s += UpdateIndent("public override IEnumerator Logic()");
             s += UpdateIndent("{");
 
-            Instruction lastif = null;
             Instruction last = null;
 
             if (m_instructions != null)
             {
                 foreach (Instruction inst in m_instructions)
                 {
-                    //WDL allows isolated "else" (bug of scripting language)
-                    //keep track of the last if, so the isolated "else" can be fixed with a negated condition
-                    if (inst.Command.StartsWith("if"))
+                    try
                     {
-                        lastif = inst;
-                    }
-                    //special case: "else" was found without previous closing bracket
-                    //take last stored "if"-condiftion, negate it and replace "else" with an "if"
-                    if ((last != null) && !last.Command.StartsWith("}") && inst.Command.StartsWith("else"))
-                    {
-                        Instruction patch = new Instruction(lastif.Command, "(!" + lastif.Parameters[0] + ")");
-                        s += UpdateIndent(patch.Command, patch.Format(instName));
-                    }
-                    //regular path
-                    else
-                    {
-                        string f = inst.Format(instName);
-                        if (!string.IsNullOrEmpty(f))
-                            s += UpdateIndent(inst.Command, f);
-                    }
+                        //WDL allows isolated "else" (bug of scripting language)
+                        //keep track of the last if, so the isolated "else" can be fixed with a negated condition
+                        if (inst.Command.StartsWith("if") && inst.Parameters.Count > 0)
+                        {
+                            PushCondition(inst.Parameters[0]);
+                        }
+                        //special case: "else" was found without previous closing bracket
+                        //take last stored "if"-condiftion, negate it and replace "else" with an "if"
+                        if ((last != null) && !last.Command.StartsWith("}") && inst.Command.StartsWith("else"))
+                        {
+                            Instruction patch;
+                            string cond = PopCondition();
+                            if (string.IsNullOrEmpty(cond))
+                            {
+                                Console.WriteLine("(W) ACTION ELSE without IF detected - disabling");
+                                patch = new Instruction("if", "(false) //disabled by transpiler");
+                            }
+                            else
+                            {
+                                Console.WriteLine("(W) ACTION patched isolated ELSE");
+                                patch = new Instruction("if", "(!" + cond + ")");
+                            }
+                            s += UpdateIndent(patch.Command, patch.Format(instName));
+                        }
+                        //regular path
+                        else
+                        {
+                            Instruction temp = inst;
+                            if (inst.Command.StartsWith("else") && string.IsNullOrEmpty(PopCondition()))
+                            {
+                                Console.WriteLine("(W) ACTION ELSE without IF detected - disabling");
+                                temp = new Instruction("if", "(false) //disabled by transpiler");
+                            }
+                            string f = temp.Format(instName);
+                            if (!string.IsNullOrEmpty(f))
+                                s += UpdateIndent(temp.Command, f);
+                        }
 
+                        last = inst;
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("(E) ACTION unexpected number of parameters: " + instName + " " + inst.Command);
+                    }
+                }
+                s += UpdateIndent("}");
+                s += UpdateIndent("}");
+                string c = "public static Function " + instName + " = new " + className + "()";
 
-                    last = inst;
+                //flag any action which was identified as interruptable
+                if (interruptable)
+                {
+                    s += UpdateIndent(c);
+                    s += UpdateIndent("{");
+                    s += UpdateIndent("Interruptable = true");
+                    s += UpdateIndent("};");
+                }
+                else
+                {
+                    s += UpdateIndent(c + ";");
                 }
             }
-            s += UpdateIndent("}");
-            s += UpdateIndent("}");
-            string c = "public static Function " + instName + " = new " + className + "()";
-
-            //flag any action which was identified as interruptable
-            if (interruptable)
-            {
-                s += UpdateIndent(c);
-                s += UpdateIndent("{");
-                s += UpdateIndent("Interruptable = true");
-                s += UpdateIndent("};");
-            }
-            else
-            {
-                s += UpdateIndent(c + ";");
-            }
-
             return s;
         }
 
@@ -260,6 +282,24 @@ namespace WDL2CS
         private void BuildIndent()
         {
             s_indent = new string('\t', s_indents);
+        }
+
+        private void PushCondition(string cond)
+        {
+            s_conditions[s_indents] = cond;
+        }
+
+        private string PopCondition()
+        {
+            if (s_conditions.TryGetValue(s_indents, out string cond))
+            {
+                s_conditions.Remove(s_indents);
+                return cond;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         private int FindIndex(int startIndex, int count)
