@@ -22,7 +22,7 @@ namespace WDL2CS
 
         //Targets are not detected specifically in the parser due to complexity limit
         //Therefore, hard code the different targets here
-        private static string[] s_targets = new[] { "move", "bullet", "drop", "stick", "straight", "follow", "repel", "vertex", "node0", "node1", "hold", "null" };
+        private static string[] s_targets = new[] { "move", "bullet", "drop", "stick", "straight", "follow", "repel", "vertex", "node0", "node1", "hold", "place", "null" };
         public static string FormatActorTarget(string s)
         {
             if (s_targets.Contains(s))
@@ -142,7 +142,8 @@ namespace WDL2CS
 
         public static string FormatIdentifier(string s)
         {
-            s = s.ToLower();
+            //remove unknown characters and lower case
+            s = s.Replace("?", "").ToLower();
             //patch all identifiers conflicting with C# language
             CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
             if (!provider.IsValidIdentifier(s))
@@ -224,7 +225,9 @@ namespace WDL2CS
             //use local skill in this case
             int g = s.LastIndexOf('.');
             string label = g < 0 ? s : s.Substring(g + 1);
-            label = FormatIdentifier(label);
+            //make sure numbers do not get prefixed by accident
+            if (!int.TryParse(label, out int i) && ! float.TryParse(label, out float f))
+                label = FormatIdentifier(label);
             if (Objects.Identify(out string type, Defines.GetConstReference(label)))
                 s = label;
 

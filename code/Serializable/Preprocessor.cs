@@ -13,6 +13,7 @@ namespace WDL2CS
         private readonly string m_expression;
 
         public string Name { get => m_name; }
+        public string Type { get => "Preprocessor"; }
         public string Expression { get => m_expression; }
 
         public Preprocessor()

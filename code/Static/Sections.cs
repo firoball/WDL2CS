@@ -178,11 +178,18 @@ namespace WDL2CS
 
         private static void AddSection(PreProcessorStack<SerializableData> stack, ISerializable section, List<ISerializable> sections)
         {
+            IEnumerable<string> sectionNamesTypes = sections.Select(x => x.Name + "@" + x.Type);
             IEnumerable<string> sectionNames = sections.Select(x => x.Name);
-            if (sectionNames.Contains(section.Name))
+            if (sectionNamesTypes.Contains(section.Name + "@" + section.Type))
             {
                 //TODO: find out whether 1st (delete) or last (move to Initialize routine) definition is the one evaluated by A3
-                Console.WriteLine("(W) SECTIONS ignore double definition: " + section.Name);
+                Console.WriteLine("(W) SECTIONS ignore double definition: " + section.Name + " (" + section.Type + ")");
+            }
+            else if (sectionNames.Contains(section.Name))
+            {
+                //TODO: resolve ambiguous namings
+                Console.WriteLine("(W) SECTIONS ambiguous definition: " + section.Name);
+                sections.Add(section);
             }
             else
             {

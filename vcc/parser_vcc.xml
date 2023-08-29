@@ -70,7 +70,7 @@
         <READ value="(?i)(FLAG[1-8])" token="ambigChar95skillChar95flag" color="#E1FFFF"/>
         <READ value="[0-9]+" token="integer" color="#E1FFFF"/>
         <READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
-        <READ value="[A-Za-z0-9_][A-Za-z0-9_]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
+        <READ value="[A-Za-z0-9_][A-Za-z0-9_\?]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
         <READ value="&lt;[\s]?[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+[\s]?&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(\\&quot;|.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
         <READ value="[\r\n\t\s\x00]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
@@ -98,6 +98,13 @@ else
                 <RULE name="Sections"/>
                 <CODE>
                     $$ = $1 + $2;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Keyword"/>
+                <CODE>
+                    $$ = ""; //bogus keyword at EOF - just discard
 
                 </CODE>
             </RIGHTSIDE>
@@ -565,7 +572,7 @@ $$ = Assets.AddAsset($1, $2, $4);
         </RULE>
         <RULE name="AssetParams" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Integer"/>
+                <RULE name="AssetParam"/>
                 <TOKEN name="Char44"/>
                 <RULE name="AssetParams"/>
                 <CODE>
@@ -576,7 +583,7 @@ Assets.AddParameter($1);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Integer"/>
+                <RULE name="AssetParam"/>
                 <CODE>
                     //$$ = $1;
 $$ = "";
@@ -587,6 +594,22 @@ Assets.AddParameter($1);
             <RIGHTSIDE>
                 <CODE>
                     $$ = "";
+
+                </CODE>
+            </RIGHTSIDE>
+        </RULE>
+        <RULE name="AssetParam" color="#FFE1FF">
+            <RIGHTSIDE>
+                <RULE name="Identifier"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Integer"/>
+                <CODE>
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -840,15 +863,6 @@ $$ = Actions.CreateMarker($1, $3);
         </RULE>
         <RULE name="Instruction" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="UNDEF"/>
-                <RULE name="DefIdentifier"/>
-                <TOKEN name="Char59"/>
-                <CODE>
-                    $$ = Defines.RemoveDefine($2);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <RULE name="Command"/>
                 <RULE name="Sep"/>
                 <RULE name="ParameterList"/>
@@ -871,6 +885,14 @@ $$ = Actions.CreateInvalidInstruction($1);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <RULE name="Rule"/>
+                <TOKEN name="Char59"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <RULE name="Command"/>
                 <TOKEN name="Char59"/>
                 <CODE>
@@ -880,17 +902,16 @@ $$ = Actions.CreateInstruction($1);
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="Rule"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = "";
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="Char59"/>
+                <RULE name="Define"/>
                 <CODE>
-                    $$ = "";
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>

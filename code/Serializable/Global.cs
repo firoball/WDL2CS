@@ -14,6 +14,7 @@ namespace WDL2CS
         private List<string> m_parameters;
 
         public string Name { get => m_name; set => m_name = value; }
+        public string Type { get => "Global"; }
         public List<string> Parameters { get => m_parameters; set => m_parameters = value; }
 
         public Global()

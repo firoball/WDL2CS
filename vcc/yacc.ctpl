@@ -113,9 +113,7 @@ namespace VCCCompiler
                 Scriptname = Path.GetFileNameWithoutExtension(InputFilename);
             }
 
-            StreamReader in_s = File.OpenText(InputFilename);
-            string inputstream = in_s.ReadToEnd();
-            in_s.Close();
+            string inputstream = File.ReadAllText(InputFilename, Encoding.ASCII);
 
             ////////////////////////////////////////////////////////////////
             /// Compiler Code:
@@ -359,9 +357,7 @@ namespace VCCCompiler
         }
         public static string SubScanner(string file)
         {
-            StreamReader in_s = File.OpenText(file);
-            string inputstream = in_s.ReadToEnd();
-            in_s.Close();
+            string inputstream = File.ReadAllText(InputFilename, Encoding.ASCII);
 
             MyCompiler compiler = new MyCompiler();
             StringBuilder sb = new StringBuilder();

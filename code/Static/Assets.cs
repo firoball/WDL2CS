@@ -72,7 +72,7 @@ namespace WDL2CS
 
         public static void AddParameter(string value)
         {
-            s_parameters.Insert(0, Formatter.FormatNumber(value));
+            s_parameters.Insert(0, value);
         }
 
     }

@@ -11,6 +11,11 @@ namespace WDL2CS
         {
             get;
         }
+
+        string Type
+        {
+            get;
+        }
         string Serialize();
         string Format();
         bool IsInitialized();

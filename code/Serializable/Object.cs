@@ -21,6 +21,7 @@ namespace WDL2CS
         private Object m_way; //"inlined" Way object
 
         public string Name { get => m_name; set => m_name = value; }
+        public string Type { get => m_type; }
 
         public Object(string type, string name, bool isString)
         {

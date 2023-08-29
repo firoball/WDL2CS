@@ -1,6 +1,8 @@
 Start -> Sections
 
-Sections -> Section Sections | EPSILON
+%Ugly Patch: Collect any garbage keyword at EOF - WDL allowed it
+%Sections -> Section Sections | EPSILON
+Sections -> Section Sections | Keyword | EPSILON
 Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor | } | ;
 %Superfluous closing curly braces and semicolons may be put - capture these as dummy section
 
@@ -26,7 +28,9 @@ ObjectIdList -> ObjectId Sep ObjectIdList | ObjectId Sep
 GlobalParameter -> Number | File | String | Identifier
 
 AssetDef -> AssetRef AssetId Sep File Sep AssetParams ;
-AssetParams -> Integer | Integer , AssetParams | EPSILON 
+AssetParams -> AssetParam | AssetParam , AssetParams | EPSILON 
+%Assets must also allow redefinitions (= identifier) TODO: is "Identifier" sufficient?
+AssetParam -> Integer | Identifier
 AssetRef -> asset
 
 ObjectDef -> Object ObjectId ; | Object ObjectId Sep { PropertyDefs } | Object ObjectId Sep String ;
@@ -42,9 +46,9 @@ FunctionDef -> Function FunctionId Sep { Instructions }
 Function -> function
 %Compatibility patch - Goto markers may also be terminated by ; instead of : (use identifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
 Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | PreprocInst Instructions | { Instructions } Instructions | EPSILON
-%Compatibility patch - UNDEF can be placed inside functions - A3 allows bogus instructions (capture as Identifier)
+%Compatibility patch - DEFINEs can be placed inside functions - A3 allows bogus instructions (capture as Identifier)
 %Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | ;
-Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | UNDEF DefIdentifier ; | Identifier Sep ParameterList ; | ;
+Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | Define | Identifier Sep ParameterList ; | ;
 
 ParameterList -> Parameter Sep ParameterList | Parameter Sep
 Parameter -> Number | File | String | KeywordPar | List

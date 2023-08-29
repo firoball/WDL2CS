@@ -18,6 +18,7 @@ namespace WDL2CS
         private Dictionary<int, string> s_conditions = new Dictionary<int, string>();
 
         public string Name { get => m_name; set => m_name = value; }
+        public string Type { get => "Action"; }
 
         public Action(string name, string instructions)
         {
@@ -123,7 +124,7 @@ namespace WDL2CS
 
                         last = inst;
                     }
-                    catch (Exception e)
+                    catch 
                     {
                         Console.WriteLine("(E) ACTION unexpected number of parameters: " + instName + " " + inst.Command);
                     }
@@ -153,7 +154,7 @@ namespace WDL2CS
             bool interruptable = false;
 
             //no instructions in action
-            if (m_instructions == null)
+            if (m_instructions == null || (m_instructions.Count == 0))
                 return interruptable;
 
             Dictionary<int, Instruction> inserts = new Dictionary<int, Instruction>();
@@ -169,30 +170,39 @@ namespace WDL2CS
                 //Transform "Skip" to "goto" and jump marker
                 else if (m_instructions[i].Command.StartsWith("Skip"))
                 {
-                    //Console.WriteLine(name);
-                    int index = FindIndex(i, Convert.ToInt32(m_instructions[i].Parameters[0]));
-                    if (index > -1)
+                    //standard case: Skip comes with number of lines to skip as parameter
+                    if (Int32.TryParse(m_instructions[i].Parameters[0], out int num))
                     {
-                        //Add additional parameter carrying the jump label
-                        m_instructions[i].Parameters.Add("skip" + i + "to" + index);
-                        //create new instruction for jump marker which is to be inserted
-                        Instruction marker = new Instruction(Formatter.FormatGotoMarker(m_instructions[i].Parameters[1]), false);
-                        //instruction needs to be inserted above current one. Buffer and insert later
-                        //otherwise iteration can break on direct insertion
-                        if (index < i)
+                        //Console.WriteLine(name);
+                        int index = FindIndex(i, num);
+                        if (index > -1)
                         {
-                            inserts.Add(index, marker);
+                            //Add additional parameter carrying the jump label
+                            m_instructions[i].Parameters.Add("skip" + i + "to" + index);
+                            //create new instruction for jump marker which is to be inserted
+                            Instruction marker = new Instruction(Formatter.FormatGotoMarker(m_instructions[i].Parameters[1]), false);
+                            //instruction needs to be inserted above current one. Buffer and insert later
+                            //otherwise iteration can break on direct insertion
+                            if (index < i)
+                            {
+                                inserts.Add(index, marker);
+                            }
+                            else
+                            {
+                                m_instructions.Insert(index, marker);
+                            }
                         }
                         else
                         {
-                            m_instructions.Insert(index, marker);
+                            //Skip tries to jump outside instruction list - throw warning and remove instruction
+                            Console.WriteLine("(W) ACTION remove invalid statement in " + m_name + ": " + m_instructions[i].Command + " " + m_instructions[i].Parameters[0]);
+                            m_instructions.RemoveAt(i);
                         }
                     }
                     else
                     {
-                        //Skip tries to jump outside instruction list - throw warning and remove instruction
-                        Console.WriteLine("(W) ACTION remove invalid statement in " + m_name + ": " + m_instructions[i].Command + " " + m_instructions[i].Parameters[0]);
-                        m_instructions.RemoveAt(i);
+                        //special case: skip is used like goto with label instead of number - Add additional parameter carrying the copied jump label to appease the formatter
+                        m_instructions[i].Parameters.Add(m_instructions[i].Parameters[0]);
                     }
                 }
 
@@ -211,7 +221,7 @@ namespace WDL2CS
                     else
                     {
                         //in case no instruction follows after if_*, remove instruction
-                        Console.WriteLine("(W) ACTION remove incomplete statement in "+ m_name + ": " + m_instructions[i].Format(m_name));
+                        Console.WriteLine("(W) ACTION remove incomplete statement in " + m_name + ": " + m_instructions[i].Format(m_name));
                         m_instructions.RemoveAt(i);
                     }
                 }
