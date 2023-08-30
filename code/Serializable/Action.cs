@@ -206,7 +206,7 @@ namespace WDL2CS
                     }
 
                     //add brackets for "If_..." instructions, since these are transformed to bare "if"
-                    //don't do this in case of a third partameter is supplied. In this special case an goto instruction got inserted already - no brackets needed
+                    //don't do this in case of a third parameter is supplied. In this special case an goto instruction got inserted already - no brackets needed
                     else if ((m_instructions[i].Command.StartsWith("If_") && (m_instructions[i].Parameters.Count < 3)) ||
                         (m_instructions[i].Command.StartsWith("Else") && (i < m_instructions.Count - 1) && (m_instructions[i + 1].Command[0] != '{')))
                     {
@@ -221,6 +221,22 @@ namespace WDL2CS
                         {
                             //in case no instruction follows after if_*, remove instruction
                             Console.WriteLine("(W) ACTION remove incomplete statement in " + m_name + ": " + m_instructions[i].Format(m_name));
+                            m_instructions.RemoveAt(i);
+                        }
+                    }
+
+                    //C# does not allow jumpin at end of { } block - move label after block
+                    else if (m_instructions[i].Command.EndsWith(":"))
+                    {
+                        int m = i;
+                        while ((m < m_instructions.Count - 1) && (m_instructions[m + 1].Command[0] == '}'))
+                        {
+                            m++;
+                        }
+                        if (m > i)
+                        {
+                            Console.WriteLine("(I) ACTION jump marker moved after closing bracket");
+                            m_instructions.Insert(m + 1, m_instructions[i]);
                             m_instructions.RemoveAt(i);
                         }
                     }

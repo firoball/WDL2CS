@@ -357,7 +357,7 @@ namespace VCCCompiler
         }
         public static string SubScanner(string file)
         {
-            string inputstream = File.ReadAllText(InputFilename, Encoding.ASCII);
+            string inputstream = File.ReadAllText(file, Encoding.ASCII);
 
             MyCompiler compiler = new MyCompiler();
             StringBuilder sb = new StringBuilder();

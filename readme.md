@@ -76,7 +76,7 @@ The parser code is generated through **VCC** tool (and manually patched afterwar
 ![Workflow](workflow.jpg)
 
 Since the parser operates string-based, any object represented by an internal data structure is serialized to a string-based stream. Once all incoming tokens have been processed, the whole stream is deserialized again into internal data structures. Based on certain criteria like required initialization or preprocessor conditions, all data is sorted.
-As last step every object is formatted, in the sense of the corresponding C# code is generated.
+As last step every object is formatted, meaning the corresponding C# code is generated.
 
 ## Current status
 
@@ -89,36 +89,62 @@ High-level road map:
 * [x] define grammar and token regex
 * [x] define WDL API for C# (separate project, in progress)
 * [x] add token to script generator logic
-* [ ] export C# scripts <-- __HERE__
-* [ ] test exported code against AcknexCSApi <-- __HERE__
+* [x] export C# scripts
+* [x] test exported code against AcknexCSApi
+* [x] automated regression tests, see [WDLTransTest](https://github.com/firoball/WDLTransTest)
+* [ ] test transpiler against all available Acknex3 games <-- __HERE__
+* [ ] handles reuse of keywords (duplicates)
+* [ ] introduce preprocessor
+* [ ] remove preprocessor defines from grammar
 
 ## Compatibility
 
-Following Acknex3 games have been transpiled successfully:
+Following Acknex3 games have been transpiled and compiled against [Acknex3 C# Api](https://github.com/firoball/AcknexCSApi) successfully:
 
 * Abiventure 2 (Crew99)
 * Adeptus (Conitec)
 * Angst (ManMachine Games)
+* Bust Hillary (Dan Pereira)
 * Deathman's Island (Lutz Hüls)
+* Der Name des Bruders (backbone.interactive)
+* Escape (Ben Glick)
 * Floriansdorf (BigByte Software)
+* Hades 2 (Espaço Informática)
 * Lord of Lightning (Alex Seifriz)
+* Mr. Pibb (BrandGames)
+* Mystic Office (Czeslaw Gorski)
 * Nightfreeze (Dennis Lenz)
 * oPDemo3 (oP Group Germany)
-* Pibbgame
+* Saints of Virtue (Shine Studios)
+* Shadow of the Lost Citadel (SalsaShark Productions)
 * Skaphander Demo (oP Group Germany)
 * Streetlife (Madhouse Games)
-* Tasty Temple Challenge
+* Tasty Temple Challenge (BrandGames)
 * Tyrannizer Demo (Viper Byte Software)
 * Vampira (CWR-Spiele)
-* Varghina Incident / Alien Anarchy (Perceptum Informática)
+* Varginha Incident / Alien Anarchy (Perceptum Informática)
 * VRDemo (oP Group Germany)
 * VVL (CWR-Spiele) 
+* War Pac 3D (SKV Soft)
 * World of Kandoria - Contest version (mine)
+
+Following Acknex3 games have been transpiled, but don't compile:
+
+* Black Bekker (Min Bekker) - Game utilizes jumps into if-cases which is not supported by C#
+* Skaphander (oP Group Germany) - Name clashes between different object types and actions
+* Virus Explosion (oP Group Germany) - Complex preprocessor defines lead to incomplete c# code
+* VR Messe (oP Group Germany)  - Name clashes between different object types and actions
 
 Following Acknex3 games currently are **not** supported by the transpiler:
 
-* Der Name des Bruders (huge WDL files lead to breakdown of parser)
-* VR Messe (Name clashes between different object types and actions)
+* currently none
+
+Games I am looking forward to get hold off for testing:
+
+* Adventure Demo (Conitec GmbH) - is this same as Adeptus?
+* Banana Kong (Lutz Hüls)
+* Pax Westphalica (M.T. Bhatty)
+* other A3 games I am not aware of
 
 Source code is not freely available for all of the listed games, therefore transpiled code is not uploaded to GitHub.
 

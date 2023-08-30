@@ -3,7 +3,7 @@ Start -> Sections
 %Ugly Patch: Collect any garbage keyword at EOF - WDL allowed it
 %Sections -> Section Sections | EPSILON
 Sections -> Section Sections | Keyword | EPSILON
-Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor | } | ;
+Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor | } | { | ;
 %Superfluous closing curly braces and semicolons may be put - capture these as dummy section
 
 Preprocessor -> IFDEF DefIdentifier ; PreprocessorSection ; | IFNDEF DefIdentifier ; PreprocessorSection ;
@@ -13,7 +13,7 @@ PreprocInstSection -> Instructions ENDIF | Instructions IFELSE Instructions ENDI
 PreprocProp -> IFDEF DefIdentifier ; PreprocPropSection ; | IFNDEF DefIdentifier ; PreprocPropSection ;
 PreprocPropSection -> PropertyDefs ENDIF | PropertyDefs IFELSE ; PropertyDefs ENDIF
 
-Define -> DEFINE DefIdentifier , DefParameter ; | DEFINE DefIdentifier ; | UNDEF DefIdentifier ;
+Define -> DEFINE DefIdentifier DefParameter ; | DEFINE DefIdentifier ; | UNDEF DefIdentifier ;
 %Allow ambiguity between predefined skills and defines. WDL allowed it.
 %TODO: is this suffcient or more general approach needed? Just allow "BasicKeyword"?
 DefIdentifier -> Identifier | Skill
@@ -21,40 +21,37 @@ DefIdentifier -> Identifier | Skill
 DefParameter -> Number | KeywordPar | File | String | List
 Include -> INCLUDE File ;
 
-GlobalDef -> Global Sep GlobalParameter ; | Event Sep ObjectIdList ;
+GlobalDef -> Global GlobalParameter ; | Event ObjectIdList ;
 Global -> global | ambig_global_property | ambig_global_synonym_property | Skill
 Event -> event | ambig_event_property
-ObjectIdList -> ObjectId Sep ObjectIdList | ObjectId Sep
+ObjectIdList -> ObjectId ObjectIdList | ObjectId
 GlobalParameter -> Number | File | String | Identifier
 
-AssetDef -> AssetRef AssetId Sep File Sep AssetParams ;
-AssetParams -> AssetParam | AssetParam , AssetParams | EPSILON 
+AssetDef -> AssetRef AssetId File AssetParams ;
+AssetParams -> AssetParam AssetParams | EPSILON 
 %Assets must also allow redefinitions (= identifier) TODO: is "Identifier" sufficient?
 AssetParam -> Integer | Identifier
 AssetRef -> asset
 
-ObjectDef -> Object ObjectId ; | Object ObjectId Sep { PropertyDefs } | Object ObjectId Sep String ;
+ObjectDef -> Object ObjectId ; | Object ObjectId { PropertyDefs } | Object ObjectId String ;
 ObjectRef -> object
 %TODO is this special case still required?
 Object -> ObjectRef | ambig_object_flag 
 PropertyDefs -> PropertyDef PropertyDefs | PreprocProp PropertyDefs | EPSILON
-PropertyDef -> Property Sep PropertyValueList ; | ;
-PropertyValueList -> PropertyValue Sep PropertyValueList | PropertyValue Sep 
+PropertyDef -> Property PropertyValueList ; | ;
+PropertyValueList -> PropertyValue PropertyValueList | PropertyValue 
 PropertyValue -> Number | File | String | KeywordPar
 
-FunctionDef -> Function FunctionId Sep { Instructions }
+FunctionDef -> Function FunctionId { Instructions }
 Function -> function
 %Compatibility patch - Goto markers may also be terminated by ; instead of : (use identifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
 Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | PreprocInst Instructions | { Instructions } Instructions | EPSILON
 %Compatibility patch - DEFINEs can be placed inside functions - A3 allows bogus instructions (capture as Identifier)
-%Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | ;
-Instruction -> Command ; | Command Sep ParameterList ; | Rule ; | Define | Identifier Sep ParameterList ; | ;
+%Instruction -> Command ; | Command ParameterList ; | Rule ; | ;
+Instruction -> Command ; | Command ParameterList ; | Rule ; | Define | Identifier ParameterList ; | ;
 
-ParameterList -> Parameter Sep ParameterList | Parameter Sep
+ParameterList -> Parameter ParameterList | Parameter
 Parameter -> Number | File | String | KeywordPar | List
-
-%Compatibility patch - WDL parser allows leaving/adding commas
-Sep -> , | EPSILON
 
 Expression -> LogicOr
 LogicOr -> LogicOr '||' LogicAnd | LogicAnd
@@ -67,9 +64,9 @@ Comparison -> Comparison OpCmp Term | Term
 Term -> Term OpTerm Factor | Factor 
 Factor -> Factor OpFac Unary | Unary 
 Unary -> OpUn Unary | Primary
-%add stupid SKILL 6 <--> SKILL6 workaround
+%add stupid "SKILL 6 --> 6" and "18,4 --> 18" workarounds
 %Primary -> UnNumber | Keyword | ( Expression ) | Math ( Expression ) | List
-Primary -> UnNumber | Keyword | ( Expression ) | Math ( Expression ) | List | Keyword integer
+Primary -> UnNumber | Keyword | ( Expression ) | Math ( Expression ) | List | Keyword integer | integer integer
 
 OpEq -> == | !=
 OpCmp -> <= | >= | < | > 
@@ -77,7 +74,8 @@ OpTerm -> + | -
 OpFac -> / | * | %
 OpUn -> - | + | !
 
-%WDL parser allowed RULEs without assignment
+%WDL parser allows RULEs without assignment and statements similar to SET a,b;
+%Rule -> RULE Keyword OpAssign Expression | Keyword OpAssign Expression
 Rule -> RULE Keyword OpAssign Expression | RULE Expression | Keyword OpAssign Expression
 OpAssign -> = | += | -= | *= | /=
 Math -> math | ambig_math_command | ambig_math_skill_property
@@ -105,8 +103,8 @@ Skill -> skill | ambig_skill_property | ambig_math_skill_property
 EngineKeywords -> event | global | asset | object | function | math | flag | property | command | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command | ambig_command_flag | ambig_command_property
 EngineObjects -> skill | synonym | ambig_math_skill_property | ambig_synonym_flag | ambig_skill_property | ambig_global_synonym_property | ambig_skill_flag
 BasicKeyword -> EngineKeywords | EngineObjects | Identifier | NULL
-%add stupid "identifier-name" workaround
-HackKeyword -> BasicKeyword | identifier - identifier
+%add stupid "identifier-name" / "identifier-123" workarounds
+HackKeyword -> BasicKeyword | identifier - identifier | identifier - integer
 %ObjectId -> BasicKeyword
 ObjectId -> HackKeyword
 %FunctionId -> BasicKeyword

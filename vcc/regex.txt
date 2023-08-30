@@ -1,11 +1,12 @@
         <READ value="(?i)IFDEF" token="IFDEF" color="#E1FFFF"/>
-        <READ value="(,*[\s\t\x00]*)?;" token="Char59" color="#E1FFFF"/>
+        <READ value=";" token="Char59" color="#E1FFFF"/>
         <READ value="(?i)IFNDEF" token="IFNDEF" color="#E1FFFF"/>
         <READ value="(?i)IFELSE" token="IFELSE" color="#E1FFFF"/>
         <READ value="(?i)ENDIF" token="ENDIF" color="#E1FFFF"/>
         <READ value="(?i)DEFINE" token="DEFINE" color="#E1FFFF"/>
-        <READ value="(:=|(,+[\s\t\x00]*)*)" token="Char44" color="#E1FFFF"/>
         <READ value="(?i)UNDEF" token="UNDEF" color="#E1FFFF"/>
+        <READ value="REMOVEME" token="Char44" color="#E1FFFF"/>
+        <READ value="ALSOREMOVEME" token="KeywordChar44" color="#E1FFFF"/>
         <READ value="(?i)INCLUDE" token="INCLUDE" color="#E1FFFF"/>
         <READ value="\{" token="Char123" color="#E1FFFF"/>
         <READ value="\}" token="Char125" color="#E1FFFF"/>
@@ -68,4 +69,4 @@
         <READ value="[A-Za-z0-9_][A-Za-z0-9_\?]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
         <READ value="&lt;[\s]?[^&lt;;:&quot; ]+\.[^&lt;;:&quot; ]+[\s]?&gt;" token="file" color="#E1FFFF"/>
         <READ value="&quot;(\\&quot;|.|[\r\n])*?&quot;" token="string" color="#E1FFFF"/>
-        <READ value="[\r\n\t\s\x00]|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>
+        <READ value="[\r\n\t\s\x00,]|:=|(#.*(\n|$))|(//.*(\n|$))|(/\*(.|[\r\n])*?\*/)" token="IGNORE" color="#E1FFFF"/>

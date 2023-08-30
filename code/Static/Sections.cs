@@ -187,8 +187,9 @@ namespace WDL2CS
             }
             else if (sectionNames.Contains(section.Name))
             {
+                string collisions = string.Join(", ", sections.Where(x => x.Name.Equals(section.Name)).Select(x => x.Type).Reverse());
                 //TODO: resolve ambiguous namings
-                Console.WriteLine("(W) SECTIONS ambiguous definition: " + section.Name);
+                Console.WriteLine("(W) SECTIONS ambiguous definition: " + section.Name + " (" + section.Type + ", " + collisions+")");
                 sections.Add(section);
             }
             else
