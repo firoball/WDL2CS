@@ -132,18 +132,22 @@ Following Acknex3 games have been transpiled, but don't compile:
 
 * Black Bekker (Min Bekker) - Game utilizes jumps into if-cases which is not supported by C#
 * Skaphander (oP Group Germany) - Name clashes between different object types and actions
-* Virus Explosion (oP Group Germany) - Complex preprocessor defines lead to incomplete c# code
+* Virus Explosion (oP Group Germany) - Complex preprocessor defines lead to incomplete C# code
 * VR Messe (oP Group Germany)  - Name clashes between different object types and actions
 
 Following Acknex3 games currently are **not** supported by the transpiler:
 
-* currently none
+* N/A
 
 Games I am looking forward to get hold off for testing:
 
 * Adventure Demo (Conitec GmbH) - is this same as Adeptus?
 * Banana Kong (Lutz Hüls)
 * Pax Westphalica (M.T. Bhatty)
+* Pikto (Phaestos)
+* Queste (oP Group Germany)
+* Shades (LifeGbR)
+* Timeteap 3D (Michael Meyer)
 * other A3 games I am not aware of
 
 Source code is not freely available for all of the listed games, therefore transpiled code is not uploaded to GitHub.
