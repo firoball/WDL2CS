@@ -35,7 +35,7 @@ namespace WDL2CS
             return m_type + s_sepDef + m_redefine + s_sepDef + m_original;
         }
 
-        public static Define Deserialize(string stream)
+        public static Define Deserialize(ref string stream)
         {
             string[] fragments = stream.Split(new[] { s_sepDef }, StringSplitOptions.None);
             string type = fragments[0];
@@ -45,12 +45,9 @@ namespace WDL2CS
             return new Define(type, redefine, original);
         }
 
-        public string Format()
+        public void Format(StringBuilder sb)
         {
-            string o;
-            o = $"{s_indent}{s_scope} static readonly {m_type} {m_redefine} = {m_original};";
-
-            return o;
+            sb.Append($"{s_indent}{s_scope} static readonly {m_type} {m_redefine} = {m_original};");
         }
     }
 }

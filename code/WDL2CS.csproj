@@ -53,6 +53,7 @@
     <Compile Include="Static\Formatter.cs" />
     <Compile Include="Serializable\Global.cs" />
     <Compile Include="Static\Globals.cs" />
+    <Compile Include="Static\Identifiers.cs" />
     <Compile Include="Static\Include.cs" />
     <Compile Include="Serializable\Instruction.cs" />
     <Compile Include="Serializable\Object.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Util\ObjectData.cs" />
     <Compile Include="Static\Objects.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="Util\Preprocessor.cs" />
     <Compile Include="Util\PreProcessorData.cs" />
     <Compile Include="Util\PreProcessorStack.cs" />
     <Compile Include="Serializable\Property.cs" />

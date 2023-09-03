@@ -114,6 +114,9 @@ namespace VCCCompiler
             }
 
             string inputstream = File.ReadAllText(InputFilename, Encoding.ASCII);
+            string path = Path.GetDirectoryName(InputFilename);
+            Preprocess p = new Preprocess(path);
+            inputstream = p.Parse(ref inputstream);
 
             ////////////////////////////////////////////////////////////////
             /// Compiler Code:

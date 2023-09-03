@@ -27,9 +27,6 @@ namespace WDL2CS
         {
             //TODO: add support for "Load" section here
             //TODO: should this code be somewhere in Sections class?
-            List<string> sections = new List<string>();
-            List<string> initSections = new List<string>();
-
             foreach (ISerializable section in m_sections)
             {
                 if (ParentContains(section.Name))
@@ -39,15 +36,17 @@ namespace WDL2CS
                     //initSections.Add(section.Format()); -- TODO: add on-the-fly-switch for "init" mode
                 }
                 else if (section.IsInitialized())
-                    initSections.Add(section.Format());
+                {
+                    section.Format(InitSectionStream);
+                    InitSectionStream.AppendLine();
+                }
                 else
-                    sections.Add(section.Format());
+                {
+                    section.Format(SectionStream);
+                    SectionStream.AppendLine();
+                }
             }
-            //sections.Sort(); //TODO: this is dangerous - introduce sort by type
-            SectionStream.Append(string.Join(s_nl, sections));
 
-            //initSections.Sort(); //TODO: this is dangerous - introduce sort by type
-            InitSectionStream.Append(string.Join(s_nl, initSections));
         }
     }
 }

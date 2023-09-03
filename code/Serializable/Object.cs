@@ -65,7 +65,7 @@ namespace WDL2CS
             return s;
         }
 
-        public static Object Deserialize(string stream)
+        public static Object Deserialize(ref string stream)
         {
             List<Property> properties = null;
 
@@ -84,7 +84,7 @@ namespace WDL2CS
             return new Object(type, name, properties);
         }
 
-        public string Format()
+        public void Format(StringBuilder sb)
         {
             string properties;
             //string carries text instead of (serialized) properties
@@ -93,23 +93,28 @@ namespace WDL2CS
             else
                 properties = ProcessProperties();
 
-            string o = string.Empty;
             string scope = "public static ";
 
             switch (m_type)
             {
                 case "Synonym":
-                    o += s_indent + scope + properties + ";";
+                    sb.Append(s_indent + scope + properties + ";");
                     break;
 
                 case "String":
-                    o += s_indent + scope + "string " + m_name;
+                    sb.Append(s_indent + scope + "string " + m_name);
                     if (!string.IsNullOrEmpty(properties))
-                        o += " = " + properties;
-                    o += ";";
+                        sb.Append(" = " + properties);
+                    sb.Append(";");
                     break;
 
                 default:
+                    //if "inlined" Way definition was found earlier, prepend Way definition here 
+                    if (m_way != null)
+                    {
+                        m_way.Format(sb);
+                        sb.AppendLine();
+                    }
                     //Ways never have properties, but need to be instantiated nonetheless
                     //if (!string.IsNullOrEmpty(props) || string.Compare(type, "Way", true) == 0 || string.Compare(type, "Skill", true) == 0)
                     {
@@ -117,33 +122,26 @@ namespace WDL2CS
                         if (!IsInitialized())
                         {
                             indent = s_indent;
-                            o += indent + scope + m_type + " ";
+                            sb.Append(indent + scope + m_type + " ");
                         }
                         else
                         {
                             indent = s_indentInit;
-                            o += indent;
+                            sb.Append(indent);
                         }
 
-                        o += m_name + " = new " + m_type + "()";
+                        sb.Append(m_name + " = new " + m_type + "()");
 
                         if (!string.IsNullOrEmpty(properties))
                         {
-                            o += s_nl + indent + "{" + s_nl;
-                            o += properties + s_nl;
-                            o += indent + "}";
+                            sb.Append(s_nl + indent + "{" + s_nl);
+                            sb.Append(properties + s_nl);
+                            sb.Append(indent + "}");
                         }
-                        o += ";";
-                    }
-                    //if "inlined" Way definition was found earlier, prepend Way definition here 
-                    if (m_way != null)
-                    {
-                        o = m_way.Format() + s_nl + o;
+                        sb.Append(";");
                     }
                     break;
             }
-
-            return o;
         }
 
         private string ProcessProperties()
@@ -257,10 +255,15 @@ namespace WDL2CS
 
         private void ProcessProperties(ObjectData objectData)
         {
-            List<string> ranges = new List<string>();
+            /*List<string> ranges = new List<string>();
             List<string> controls = new List<string>();
             List<string> properties = new List<string>();
-            List<string> shadows = new List<string>();
+            List<string> shadows = new List<string>();*/
+
+            //initialized object definitions need different indention
+            string indent = s_indent;
+            if (IsInitialized())
+                indent = s_indentInit;
 
             foreach (Property property in objectData.Properties)
             {
@@ -276,12 +279,22 @@ namespace WDL2CS
                         if (!isShadow)
                             goto default;
                         else
-                            shadows.Add($"{m_name}.{property.Format(m_type).Replace("=", "|=")}"); //apply patch for shadow definition
+                        {
+                            //                            shadows.Add($"{m_name}.{property.Format(m_type).Replace("=", "|=")}"); //apply patch for shadow definition
+                            objectData.ShadowStream.Append(s_indentInit);
+                            objectData.ShadowStream.Append($"{m_name}.{property.Format(m_type).Replace("=", "|=")}"); //apply patch for shadow definition
+                            objectData.ShadowStream.Append(";" + s_nl);
+                        }
                         break;
 
                     case "Range":
                         if (!isShadow)
-                            ranges.Add(property.Format(m_type));
+                        {
+                            //                            ranges.Add(property.Format(m_type));
+                            objectData.RangeStream.Append(indent + "\t\t");
+                            objectData.RangeStream.Append(property.Format(m_type));
+                            objectData.RangeStream.Append("," + s_nl);
+                        }
                         else
                             //shadows.Add($"{m_name}.{property.Name}.Concat({property.Format(m_type)})"); -- not supported by C# for 2D arrays
                             Console.WriteLine("(W) OBJECT unable to build shadow property: " + property.Name);
@@ -297,7 +310,10 @@ namespace WDL2CS
                     case "Button":
                         //does not work for definitions with "allowMultiple" flag.
                         //if (!isShadow)
-                            controls.Add(property.Format(m_type));
+                        //                            controls.Add(property.Format(m_type));
+                        objectData.ControlStream.Append(indent + "\t\t");
+                        objectData.ControlStream.Append(property.Format(m_type));
+                        objectData.ControlStream.Append("," + s_nl);
                         //else
                         //    shadows.Add($"{m_name}.Controls.Concat(new UIControl[] {{ {property.Format(m_type)} }})"); //apply patch for shadow definition
                         break;
@@ -306,19 +322,23 @@ namespace WDL2CS
                         //Ways can be "inlined" in object definitions
                         //if way is not yet defined, create and register it outside of serialized parser stream
                         //during formatting, formatted way object will be printend along with this object
-                        if (!Objects.Is("Way", property.Values[0]))
+                        if (!Identifiers.Is("Way", property.Values[0]))
                         {
                             Console.WriteLine("(I) OBJECT add missing Way definition for: " + property.Values[0]);
-                            m_way = Deserialize(Objects.AddObject("Way", property.Values[0]));
+                            string obj = Objects.AddObject("Way", property.Values[0]);
+                            m_way = Deserialize(ref obj);
                         }
                         goto default;
 
                     default:
-                        properties.Add(property.Format(m_type));
+                        //                        properties.Add(property.Format(m_type));
+                        objectData.PropertyStream.Append(indent + "\t");
+                        objectData.PropertyStream.Append(property.Format(m_type));
+                        objectData.PropertyStream.Append("," + s_nl);
                         break;
                 }
             }
-
+/*
             //initialized object definitions need different indention
             string indent = s_indent;
             if (IsInitialized())
@@ -338,6 +358,7 @@ namespace WDL2CS
             //create semicolon separated list of shadow properties (workaround: these need to be set in initialization routine of script)
             shadows.Sort();
             objectData.ShadowStream.Append(string.Join(s_nl, shadows.Select(x => s_indentInit + x + ";")));
+            */
         }
 
         private void AddProperty(Property property, List<Property> properties)

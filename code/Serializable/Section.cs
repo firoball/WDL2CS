@@ -36,7 +36,7 @@ namespace WDL2CS
             return s_sepSect + m_type + m_stream;
         }
 
-        public static ISerializable Deserialize(string stream)
+        public static ISerializable Deserialize(ref string stream)
         {
             //kill any leading object seperator - it is used for serializing multiple instructions only
             string[] fragments = stream.Split(new[] { s_sepSect }, StringSplitOptions.RemoveEmptyEntries);
@@ -47,37 +47,37 @@ namespace WDL2CS
             switch (type)
             {
                 case "#[SA]#":
-                    return Asset.Deserialize(data);
+                    return Asset.Deserialize(ref data);
 
                 case "#[SD]#":
-                    return Define.Deserialize(data);
+                    return Define.Deserialize(ref data);
 
                 case "#[SF]#":
-                    return Action.Deserialize(data);
+                    return Action.Deserialize(ref data);
 
                 case "#[SG]#":
-                    return Global.Deserialize(data);
+                    return Global.Deserialize(ref data);
 
                 case "#[SO]#":
-                    return Object.Deserialize(data);
+                    return Object.Deserialize(ref data);
 
                 case "#[SP]#":
-                    return Preprocessor.Deserialize(data);
+                    return Preprocessor.Deserialize(ref data);
 
                 default:
                     return null;
             }
         }
 
-        public static List<ISerializable> DeserializeList(string stream)
+        public static List<ISerializable> DeserializeList(ref string stream)
         {
             List<ISerializable> sections = new List<ISerializable>();
 
             string[] fragments = stream.Split(new[] { s_sepSect }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (string fragment in fragments)
+            for (int i = 0; i < fragments.Length; i++)
             {
-                sections.Add(Deserialize(fragment));
+                sections.Add(Deserialize(ref fragments[i]));
             }
             return sections;
         }

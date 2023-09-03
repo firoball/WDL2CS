@@ -107,19 +107,13 @@ namespace WDL2CS
         public static void AddKeywordDefine(string s)
         {
             s = Formatter.FormatDefine(s); //due to limitations of parser, any keyword define needs to be reformatted explicitly
-            if (Objects.Identify(out string obj, s))
+            if (Identifiers.Identify(out string id, s))
             {
                 //identified as some specific object, declare data type accordingly
-                if (obj.Equals("String"))
+                if (id.Equals("String"))
                     s_const = "string"; //special case - C# string type is used instead of custom object
                 else
-                    s_const = obj;
-                s_original = s;
-            }
-            else if (Assets.Identify(out string asset, s))
-            {
-                //identified as some specific asset, declare data type accordingly
-                s_const = asset;
+                    s_const = id;
                 s_original = s;
             }
             else

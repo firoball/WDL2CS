@@ -12,6 +12,7 @@ namespace WDL2CS
         public static string AddAction(string name, string stream)
         {
             name = Formatter.FormatActionId(name);
+            Identifiers.Register("Action", name);
             string a = new Action(name, stream).Serialize();
 
             return a;

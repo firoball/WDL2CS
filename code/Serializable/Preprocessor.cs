@@ -39,7 +39,7 @@ namespace WDL2CS
             return m_name + s_sepPre + m_expression;
         }
 
-        public static Preprocessor Deserialize(string stream)
+        public static Preprocessor Deserialize(ref string stream)
         {
             string[] fragments = stream.Split(new[] { s_sepPre }, StringSplitOptions.None);
             Preprocessor pre;
@@ -55,12 +55,11 @@ namespace WDL2CS
             return pre;
         }
 
-        public string Format()
+        public void Format(StringBuilder sb)
         {
-            string p = m_name;
+            sb.Append(m_name);
             if (!string.IsNullOrEmpty(m_expression))
-                p += " " + m_expression;
-            return p;
+                sb.Append (" " + m_expression);
         }
 
     }

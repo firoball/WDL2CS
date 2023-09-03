@@ -230,7 +230,7 @@ namespace WDL2CS
             //make sure numbers do not get prefixed by accident
             if (!int.TryParse(label, out int i) && ! float.TryParse(label, out float f))
                 label = FormatIdentifier(label);
-            if (Objects.Identify(out string type, Defines.GetConstReference(label)))
+            if (Identifiers.Identify(out string type, Defines.GetConstReference(label)))
                 s = label;
 
             //prioritize usage of const definitions (defines in WDL) over global skills/events in properties
@@ -270,7 +270,7 @@ namespace WDL2CS
             else
             {
                 string identifier = FormatIdentifier(target); //eliminate ambiguity between skill and property
-                if (Objects.Is("Skill", Defines.GetConstReference(identifier))) //resolve const references in order to detect redefined skills as well
+                if (Identifiers.Is("Skill", Defines.GetConstReference(identifier))) //resolve const references in order to detect redefined skills as well
                     target = identifier + ".Val";
             }
             return target;

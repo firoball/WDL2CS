@@ -48,7 +48,7 @@ namespace WDL2CS
             return s;
         }
 
-        public static Action Deserialize(string stream)
+        public static Action Deserialize(ref string stream)
         {
             List<Instruction> instructions = null;
 
@@ -61,9 +61,8 @@ namespace WDL2CS
             return new Action(name, instructions);
         }
 
-        public string Format()
+        public void Format(StringBuilder sb)
         {
-            string s = string.Empty;
             bool interruptable = false;
             string className = Formatter.FormatActionClass(m_name);
             string instName = m_name;
@@ -71,10 +70,10 @@ namespace WDL2CS
             //Update instruction list in order to make it compatible to C#
             interruptable = ProcessInstructions();
 
-            s += UpdateIndent("private class " + className + " : Function<" + className + ">");
-            s += UpdateIndent("{");
-            s += UpdateIndent("public override IEnumerator Logic()");
-            s += UpdateIndent("{");
+            sb.Append(UpdateIndent("private class " + className + " : Function<" + className + ">"));
+            sb.Append(UpdateIndent("{"));
+            sb.Append(UpdateIndent("public override IEnumerator Logic()"));
+            sb.Append(UpdateIndent("{"));
 
             Instruction last = null;
 
@@ -106,7 +105,7 @@ namespace WDL2CS
                                 Console.WriteLine("(W) ACTION patched isolated ELSE");
                                 patch = new Instruction("if", "(!" + cond + ")");
                             }
-                            s += UpdateIndent(patch.Command, patch.Format(instName));
+                            sb.Append(UpdateIndent(patch.Command, patch.Format(instName)));
                         }
                         //regular path
                         else
@@ -119,7 +118,7 @@ namespace WDL2CS
                             }
                             string f = temp.Format(instName);
                             if (!string.IsNullOrEmpty(f))
-                                s += UpdateIndent(temp.Command, f);
+                                sb.Append(UpdateIndent(temp.Command, f));
                         }
 
                         last = inst;
@@ -130,23 +129,22 @@ namespace WDL2CS
                     }
                 }
             }
-            s += UpdateIndent("}");
-            s += UpdateIndent("}");
+            sb.Append(UpdateIndent("}"));
+            sb.Append(UpdateIndent("}"));
             string c = "public static Function " + instName + " = new " + className + "()";
 
             //flag any action which was identified as interruptable
             if (interruptable)
             {
-                s += UpdateIndent(c);
-                s += UpdateIndent("{");
-                s += UpdateIndent("Interruptable = true");
-                s += UpdateIndent("};");
+                sb.Append(UpdateIndent(c));
+                sb.Append(UpdateIndent("{"));
+                sb.Append(UpdateIndent("Interruptable = true"));
+                sb.Append(UpdateIndent("};"));
             }
             else
             {
-                s += UpdateIndent(c + ";");
+                sb.Append(UpdateIndent(c + ";"));
             }
-            return s;
         }
 
         private bool ProcessInstructions()
@@ -257,8 +255,10 @@ namespace WDL2CS
             }
             else //function is empty - at least yield.
             {
-                m_instructions = new List<Instruction>();
-                m_instructions.Add(new Instruction("yield break;", false));
+                m_instructions = new List<Instruction>
+                {
+                    new Instruction("yield break;", false)
+                };
             }
             return interruptable;
         }

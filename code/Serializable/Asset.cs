@@ -51,7 +51,7 @@ namespace WDL2CS
             return s;
         }
 
-        public static Asset Deserialize(string stream)
+        public static Asset Deserialize(ref string stream)
         {            
             string[] fragments = stream.Split(new[] { s_sepAss }, StringSplitOptions.None);
             string type = fragments[0];
@@ -65,17 +65,14 @@ namespace WDL2CS
             return new Asset(type, name, file, parameters);
         }
 
-        public string Format()
+        public void Format(StringBuilder sb)
         {
-            string o = string.Empty;
             string scope = "public static ";
 
             string pars = string.Empty;
             if (m_parameters != null && m_parameters.Count > 0)
                pars = ", " + string.Join(", ", m_parameters);
-            o += s_indent + scope + m_type + " " + m_name + " = new " + m_type + "(" + m_file + pars + ");";
-
-            return o;
+            sb.Append(s_indent + scope + m_type + " " + m_name + " = new " + m_type + "(" + m_file + pars + ");");
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -9,11 +10,14 @@ namespace WDL2CS
     {
         public static string Format(string className, string stream)
         {
-            Sections.Deserialize(stream);
-            string s = string.Empty;
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
 
-            s += Defines.Format();
-            s += @"
+            Sections.Deserialize(ref stream);
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(Defines.Format());
+            sb.Append(@"
 using System.Collections;
 using Acknex3.Api;
 
@@ -23,18 +27,20 @@ namespace Acknex3.Script
 	{
 		public void Initialize()
 		{
-";
-            s += Sections.FormatInit();
-            s += @"
+");
+            sb.Append(Sections.FormatInit());
+            sb.Append(@"
 		}
-";
-            s += Sections.Format();
-            s += @"
+");
+            sb.Append(Sections.Format());
+            sb.Append(@"
 	}
 }
-";
+");
+            Console.WriteLine("(I) SCRIPT formatting finished in " + watch.Elapsed);
+            watch.Stop();
 
-            return s;
+            return sb.ToString();
         }
 
     }

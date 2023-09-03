@@ -46,7 +46,7 @@ namespace WDL2CS
             return s;
         }
 
-        public static Property Deserialize(string stream)
+        public static Property Deserialize(ref string stream)
         {
             //kill any leading object seperator - it is used for serializing multiple instructions only
             string[] fragments = stream.Split(new[] { s_sepProp }, StringSplitOptions.RemoveEmptyEntries);
@@ -203,9 +203,9 @@ namespace WDL2CS
         {
             string[] fragments = stream.Split(new[] { s_sepProp }, StringSplitOptions.RemoveEmptyEntries);
             List<Property> properties = new List<Property>();
-            foreach (string fragment in fragments)
+            for (int i = 0; i < fragments.Length; i++)
             {
-                properties.Add(Deserialize(fragment));
+                properties.Add(Deserialize(ref fragments[i]));
             }
             return properties;
         }

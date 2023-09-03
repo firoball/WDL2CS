@@ -17,7 +17,7 @@ namespace WDL2CS
             get;
         }
         string Serialize();
-        string Format();
+        void Format(StringBuilder sb);
         bool IsInitialized();
     }
 }

@@ -8,7 +8,6 @@ namespace WDL2CS
     class Sections
     {
 
-        private static readonly string s_nl = Environment.NewLine;
         private static SerializableData s_serializableData;
         private static string s_shadowDefinitions = string.Empty;
 
@@ -123,10 +122,10 @@ namespace WDL2CS
             //return string.Join(s_nl, s_sections.Select(x => x.Format()));
         }
 
-        public static void Deserialize(string stream)
+        public static void Deserialize(ref string stream)
         {
             //Console.WriteLine(stream);
-            List<ISerializable> sections = Section.DeserializeList(stream);
+            List<ISerializable> sections = Section.DeserializeList(ref stream);
             ProcessSections(sections);
         }
 

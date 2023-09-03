@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using WDL2CS;
-
+using System.Diagnostics;
 namespace VCCCompiler
 {
     /// <summary>
@@ -324,7 +324,10 @@ namespace VCCCompiler
             }
 
             string inputstream = File.ReadAllText(InputFilename, Encoding.ASCII);
-
+            string path = Path.GetDirectoryName(InputFilename);
+            Preprocess p = new Preprocess(path);
+            inputstream = p.Parse(ref inputstream);
+            Console.WriteLine(inputstream);
             ////////////////////////////////////////////////////////////////
             /// Compiler Code:
             ////////////////////////////////////////////////////////////////
@@ -725,18 +728,19 @@ namespace VCCCompiler
          yyval = yyv[yysp-1];
          
        break;
-							case   87 : 
-         yyval = Actions.CreateInstruction(yyv[yysp-1]);
+							case   87 :
+                    yyval = Actions.CreateInstruction(yyv[yysp-1]);
          
        break;
 							case   88 : 
          yyval = "";
          
        break;
-							case   89 : 
-         yyval = yyv[yysp-0];
-         
-       break;
+							case   89 :
+                    yyval = "";// Sections.AddDefineSection(yyv[yysp-0]);
+                    //this causes invalid nesting, breaking the formatter
+
+                    break;
 							case   90 : 
          yyval = "";
          Actions.AddInstructionParameter(yyv[yysp-0]);
@@ -6796,7 +6800,7 @@ namespace VCCCompiler
 
             error:
 
-            if (yyerrflag==0) yyerror("syntax error");
+            if (yyerrflag==0) yyerror("syntax error "+yylval);
 
             errlab:
 

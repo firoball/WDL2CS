@@ -43,7 +43,7 @@ namespace WDL2CS
             return s;
         }
 
-        public static Global Deserialize(string stream)
+        public static Global Deserialize(ref string stream)
         {
             string[] fragments = stream.Split(new[] { s_sepGlob }, StringSplitOptions.None);
             string name = fragments[0];
@@ -55,10 +55,8 @@ namespace WDL2CS
             return new Global(name, parameterss);
         }
 
-        public string Format()
+        public void Format(StringBuilder sb)
         {
-            string o = string.Empty;
-
             bool forceMulti = false;
             //identify data type for array definition
             string type = string.Empty;
@@ -93,7 +91,7 @@ namespace WDL2CS
                 }
 
                 string parameters = string.Join(", ", m_parameters);
-                o += s_indent + m_name + " = new " + type + "[] {" + parameters + "};";
+                sb.Append(s_indent + m_name + " = new " + type + "[] {" + parameters + "};");
             }
             else
             {
@@ -101,9 +99,8 @@ namespace WDL2CS
                 //Patch for video mode definition
                 if (m_name.Contains("Video"))
                     parameter = Formatter.FormatVideo(parameter);
-                o += s_indent + m_name + " = " + parameter + ";";
+                sb.Append(s_indent + m_name + " = " + parameter + ";");
             }
-            return o;
         }
 
     }

@@ -46,7 +46,7 @@ namespace WDL2CS
             return s;
         }
 
-        public void Deserialize(string stream)
+        public void Deserialize(ref string stream)
         {
             //kill any leading object seperator - it is used for serializing multiple instructions only
             string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.RemoveEmptyEntries);
@@ -321,7 +321,7 @@ namespace WDL2CS
                         if (m_parameters.Count > 2)
                         {
                             //check for specific properties containing an object, e.g. <object>.Genius - checking for dot may lead to false positives
-                            if (Objects.Is("Thing", m_parameters[2]) || Objects.Is("Actor", m_parameters[2]) || Objects.Is("Wall", m_parameters[2]) ||
+                            if (Identifiers.Is("Thing", m_parameters[2]) || Identifiers.Is("Actor", m_parameters[2]) || Identifiers.Is("Wall", m_parameters[2]) ||
                                 m_parameters[2].StartsWith("Globals.") || m_parameters[2].EndsWith(".Genius") || (string.Compare(m_parameters[2], "My") == 0)
                                 )
                             {
@@ -571,10 +571,10 @@ namespace WDL2CS
         {
             string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.RemoveEmptyEntries);
             List<Instruction> instructions = new List<Instruction>();
-            foreach (string fragment in fragments)
+            for (int i = 0; i < fragments.Length; i++)
             {
                 Instruction inst = new Instruction();
-                inst.Deserialize(fragment);
+                inst.Deserialize(ref fragments[i]);
                 instructions.Add(inst);
             }
             return instructions;
