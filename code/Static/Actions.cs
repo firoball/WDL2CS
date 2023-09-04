@@ -30,49 +30,6 @@ namespace WDL2CS
 
         }
 
-        public static string CreatePreProcIfNotCondition(string expr, string stream)
-        {
-            string s = string.Empty;
-
-            s += new Instruction("#if", "!(" + expr + ")", false).Serialize();
-            s += stream;
-
-            return s;
-        }
-
-
-        public static string CreatePreProcIfCondition(string expr, string stream)
-        {
-            string s = string.Empty;
-
-            s += new Instruction("#if", expr, false).Serialize();
-            s += stream;
-
-            return s;
-        }
-
-        public static string CreatePreProcElseCondition(string ifstream, string elsestream)
-        {
-            string s = string.Empty;
-
-            s += ifstream;
-            s += new Instruction("#else", false).Serialize();
-            s += elsestream;
-            s += new Instruction("#endif", false).Serialize();
-
-            return s;
-        }
-
-        public static string CreatePreProcEndCondition(string stream)
-        {
-            string s = string.Empty;
-
-            s += stream;
-            s += new Instruction("#endif", false).Serialize();
-
-            return s;
-        }
-
         public static string CreateIfCondition(string expr, string stream)
         {
             string s = string.Empty;

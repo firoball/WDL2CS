@@ -62,15 +62,7 @@ namespace WDL2CS
         public static string FormatCommand(string s)//TODO really own function required?
         {
             s = Ucfirst(s);
-            return Defines.CheckTransform(s);//transform required here?
-        }
-
-        public static string FormatDefine(string define)
-        {
-            //Workaround
-            //make sure any falsly added prefix is discarded (parser cannot distinguish properly for defines)
-            int g = define.LastIndexOf('.');
-            return g < 0 ? define : define.Substring(g + 1);
+            return s;
         }
 
         //Lists are not detected specifically in the parser due to complexity limit
@@ -150,7 +142,7 @@ namespace WDL2CS
             CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
             if (!provider.IsValidIdentifier(s))
                 s = "__" + s;
-            return Defines.CheckTransform(s);
+            return s;
         }
 
         public static string FormatList(string list)
@@ -206,11 +198,6 @@ namespace WDL2CS
             }
         }
 
-        public static string FormatPreprocessor(string preproc)
-        {
-            return preproc.ToUpperInvariant();
-        }
-
         public static string FormatProperty(string s)
         {
             //somewhat dirty workaround due to "base" identifier being patched to avoid clash with C# language
@@ -218,7 +205,7 @@ namespace WDL2CS
             while (s[0] == '_')
                 s = s.Substring(1);
             s = Ucfirst(s);
-            return Defines.CheckTransform(s);
+            return s;
         }
 
         public static string FormatPropertyValue(string s)
@@ -230,13 +217,10 @@ namespace WDL2CS
             //make sure numbers do not get prefixed by accident
             if (!int.TryParse(label, out int i) && ! float.TryParse(label, out float f))
                 label = FormatIdentifier(label);
-            if (Identifiers.Identify(out string type, Defines.GetConstReference(label)))
+            if (Identifiers.Identify(out string type, label))
                 s = label;
 
-            //prioritize usage of const definitions (defines in WDL) over global skills/events in properties
-            //this is more or less a shameless hack, but consts cannot be treated at earlier stage
-            //without breaking redeclaration of built-in Acknex engine skills and events.
-            return Defines.CheckConst(s);
+            return s;
         }
 
         public static string FormatSkill(string s)
@@ -270,7 +254,7 @@ namespace WDL2CS
             else
             {
                 string identifier = FormatIdentifier(target); //eliminate ambiguity between skill and property
-                if (Identifiers.Is("Skill", Defines.GetConstReference(identifier))) //resolve const references in order to detect redefined skills as well
+                if (Identifiers.Is("Skill", identifier)) //resolve const references in order to detect redefined skills as well
                     target = identifier + ".Val";
             }
             return target;

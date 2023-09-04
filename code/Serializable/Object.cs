@@ -153,31 +153,8 @@ namespace WDL2CS
 
             foreach (Property property in m_properties)
             {
-                switch (property.Name)
-                {
-                    case "#if":
-                        //update preprocessor stack and obtain new dataset
-                        objectData = stack.Update(property.Name, property.Values[0]);
-                        objectData.ParentObject = this; //required for callback in objectData.Format()
-                        break;
-
-                    case "#else":
-                        //update preprocessor stack and move to else branch of active dataset
-                        objectData = stack.Update(property.Name);
-                        objectData.ParentObject = this; //required for callback in objectData.Format()
-                        break;
-
-                    case "#endif":
-                        //update preprocessor stack, get previous dataset
-                        objectData = stack.Update(property.Name);
-                        objectData.ParentObject = this; //required for callback in objectData.Format()
-                        break;
-
-                    default:
-                        //add property to active dataset
-                        AddProperty(property, objectData.Properties);
-                        break;
-                }
+                //add property to active dataset
+                AddProperty(property, objectData.Properties);
             }
 
             objectData = stack.Merge();

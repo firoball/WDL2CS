@@ -35,48 +35,6 @@ namespace WDL2CS
             return o;
         }
 
-        public static string CreatePreProcIfNotCondition(string expr, string stream)
-        {
-            string s = string.Empty;
-
-            s += new Property("#if", "!(" + expr + ")").Serialize();
-            s += stream;
-
-            return s;
-        }
-
-        public static string CreatePreProcIfCondition(string expr, string stream)
-        {
-            string s = string.Empty;
-
-            s += new Property("#if", expr).Serialize();
-            s += stream;
-
-            return s;
-        }
-
-        public static string CreatePreProcElseCondition(string ifstream, string elsestream)
-        {
-            string s = string.Empty;
-
-            s += ifstream;
-            s += new Property("#else").Serialize();
-            s += elsestream;
-            s += new Property("#endif").Serialize();
-
-            return s;
-        }
-
-        public static string CreatePreProcEndCondition(string stream)
-        {
-            string s = string.Empty;
-
-            s += stream;
-            s += new Property("#endif").Serialize();
-
-            return s;
-        }
-
         public static string CreateProperty(string property)
         {
             Property prop = new Property(property, s_values);

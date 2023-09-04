@@ -247,7 +247,7 @@ namespace VCCCompiler
 
             error:
 
-            if (yyerrflag==0) yyerror("syntax error");
+            if (yyerrflag==0) yyerror("syntax error "+yylval);
 
             errlab:
 

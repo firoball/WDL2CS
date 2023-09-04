@@ -3,23 +3,8 @@ Start -> Sections
 %Ugly Patch: Collect any garbage keyword at EOF - WDL allowed it
 %Sections -> Section Sections | EPSILON
 Sections -> Section Sections | Keyword | EPSILON
-Section -> ObjectDef | FunctionDef | AssetDef | Define | Include | GlobalDef | Preprocessor | } | { | ;
+Section -> ObjectDef | FunctionDef | AssetDef | GlobalDef | } | { | ;
 %Superfluous closing curly braces and semicolons may be put - capture these as dummy section
-
-Preprocessor -> IFDEF DefIdentifier ; PreprocessorSection ; | IFNDEF DefIdentifier ; PreprocessorSection ;
-PreprocessorSection -> Sections ENDIF | Sections IFELSE ; Sections ENDIF
-PreprocInst -> IFDEF DefIdentifier PreprocInstSection | IFNDEF DefIdentifier PreprocInstSection
-PreprocInstSection -> Instructions ENDIF | Instructions IFELSE Instructions ENDIF
-PreprocProp -> IFDEF DefIdentifier ; PreprocPropSection ; | IFNDEF DefIdentifier ; PreprocPropSection ;
-PreprocPropSection -> PropertyDefs ENDIF | PropertyDefs IFELSE ; PropertyDefs ENDIF
-
-Define -> DEFINE DefIdentifier DefParameter ; | DEFINE DefIdentifier ; | UNDEF DefIdentifier ;
-%Allow ambiguity between predefined skills and defines. WDL allowed it.
-%TODO: is this suffcient or more general approach needed? Just allow "BasicKeyword"?
-DefIdentifier -> Identifier | Skill
-%TODO
-DefParameter -> Number | KeywordPar | File | String | List
-Include -> INCLUDE File ;
 
 GlobalDef -> Global GlobalParameter ; | Event ObjectIdList ;
 Global -> global | ambig_global_property | ambig_global_synonym_property | Skill
@@ -29,15 +14,14 @@ GlobalParameter -> Number | File | String | Identifier
 
 AssetDef -> AssetRef AssetId File AssetParams ;
 AssetParams -> AssetParam AssetParams | EPSILON 
-%Assets must also allow redefinitions (= identifier) TODO: is "Identifier" sufficient?
-AssetParam -> Integer | Identifier
+AssetParam -> Integer
 AssetRef -> asset
 
 ObjectDef -> Object ObjectId ; | Object ObjectId { PropertyDefs } | Object ObjectId String ;
 ObjectRef -> object
 %TODO is this special case still required?
 Object -> ObjectRef | ambig_object_flag 
-PropertyDefs -> PropertyDef PropertyDefs | PreprocProp PropertyDefs | EPSILON
+PropertyDefs -> PropertyDef PropertyDefs | EPSILON
 PropertyDef -> Property PropertyValueList ; | ;
 PropertyValueList -> PropertyValue PropertyValueList | PropertyValue 
 PropertyValue -> Number | File | String | KeywordPar
@@ -45,10 +29,10 @@ PropertyValue -> Number | File | String | KeywordPar
 FunctionDef -> Function FunctionId { Instructions }
 Function -> function
 %Compatibility patch - Goto markers may also be terminated by ; instead of : (use identifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
-Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | PreprocInst Instructions | { Instructions } Instructions | EPSILON
-%Compatibility patch - DEFINEs can be placed inside functions - A3 allows bogus instructions (capture as Identifier)
+Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | { Instructions } Instructions | EPSILON
+%Compatibility patch - A3 allows bogus instructions (capture as Identifier)
 %Instruction -> Command ; | Command ParameterList ; | Rule ; | ;
-Instruction -> Command ; | Command ParameterList ; | Rule ; | Define | Identifier ParameterList ; | ;
+Instruction -> Command ; | Command ParameterList ; | Rule ; | Identifier ParameterList ; | ;
 
 ParameterList -> Parameter ParameterList | Parameter
 Parameter -> Number | File | String | KeywordPar | List
@@ -87,9 +71,7 @@ Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expressio
 Keyword -> BasicKeyword | BasicKeyword . Property | BasicKeyword . Flag
 KeywordPar -> OpUn Keyword | Keyword
 Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag | ambig_skill_flag
-%Properties must also allow redefinitions (= identifier) TODO: is "Identifier" sufficient?
-%Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
-Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property | Identifier
+Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
 Command -> command | ambig_command_flag | ambig_command_property | ambig_math_command | ELSE
 Number -> Integer | Fixed
 UnNumber -> integer | fixed

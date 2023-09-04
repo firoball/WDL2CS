@@ -30,6 +30,7 @@ namespace WDL2CS
             Comment = 8,
             String = 9,
             Code = 10,
+            Identifier = 11,
         }
 
         public Preprocess() : this(string.Empty) { }
@@ -49,7 +50,11 @@ namespace WDL2CS
             //strings
             m_regex.Add(new Regex(@"\G(""(\\""|.|[\r\n])*?"")"));
             //standard code
-            m_regex.Add(new Regex(@"\G([\w\?_]+|\s+|[\x21-\x2F\x3A-\x40\x5B-\x5D\x7B-\x7E])"));
+            m_regex.Add(new Regex(@"\G(\s+|[\x21-\x2F\x3A-\x40\x5B-\x5D\x7B-\x7E])"));
+            //identifier
+            m_regex.Add(new Regex(@"\G([\w\?_]+)"));
+
+            Regex.CacheSize += m_regex.Count;
         }
 
 
@@ -165,7 +170,7 @@ namespace WDL2CS
                     break;
 
                 case ProcId.Endif:
-                    m_directives.Add(new string('\t', m_stack.Count-1) + (m_stack.Peek() ? "(ENDIF)" : "ENDIF"));
+                    m_directives.Add(new string('\t', m_stack.Count-1) + (ignore ? "(ENDIF)" : "ENDIF"));
                     if (m_stack.Count > 0)
                         ignore = m_stack.Pop();
                     else
@@ -175,16 +180,35 @@ namespace WDL2CS
                 case ProcId.Code:
                     if (!ignore)
                     {
+                        sb.Append(stream, pos, match.Length);
+                    }
+                    break;
+
+                case ProcId.Identifier:
+                    if (!ignore)
+                    {
+                        int sbPos = sb.Length;
                         if (m_replacements.ContainsKey(match.Value))
+                        {
                             sb.Append(m_replacements[match.Value]);
+                        }
                         else
+                        {
                             sb.Append(stream, pos, match.Length);
+                        }
+
+                        for (int i = sbPos; i < sb.Length; i++)
+                        {
+                                sb[i] = char.ToUpper(sb[i]);
+                        }
                     }
                     break;
 
                 case ProcId.String:
                     if (!ignore)
+                    {
                         sb.Append(stream, pos, match.Length);
+                    }
                     break;
 
                 case ProcId.Define:

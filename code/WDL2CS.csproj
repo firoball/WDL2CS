@@ -44,17 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Serializable\Action.cs" />
-    <Compile Include="Serializable\Define.cs" />
-    <Compile Include="Serializable\Preprocessor.cs" />
     <Compile Include="Static\Actions.cs" />
     <Compile Include="Serializable\Asset.cs" />
     <Compile Include="Static\Assets.cs" />
-    <Compile Include="Static\Defines.cs" />
     <Compile Include="Static\Formatter.cs" />
     <Compile Include="Serializable\Global.cs" />
     <Compile Include="Static\Globals.cs" />
     <Compile Include="Static\Identifiers.cs" />
-    <Compile Include="Static\Include.cs" />
     <Compile Include="Serializable\Instruction.cs" />
     <Compile Include="Serializable\Object.cs" />
     <Compile Include="Static\Script.cs" />

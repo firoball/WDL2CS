@@ -16,7 +16,6 @@ namespace WDL2CS
             Sections.Deserialize(ref stream);
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(Defines.Format());
             sb.Append(@"
 using System.Collections;
 using Acknex3.Api;
