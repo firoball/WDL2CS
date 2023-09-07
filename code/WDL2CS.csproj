@@ -59,13 +59,10 @@
     <Compile Include="Static\Objects.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Util\Preprocessor.cs" />
-    <Compile Include="Util\PreProcessorData.cs" />
-    <Compile Include="Util\PreProcessorStack.cs" />
     <Compile Include="Serializable\Property.cs" />
     <Compile Include="Serializable\ISerializable.cs" />
     <Compile Include="Serializable\Section.cs" />
     <Compile Include="Static\Sections.cs" />
-    <Compile Include="Util\SerializableData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

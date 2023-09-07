@@ -27,11 +27,11 @@ namespace Acknex3.Script
 		public void Initialize()
 		{
 ");
-            sb.Append(Sections.FormatInit());
+            Sections.Format(sb, true); //initialized data
             sb.Append(@"
 		}
 ");
-            sb.Append(Sections.Format());
+            Sections.Format(sb, false); //static data
             sb.Append(@"
 	}
 }

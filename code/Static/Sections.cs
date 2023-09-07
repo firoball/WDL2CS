@@ -7,11 +7,7 @@ namespace WDL2CS
 {
     class Sections
     {
-
-        private static SerializableData s_serializableData;
-        private static string s_shadowDefinitions = string.Empty;
-
-        public static string ShadowDefinitions { get => s_shadowDefinitions; set => s_shadowDefinitions = value; }
+        private static List<ISerializable> s_sections = new List<ISerializable>();
 
         public static string AddActionSection(string stream)
         {
@@ -51,43 +47,31 @@ namespace WDL2CS
             return string.Empty;
         }
 
-        public static string FormatInit()
+        public static void Format(StringBuilder sb, bool isInitialized)
         {
-            return s_serializableData.InitSectionStream.Append(s_shadowDefinitions).ToString();
-        }
-
-        public static string Format()
-        {
-            return s_serializableData.SectionStream.ToString();
-            //return string.Join(s_nl, s_sections.Select(x => x.Format()));
+            foreach (ISerializable section in s_sections)
+            {
+                if (section.IsInitialized() == isInitialized)
+                {
+                    section.Format(sb);
+                    sb.AppendLine();
+                }
+            }
         }
 
         public static void Deserialize(ref string stream)
         {
             //Console.WriteLine(stream);
             List<ISerializable> sections = Section.DeserializeList(ref stream);
-            ProcessSections(sections);
-        }
 
-        private static void ProcessSections(List<ISerializable> sections)
-        {
-            string p = string.Empty;
-            PreProcessorStack<SerializableData> stack = new PreProcessorStack<SerializableData>();
-            SerializableData serializableData = stack.Content;
-
+            //Verify section list
             foreach (ISerializable section in sections)
             {
-                //add property to active dataset
-                AddSection(stack, section, serializableData.Sections);
+                AddSection(section, s_sections);
             }
-
-            serializableData = stack.Merge();
-
-            //copy formatted data to static interface
-            s_serializableData = serializableData;
         }
 
-        private static void AddSection(PreProcessorStack<SerializableData> stack, ISerializable section, List<ISerializable> sections)
+        private static void AddSection(ISerializable section, List<ISerializable> sections)
         {
             IEnumerable<string> sectionNamesTypes = sections.Select(x => x.Name + "@" + x.Type);
             IEnumerable<string> sectionNames = sections.Select(x => x.Name);

@@ -37,7 +37,7 @@ namespace WDL2CS
 
         public Object(string type, string name, bool isInitialized, string properties, bool isString) : this(type, name, isInitialized, isString)
         {
-            //special case: string content is treated like serialied property
+            //special case: string content is treated like serialized property
             m_serializedProperties = properties;
         }
 
@@ -152,10 +152,8 @@ namespace WDL2CS
             //sort properties alphabetically
             m_properties = m_properties.OrderBy(x => x.Name).ToList(); //TODO: sort AFTER formatting (as previously)
 
-            string p = string.Empty;
-            PreProcessorStack<ObjectData> stack = new PreProcessorStack<ObjectData>();
-            ObjectData objectData = stack.Content;
-            objectData.ParentObject = this; //required for callback in objectData.Format()
+            ObjectData objectData = new ObjectData();
+            StringBuilder sb = new StringBuilder();
 
             foreach (Property property in m_properties)
             {
@@ -163,42 +161,32 @@ namespace WDL2CS
                 AddProperty(property, objectData.Properties);
             }
 
-            objectData = stack.Merge();
-
-            //copy standard properties to output
-            p += objectData.PropertyStream;
-
-            //handle palette range definitions
-            if (objectData.RangeStream.Length > 0)
-            {
-                p += s_nl + s_indent + "\tRange = new[,]" + s_nl + s_indent + "\t{" + objectData.RangeStream;
-                p += s_nl + s_indent + "\t}";
-            }
-
-            //handle UI control definitions
-            if (objectData.ControlStream.Length > 0)
-            {
-                p += s_nl + s_indent + "\tControls = new UIControl[]" + s_nl + s_indent + "\t{ " + objectData.ControlStream;
-                p += s_nl + s_indent + "\t}";
-            }
-
-            //report any shadow properties (workaround: C# does not allow double-init on construction)
-            if (objectData.ShadowStream.Length > 0)
-            {
-                Sections.ShadowDefinitions += objectData.ShadowStream;
-            }
-
-            return p;
-        }
-
-        public void ProcessObjectData(ObjectData objectData)
-        {
             //Synonyms need special treatment: convert from WDL object with properties to C# object reference
             if (m_type.Equals("Synonym"))
                 ProcessSynonym(objectData);
             else
                 ProcessProperties(objectData);
 
+            //copy standard properties to output
+            sb.Append(objectData.PropertyStream);
+
+            //handle palette range definitions
+            if (objectData.RangeStream.Length > 0)
+            {
+                sb.Append(s_nl + s_indent + "\tRange = new[,]" + s_nl);
+                sb.Append(s_indent + "\t{" + objectData.RangeStream);
+                sb.Append(s_nl + s_indent + "\t}");
+            }
+
+            //handle UI control definitions
+            if (objectData.ControlStream.Length > 0)
+            {
+                sb.Append(s_nl + s_indent + "\tControls = new UIControl[]" + s_nl);
+                sb.Append(s_indent + "\t{ " + objectData.ControlStream);
+                sb.Append(s_nl + s_indent + "\t}");
+            }
+
+            return sb.ToString();
         }
 
         private void ProcessSynonym(ObjectData objectData)
@@ -238,11 +226,6 @@ namespace WDL2CS
 
         private void ProcessProperties(ObjectData objectData)
         {
-            /*List<string> ranges = new List<string>();
-            List<string> controls = new List<string>();
-            List<string> properties = new List<string>();
-            List<string> shadows = new List<string>();*/
-
             //initialized object definitions need different indention
             string indent = s_indent;
             if (IsInitialized())
@@ -250,39 +233,13 @@ namespace WDL2CS
 
             foreach (Property property in objectData.Properties)
             {
-                bool isShadow = false;
-                if (objectData.ParentContains(property.Name))
-                {
-                    Console.WriteLine("(I) OBJECT found shadow property: " + property.Name);
-                    isShadow = true;
-                }
                 switch (property.Name)
                 {
-                    case "Flags":
-                        if (!isShadow)
-                            goto default;
-                        else
-                        {
-                            //                            shadows.Add($"{m_name}.{property.Format(m_type).Replace("=", "|=")}"); //apply patch for shadow definition
-                            objectData.ShadowStream.Append(s_nl);
-                            objectData.ShadowStream.Append(s_indentInit);
-                            objectData.ShadowStream.Append($"{m_name}.{property.Format(m_type).Replace("=", "|=")}"); //apply patch for shadow definition
-                            objectData.ShadowStream.Append(";");
-                        }
-                        break;
-
                     case "Range":
-                        if (!isShadow)
-                        {
-                            //                            ranges.Add(property.Format(m_type));
-                            objectData.RangeStream.Append(s_nl);
-                            objectData.RangeStream.Append(indent + "\t\t");
-                            objectData.RangeStream.Append(property.Format(m_type));
-                            objectData.RangeStream.Append(",");
-                        }
-                        else
-                            //shadows.Add($"{m_name}.{property.Name}.Concat({property.Format(m_type)})"); -- not supported by C# for 2D arrays
-                            Console.WriteLine("(W) OBJECT unable to build shadow property: " + property.Name);
+                        objectData.RangeStream.Append(s_nl);
+                        objectData.RangeStream.Append(indent + "\t\t");
+                        objectData.RangeStream.Append(property.Format(m_type));
+                        objectData.RangeStream.Append(",");
                         break;
 
                     case "Digits":
@@ -293,15 +250,10 @@ namespace WDL2CS
                     case "Picture":
                     case "Window":
                     case "Button":
-                        //does not work for definitions with "allowMultiple" flag.
-                        //if (!isShadow)
-                        //                            controls.Add(property.Format(m_type));
                         objectData.ControlStream.Append(s_nl);
                         objectData.ControlStream.Append(indent + "\t\t");
                         objectData.ControlStream.Append(property.Format(m_type));
                         objectData.ControlStream.Append(",");
-                        //else
-                        //    shadows.Add($"{m_name}.Controls.Concat(new UIControl[] {{ {property.Format(m_type)} }})"); //apply patch for shadow definition
                         break;
 
                     case "Way":
@@ -316,8 +268,8 @@ namespace WDL2CS
                         }
                         goto default;
 
+                    case "Flags":
                     default:
-                        //                        properties.Add(property.Format(m_type));
                         objectData.PropertyStream.Append(s_nl);
                         objectData.PropertyStream.Append(indent + "\t");
                         objectData.PropertyStream.Append(property.Format(m_type));
@@ -325,27 +277,6 @@ namespace WDL2CS
                         break;
                 }
             }
-/*
-            //initialized object definitions need different indention
-            string indent = s_indent;
-            if (IsInitialized())
-                indent = s_indentInit;
-            //create comma separated list of ranges
-            ranges.Sort();
-            objectData.RangeStream.Append(string.Join(s_nl, ranges.Select(x => indent + "\t\t" + x + ",")));
-
-            //create comma separated list of controls
-            controls.Sort();
-            objectData.ControlStream.Append(string.Join(s_nl, controls.Select(x => indent + "\t\t" + x + ",")));
-
-            //create comma separated list of properties
-            properties.Sort();
-            objectData.PropertyStream.Append(string.Join(s_nl, properties.Select(x => indent + "\t" + x + ",")));
-
-            //create semicolon separated list of shadow properties (workaround: these need to be set in initialization routine of script)
-            shadows.Sort();
-            objectData.ShadowStream.Append(string.Join(s_nl, shadows.Select(x => s_indentInit + x + ";")));
-            */
         }
 
         private void AddProperty(Property property, List<Property> properties)
@@ -365,6 +296,7 @@ namespace WDL2CS
                 }
                 else
                 {
+                    //TODO: take first or last definition?
                     Console.WriteLine("(W) OBJECT ignore double definition of property: " + property.Name);
                 }
             }

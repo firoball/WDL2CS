@@ -5,39 +5,25 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class ObjectData : PreProcessorData
+    class ObjectData
     {
         private List<Property> m_properties;
-        private Object m_parentObject;
+        private StringBuilder m_rangeStream;
+        private StringBuilder m_controlStream;
+        private StringBuilder m_propertyStream;
 
-        public ObjectData() : base(4)
+        public ObjectData()
         {
             m_properties = new List<Property>();
+            m_rangeStream = new StringBuilder();
+            m_controlStream = new StringBuilder();
+            m_propertyStream = new StringBuilder();
         }
 
         public List<Property> Properties { get => m_properties; }
-        public StringBuilder RangeStream { get => m_streams[0]; }
-        public StringBuilder ControlStream { get => m_streams[1]; }
-        public StringBuilder PropertyStream { get => m_streams[2]; }
-        public StringBuilder ShadowStream { get => m_streams[3]; }
-        public Object ParentObject { set => m_parentObject = value; }
-
-        public override bool Contains(string name)
-        {
-            //skip all properties with "AllowMultiple" flag since it would give false alert - multiple occurences are allowed, shadow property cannot be identified
-            return m_properties.Where(x => x.Name.Equals(name) && !x.AllowMultiple).FirstOrDefault() != null;
-        }
-
-        public override void Format()
-        {
-            //if/else branch may not have been populated and therefore m_parent may be null
-            if (m_parentObject != null)
-            {
-                //Formatting is done in Object class itself due to dependency on internal parameters
-                m_parentObject.ProcessObjectData(this);
-                m_parentObject = null; //decouple for GC
-            }
-        }
+        public StringBuilder RangeStream { get => m_rangeStream; }
+        public StringBuilder ControlStream { get => m_controlStream; }
+        public StringBuilder PropertyStream { get => m_propertyStream; }
 
     }
 }
