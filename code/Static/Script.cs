@@ -22,7 +22,7 @@ using Acknex3.Api;
 
 namespace Acknex3.Script
 {
-	class " + Formatter.FormatClass(className) + @"
+	class " + Formatter.FormatReserved(className) + @"
 	{
 		public void Initialize()
 		{

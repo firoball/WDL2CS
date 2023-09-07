@@ -25,7 +25,7 @@ namespace WDL2CS
         {
             m_allowMerge = false;
             m_allowMultiple = false;
-            Name = string.Empty;
+            m_name = string.Empty;
             m_values = new List<string>();
         }
 
@@ -67,11 +67,12 @@ namespace WDL2CS
         public string Format(string obj)
         {
             string p = string.Empty;
-
+            //Name formatting is done in advance in SetFlags()
+            //m_name = Formatter.FormatReserved(m_name);
             try
             {
                 //Sanitize property values
-                m_values = m_values.Select(x => Formatter.FormatPropertyValue(x)).ToList();
+                //m_values = m_values.Select(x => Formatter.FormatPropertyValue(x)).ToList();
                 
                 //TODO: add List length checks for explicite array access
                 //TODO: add prefix patch for integer asset IDs for all asset types
@@ -212,6 +213,7 @@ namespace WDL2CS
 
         private void SetFlags()
         {
+            m_name = Formatter.FormatReserved(m_name);
             switch (m_name)
             {
                 //Apply patch for undocumented WDL syntax

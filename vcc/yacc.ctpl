@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using WDL2CS;
@@ -22,6 +23,7 @@ namespace VCCCompiler
 //                tList.Add(t_IFDEF);
 //                rList.Add(new Regex("\\G((?i)IFDEF)"));
 //Correct order can be retrieved from generated FindToken() function
+            Regex.CacheSize += rList.Count;
         }
         YYARec[] yya;
         YYARec[] yyg;
@@ -115,6 +117,9 @@ namespace VCCCompiler
 
             string inputstream = File.ReadAllText(InputFilename, Encoding.ASCII);
             string path = Path.GetDirectoryName(InputFilename);
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
             Preprocess p = new Preprocess(path);
             inputstream = p.Parse(ref inputstream);
 
@@ -150,6 +155,8 @@ namespace VCCCompiler
             if (!compiler.yyparse()) return 1;
 
             if (compiler.Output != null) compiler.Output.Close();
+            Console.WriteLine("(I) PARSER compilation finished in " + watch.Elapsed);
+            watch.Stop();
             return 0;
         }
         public void yyaction(int yyruleno)
@@ -215,6 +222,8 @@ namespace VCCCompiler
 
         public bool yyparse()
         {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
 
             parse:
 
@@ -247,7 +256,7 @@ namespace VCCCompiler
 
             error:
 
-            if (yyerrflag==0) yyerror("syntax error "+yylval);
+            if (yyerrflag==0) yyerror("syntax error " + yylval);
 
             errlab:
 
@@ -300,10 +309,14 @@ namespace VCCCompiler
 
             accept:
 
+            Console.WriteLine("(I) PARSER parsing finished in " + watch.Elapsed);
+            watch.Stop();
             return true;
 
             abort:
 
+            Console.WriteLine("(E) PARSER parsing aborted.");
+            watch.Stop();
             return false;
         }
         ////////////////////////////////////////////////////////////////
@@ -312,6 +325,9 @@ namespace VCCCompiler
 
         public bool ScannerOpt(string Input)
         {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
             if (Input.Length == 0) return true;
             TokenList = new ArrayList();
             int pos = 0;
@@ -322,11 +338,14 @@ namespace VCCCompiler
                 if (lasttoken.token != t_ignore) TokenList.Add(lasttoken);
                 pos += lasttoken.val.Length;
                 if (Input.Length <= pos)
+                {
+                    Console.WriteLine("(I) PARSER scanning finished in " + watch.Elapsed);
                     return true;
+                }
             }
             System.Console.WriteLine(Input);
             System.Console.WriteLine();
-            System.Console.WriteLine("No matching token found!");
+            System.Console.WriteLine("No matching token found near: " + Input.Substring(pos));
             return false;
         }
         public AToken FindTokenOpt(string Rest, int startpos)
@@ -357,23 +376,6 @@ namespace VCCCompiler
             }
             catch { }
             return ret;
-        }
-        public static string SubScanner(string file)
-        {
-            string inputstream = File.ReadAllText(file, Encoding.ASCII);
-
-            MyCompiler compiler = new MyCompiler();
-            StringBuilder sb = new StringBuilder();
-            compiler.Output = new StringWriter(sb);
-            if (!compiler.ScannerOpt(inputstream))
-                return string.Empty;
-            compiler.InitTables();
-            if (!compiler.yyparse())
-                return string.Empty;
-
-            if (compiler.Output != null)
-                compiler.Output.Close();
-            return sb.ToString();
         }
     }
 }

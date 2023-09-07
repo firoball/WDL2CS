@@ -22,7 +22,7 @@ namespace WDL2CS
         public static string AddGlobal(string name, string parameter)
         {
             string g = string.Empty;
-
+            //name = Formatter.FormatGlobal(name);//TODO: move to formatter
             //ignore Bind and Path statements
             switch (name)
             {

@@ -50,6 +50,7 @@
     <Compile Include="Static\Formatter.cs" />
     <Compile Include="Serializable\Global.cs" />
     <Compile Include="Static\Globals.cs" />
+    <Compile Include="Static\Identifier.cs" />
     <Compile Include="Static\Identifiers.cs" />
     <Compile Include="Serializable\Instruction.cs" />
     <Compile Include="Serializable\Object.cs" />

@@ -68,11 +68,13 @@ namespace WDL2CS
         public void Format(StringBuilder sb)
         {
             string scope = "public static ";
+            string type = Formatter.FormatReserved(m_type);
+            string name = Formatter.FormatIdentifier(m_name);
 
             string pars = string.Empty;
             if (m_parameters != null && m_parameters.Count > 0)
                pars = ", " + string.Join(", ", m_parameters);
-            sb.Append(s_indent + scope + m_type + " " + m_name + " = new " + m_type + "(" + m_file + pars + ");");
+            sb.Append(s_indent + scope + type + " " + name + " = new " + type + "(" + m_file + pars + ");");
         }
 
     }

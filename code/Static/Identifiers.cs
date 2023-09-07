@@ -7,7 +7,7 @@ namespace WDL2CS
 {
     class Identifiers
     {
-        private static Dictionary<string, List<string>> s_identifiers = new Dictionary<string, List<string>>();
+        private static Dictionary<string, List<string>> s_identifiers = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         static Identifiers()
         {
@@ -40,7 +40,7 @@ namespace WDL2CS
             if (s_identifiers.TryGetValue(obj, out List<string> skills))
             {
 
-                return skills.Contains(name);
+                return skills.Contains(name, StringComparer.OrdinalIgnoreCase);
             }
             return false;
         }

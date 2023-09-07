@@ -63,18 +63,26 @@ namespace WDL2CS
         public string Format(string function)
         {
             string o = string.Empty;
-            //MY, THERE patch: global --> local
-            for (int i = 0; i < m_parameters.Count; i++)
-            {
-                m_parameters[i] = m_parameters[i].Replace(Formatter.FormatGlobal("My"), "My");
-                m_parameters[i] = m_parameters[i].Replace(Formatter.FormatGlobal("There"), "There");
-            }
             try
             {
-                switch (m_command)
+                string command = Formatter.FormatReserved(m_command);
+                /* don't format any parameter of IFs, RULEs or GOTOs
+                 * detect RULEs either by command or by assignment operator in expression
+                 * IFs and RULEs already have their expression parameter formatted
+                 * GOTO requires unformatted marker - ambiguous definition might result in wrong formatting otherwise
+                 */
+                /*if (!command.Equals("If") && !command.Equals("Rule") && !command.Equals("Goto") && !(m_parameters.Count > 0 && m_parameters[0].Contains("=")))
+                {
+                    for (int i = 0; i < m_parameters.Count; i++)
+                    {
+                        m_parameters[i] = Formatter.FormatKeyword(m_parameters[i]);
+                    }
+                }*/
+
+                switch (command)
                 {
                     case "Abs":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {Formatter.FormatMath("Abs")}({m_parameters[1]});";
+                        o = $"{m_parameters[0]} = {Formatter.FormatMath("Abs")}({m_parameters[1]});";
                         break;
 
                     case "Accel":
@@ -82,7 +90,7 @@ namespace WDL2CS
                         break;
 
                     case "Add":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} += {m_parameters[1]};";
+                        o = $"{m_parameters[0]} += {m_parameters[1]};";
                         break;
 
                     case "Add_string":
@@ -90,15 +98,15 @@ namespace WDL2CS
                         break;
 
                     case "Addt":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} += {m_parameters[1]} * {Formatter.FormatTargetSkill(Formatter.FormatSkill("Time_corr"))};";
+                        o = $"{m_parameters[0]} += {m_parameters[1]} * { Formatter.FormatKeyword("Time_corr")};"; //TODO: captialize Time_corr?
                         break;
 
                     case "And":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} &= {m_parameters[1]};";
+                        o = $"{m_parameters[0]} &= {m_parameters[1]};";
                         break;
 
                     case "Asin":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {Formatter.FormatMath("Asin")}({m_parameters[1]});";
+                        o = $"{m_parameters[0]} = {Formatter.FormatMath("Asin")}({m_parameters[1]});";
                         break;
 
                     case "Beep":
@@ -172,18 +180,18 @@ namespace WDL2CS
                         o = $"goto {Formatter.FormatGotoLabel(m_parameters[0])};";
                         break;
 
-                    case "if":
+                    case "If":
                         o = $"if {m_parameters[0]}";
                         break;
 
                     case "If_above":
-                        o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} > {Formatter.FormatTargetSkill(m_parameters[1])})";
+                        o = $"if ({m_parameters[0]} > {m_parameters[1]})";
                         if(m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
-                            o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
+                            o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}"; 
                         break;
 
                     case "If_below":
-                        o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} < {Formatter.FormatTargetSkill(m_parameters[1])})";
+                        o = $"if ({m_parameters[0]} < {m_parameters[1]})";
                         if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
@@ -193,7 +201,7 @@ namespace WDL2CS
                         if (m_parameters[0].EndsWith(".Target"))
                             o = $"if ({m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
                         else
-                            o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} == {Formatter.FormatTargetSkill(m_parameters[1])})";
+                            o = $"if ({m_parameters[0]} == {m_parameters[1]})";
                         if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
@@ -203,19 +211,25 @@ namespace WDL2CS
                         if (m_parameters[0].EndsWith(".Target"))
                             o = $"if (!{m_parameters[0]}.Equals({Formatter.FormatActorTarget(m_parameters[1])}))";
                         else
-                            o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} != {Formatter.FormatTargetSkill(m_parameters[1])})";
+                            o = $"if ({m_parameters[0]} != {m_parameters[1]})";
                         if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_max":
-                        o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} >= {m_parameters[0]}.Max)";
+                        //Remove .Val from Skill
+                        int max_i = m_parameters[0].LastIndexOf('.');
+                        string max = (max_i < 0) ? m_parameters[0] : m_parameters[0].Substring(0, max_i);
+                        o = $"if ({m_parameters[0]} >= {max}.Max)";
                         if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
 
                     case "If_min":
-                        o = $"if ({Formatter.FormatTargetSkill(m_parameters[0])} <= {m_parameters[0]}.Min)";
+                        //Remove .Val from Skill
+                        int min_i = m_parameters[0].LastIndexOf('.');
+                        string min = (min_i < 0) ? m_parameters[0] : m_parameters[0].Substring(0, min_i);
+                        o = $"if ({m_parameters[0]} <= {min}.Min)";
                         if (m_parameters.Count > 2 && !int.TryParse(m_parameters[2], out _)) //third parameter - if not numeric - is goto label
                             o += $" {{ goto {Formatter.FormatGotoLabel(m_parameters[2])}; }}";
                         break;
@@ -225,7 +239,7 @@ namespace WDL2CS
                         break;
 
                     case "Inport":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = Environment.Inport({m_parameters[1]});";
+                        o = $"{m_parameters[0]} = Environment.Inport({m_parameters[1]});";
                         break;
 
                     case "Lift":
@@ -278,7 +292,7 @@ namespace WDL2CS
                         o = $"Environment.Level({Formatter.FormatFile(m_parameters[0])});";
                         break;
 
-                    case "outport":
+                    case "Outport":
                         o = $"Environment.Outport({m_parameters[0]} , {m_parameters[1]});";
                         break;
 
@@ -295,7 +309,7 @@ namespace WDL2CS
                         break;
 
                     case "Play_flic":
-                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
+                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
                         o = $"Media.Play_flic({m_parameters[0]});";
                         break;
 
@@ -304,20 +318,17 @@ namespace WDL2CS
                         break;
 
                     case "Play_song":
-                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
-                        m_parameters[1] = Formatter.FormatTargetSkill(m_parameters[1]);
+                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
                         o = $"Media.Play_song({m_parameters[0]}, {m_parameters[1]}, true);";
                         break;
 
                     case "Play_song_once":
-                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
-                        m_parameters[1] = Formatter.FormatTargetSkill(m_parameters[1]);
+                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
                         o = $"Media.Play_song({m_parameters[0]}, {m_parameters[1]}, false);";
                         break;
 
                     case "Play_sound":
                         m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
-                        m_parameters[1] = Formatter.FormatTargetSkill(m_parameters[1]);
                         if (m_parameters.Count > 2)
                         {
                             //check for specific properties containing an object, e.g. <object>.Genius - checking for dot may lead to false positives
@@ -375,13 +386,13 @@ namespace WDL2CS
                         //ridiculous patch: A3 accepts RULE statements without assignment
                         //TODO: find out real behaviour in A3, currently first identifier is treated as assignee
                         //patch is derived from the behaviour of A3 for statements like "+ =" - seems like "=" is optional for WDL parser
-                        if (!m_parameters[0].Contains("="))
+                        /*if (!m_parameters[0].Contains("="))
                         {
                             Console.WriteLine("(W) INSTRUCTION patched invalid rule: " + m_parameters[0]);
                             string[] fragments = m_parameters[0].Split(new[] { ' ' });
                             fragments[1] += "="; //first operator is changed to assignment operator
                             m_parameters[0] = string.Join(" ", fragments);
-                        }
+                        }*/
                         o = $"{m_parameters[0]};";
                         break;
 
@@ -424,13 +435,13 @@ namespace WDL2CS
                         }
                         else
                         {
-                            o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {m_parameters[1]};";
+                            o = $"{m_parameters[0]} = {m_parameters[1]};";
                         }
                         break;
 
                     case "Set_all":
                         //split property from object for iteration through all instances
-                        int i = m_parameters[0].LastIndexOf('.');
+                        int i = m_parameters[0].IndexOf('.');
                         string target = i < 0 ? m_parameters[0] : m_parameters[0].Substring(0, i);
                         string property = i < 0 ? "" : m_parameters[0].Substring(i);
 
@@ -442,7 +453,7 @@ namespace WDL2CS
                         else
                         {
                             if (!string.IsNullOrEmpty(property))
-                                o = $"foreach (var instance in {target}) instance{Formatter.FormatTargetSkill(property)} = {m_parameters[1]};";
+                                o = $"foreach (var instance in {target}) instance{property} = {m_parameters[1]};"; //TODO: get rid of extra formatting
                             else
                             {
                                 //special case: no property has been given
@@ -488,11 +499,11 @@ namespace WDL2CS
                         break;
 
                     case "Sin":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {Formatter.FormatMath("Sin")}({m_parameters[1]});";
+                        o = $"{m_parameters[0]} = {Formatter.FormatMath("Sin")}({m_parameters[1]});";
                         break;
 
                     case "Sqrt":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = {Formatter.FormatMath("Sqrt")}({m_parameters[1]});";
+                        o = $"{m_parameters[0]} = {Formatter.FormatMath("Sqrt")}({m_parameters[1]});";
                         break;
 
                     case "Stop_demo":
@@ -512,7 +523,7 @@ namespace WDL2CS
                         break;
 
                     case "Subt":
-                        o = $"{m_parameters[0]} -= {m_parameters[1]} * {Formatter.FormatTargetSkill(Formatter.FormatSkill("Time_corr"))};";
+                        o = $"{m_parameters[0]} -= {m_parameters[1]} * {Formatter.FormatKeyword("Time_corr")};"; //TODO: captialize Time_corr?
                         break;
 
                     case "Tilt":
@@ -532,8 +543,9 @@ namespace WDL2CS
                         o = $"yield return Waitt({m_parameters[0]});";
                         break;
 
-                    case "while":
+                    case "While":
                         //while(1) patch -> C# needs while(true)
+                        Console.WriteLine("WHILE " + m_parameters[0]);
                         string x = m_parameters[0].Trim(new[] { '(', ')' });
                         if(int.TryParse(x, out int n) && n > 0)
                             o = $"while (true)";
@@ -558,10 +570,10 @@ namespace WDL2CS
                         break;
                 }
             }
-            catch(Exception e)
+            catch//(Exception e)
             {
 //                Console.WriteLine("(E) INSTRUCTION: " + e.Message + " ("+e.Source+")");
-                Console.WriteLine("(E) INSTRUCTION: " + e);
+                Console.WriteLine("(E) INSTRUCTION discard malformed instruction: " + m_command + " " + string.Join(", ", m_parameters));
             }
 
             return o;

@@ -23,35 +23,31 @@ namespace WDL2CS
         public string Name { get => m_name; set => m_name = value; }
         public string Type { get => m_type; }
 
-        public Object(string type, string name, bool isString)
+        public Object(string type, string name, bool isInitialized, bool isString)
         {
             m_type = type;
             m_name = name;
             m_isString = isString;
             m_serializedProperties = string.Empty;
             m_properties = new List<Property>();
-            //global skills are initialized
-            if (m_name.StartsWith("Skills."))
-                m_isInitialized = true;
-            //user defined skills are allocated statically
-            else
-                m_isInitialized = false;
+            m_isInitialized = isInitialized;
         }
 
-        public Object(string type, string name, string properties) : this(type, name, properties, false) { }
+        public Object(string type, string name, bool isInitialized, string properties) : this(type, name, isInitialized, properties, false) { }
 
-        public Object(string type, string name, string properties, bool isString) : this(type, name, isString)
+        public Object(string type, string name, bool isInitialized, string properties, bool isString) : this(type, name, isInitialized, isString)
         {
+            //special case: string content is treated like serialied property
             m_serializedProperties = properties;
         }
 
-        public Object(string type, string name, List<Property> properties) : this(type, name, false)
+        public Object(string type, string name, bool initialized, List<Property> properties) : this(type, name, initialized, false)
         {
             if (properties != null)
                 m_properties.AddRange(properties);
         }
 
-        public Object() : this(string.Empty, string.Empty, false) { }
+        public Object() : this(string.Empty, string.Empty, false, false) { }
 
         public bool IsInitialized()
         {
@@ -60,7 +56,7 @@ namespace WDL2CS
 
         public string Serialize()
         {
-            string s = m_type + s_sepObj + m_name + s_sepObj + m_isString.ToString();
+            string s = m_type + s_sepObj + m_name + s_sepObj + m_isInitialized + s_sepObj + m_isString.ToString();
             s += s_sepObj + m_serializedProperties;
             return s;
         }
@@ -72,20 +68,27 @@ namespace WDL2CS
             string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.None);
             string type = fragments[0];
             string name = fragments[1];
-            if ((fragments.Length > 3) && !string.IsNullOrEmpty(fragments[3]))
+            bool initialized = Convert.ToBoolean(fragments[2]);
+            if ((fragments.Length > 4) && !string.IsNullOrEmpty(fragments[4]))
             {
                 //do not deserialize properties if object is of type String
                 //in this case, the fragment contains just the string content for direct use
-                if (Convert.ToBoolean(fragments[2]))
-                    return new Object(type, name, fragments[3], true);
+                if (Convert.ToBoolean(fragments[3]))
+                    return new Object(type, name, false, fragments[4], true);
                 else
-                    properties = Property.DeserializeList(fragments[3]);
+                    properties = Property.DeserializeList(fragments[4]);
             }
-            return new Object(type, name, properties);
+            return new Object(type, name, initialized, properties);
         }
 
         public void Format(StringBuilder sb)
         {
+            m_type = Formatter.FormatReserved(m_type);
+            if (m_isInitialized)
+                m_name = Formatter.FormatSkill(m_name);
+            else
+                m_name = Formatter.FormatIdentifier(m_name);
+
             string properties;
             //string carries text instead of (serialized) properties
             if (m_isString)
@@ -134,7 +137,7 @@ namespace WDL2CS
 
                         if (!string.IsNullOrEmpty(properties))
                         {
-                            sb.Append(s_nl + indent + "{" + s_nl);
+                            sb.Append(s_nl + indent + "{");
                             sb.Append(properties + s_nl);
                             sb.Append(indent + "}");
                         }
@@ -146,6 +149,9 @@ namespace WDL2CS
 
         private string ProcessProperties()
         {
+            //sort properties alphabetically
+            m_properties = m_properties.OrderBy(x => x.Name).ToList(); //TODO: sort AFTER formatting (as previously)
+
             string p = string.Empty;
             PreProcessorStack<ObjectData> stack = new PreProcessorStack<ObjectData>();
             ObjectData objectData = stack.Content;
@@ -165,21 +171,21 @@ namespace WDL2CS
             //handle palette range definitions
             if (objectData.RangeStream.Length > 0)
             {
-                p += s_nl + s_indent + "\tRange = new[,]" + s_nl + s_indent + "\t{" + s_nl + objectData.RangeStream;
+                p += s_nl + s_indent + "\tRange = new[,]" + s_nl + s_indent + "\t{" + objectData.RangeStream;
                 p += s_nl + s_indent + "\t}";
             }
 
             //handle UI control definitions
             if (objectData.ControlStream.Length > 0)
             {
-                p += s_nl + s_indent + "\tControls = new UIControl[]" + s_nl + s_indent + "\t{ " + s_nl + objectData.ControlStream;
+                p += s_nl + s_indent + "\tControls = new UIControl[]" + s_nl + s_indent + "\t{ " + objectData.ControlStream;
                 p += s_nl + s_indent + "\t}";
             }
 
             //report any shadow properties (workaround: C# does not allow double-init on construction)
             if (objectData.ShadowStream.Length > 0)
             {
-                Sections.ShadowDefinitions += s_nl + objectData.ShadowStream;
+                Sections.ShadowDefinitions += objectData.ShadowStream;
             }
 
             return p;
@@ -204,7 +210,7 @@ namespace WDL2CS
             property = objectData.Properties.Where(x => x.Name.Equals("Type")).FirstOrDefault();
             if (property != null)
             {
-                string synType = Formatter.FormatObject(property.Values[0]);
+                string synType = Formatter.FormatReserved(property.Values[0]);
                 //use C# strings -> convert to "string"
                 if (synType.Equals("String"))
                     synType = "string";
@@ -258,9 +264,10 @@ namespace WDL2CS
                         else
                         {
                             //                            shadows.Add($"{m_name}.{property.Format(m_type).Replace("=", "|=")}"); //apply patch for shadow definition
+                            objectData.ShadowStream.Append(s_nl);
                             objectData.ShadowStream.Append(s_indentInit);
                             objectData.ShadowStream.Append($"{m_name}.{property.Format(m_type).Replace("=", "|=")}"); //apply patch for shadow definition
-                            objectData.ShadowStream.Append(";" + s_nl);
+                            objectData.ShadowStream.Append(";");
                         }
                         break;
 
@@ -268,9 +275,10 @@ namespace WDL2CS
                         if (!isShadow)
                         {
                             //                            ranges.Add(property.Format(m_type));
+                            objectData.RangeStream.Append(s_nl);
                             objectData.RangeStream.Append(indent + "\t\t");
                             objectData.RangeStream.Append(property.Format(m_type));
-                            objectData.RangeStream.Append("," + s_nl);
+                            objectData.RangeStream.Append(",");
                         }
                         else
                             //shadows.Add($"{m_name}.{property.Name}.Concat({property.Format(m_type)})"); -- not supported by C# for 2D arrays
@@ -288,9 +296,10 @@ namespace WDL2CS
                         //does not work for definitions with "allowMultiple" flag.
                         //if (!isShadow)
                         //                            controls.Add(property.Format(m_type));
+                        objectData.ControlStream.Append(s_nl);
                         objectData.ControlStream.Append(indent + "\t\t");
                         objectData.ControlStream.Append(property.Format(m_type));
-                        objectData.ControlStream.Append("," + s_nl);
+                        objectData.ControlStream.Append(",");
                         //else
                         //    shadows.Add($"{m_name}.Controls.Concat(new UIControl[] {{ {property.Format(m_type)} }})"); //apply patch for shadow definition
                         break;
@@ -309,9 +318,10 @@ namespace WDL2CS
 
                     default:
                         //                        properties.Add(property.Format(m_type));
+                        objectData.PropertyStream.Append(s_nl);
                         objectData.PropertyStream.Append(indent + "\t");
                         objectData.PropertyStream.Append(property.Format(m_type));
-                        objectData.PropertyStream.Append("," + s_nl);
+                        objectData.PropertyStream.Append(",");
                         break;
                 }
             }
@@ -355,7 +365,7 @@ namespace WDL2CS
                 }
                 else
                 {
-                    Console.WriteLine("(W) OBJECTS ignore double definition of property: " + property.Name);
+                    Console.WriteLine("(W) OBJECT ignore double definition of property: " + property.Name);
                 }
             }
             else

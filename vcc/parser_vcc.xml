@@ -43,9 +43,6 @@
         <READ value="(?=[A-Z])(OVERLAY|PANEL|PALETTE|REGION|SKILL|STRING|SYNONYM|TEXTURE|TEXT|VIEW|WALL|WAY)" token="object" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(ACTION|RULES)" token="function" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(ACOS|COS|ATAN|TAN|SIGN|INT|EXP|LOG10|LOG2|LOG)" token="math" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(FLOOR_DESCEND|CEIL_DESCEND|FLOOR_ASCEND|FLOOR_LIFTED|CEIL_ASCEND|CEIL_LIFTED|TRANSPARENT|CANDELABER|DIAPHANOUS|IMMATERIAL|IMPASSABLE|PORTCULLIS|AUTORANGE|CAREFULLY|CONDENSED|INVISIBLE|SENSITIVE|BERKELEY|CENTER_X|CENTER_Y|LIGHTMAP|PASSABLE|SAVE_ALL|CLUSTER|CURTAIN|FRAGILE|NO_CLIP|ONESHOT|REFRESH|VISIBLE|ABSPOS|BEHIND|GROUND|LIFTED|MASTER|NARROW|RELPOS|SHADOW|STICKY|FENCE|GHOST|LIBER|MOVED|SLOOP|BASE|BLUR|CLIP|FLAT|HARD|PLAY|SEEN|WIRE|FAR|SKY)" token="flag" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(ALBEDO|ANGLE|ASPEED|ATTACH|BELOW|BMAPS|BUTTON|CEIL_(ANGLE|OFFS_[X-Y]|TEX)|CYCLES|CYCLE|DEFAULT|DELAY|DIGITS|DISTANCE|DIST|EACH_CYCLE_(C|F)|EACH_CYCLE|FLAGS|FLOOR_(ANGLE|OFFS_[X-Y]|TEX)|FOOT_HGT|FRAME|GENIUS|HBAR|HEIGHT|HSLIDER|IF_(ARISE|ARRIVED|DIVE|FAR|LEAVE|NEAR|RELEASE|TOUCH)|INDEX|LAYER|LEFT|LENGTH|MAP_COLOR|MASK|MAX|MIN|MIRROR|OFFSET_[X-Y]|OVLYS|PALFILE|PAN_MAP|PICTURE|POSITION|POS_[X-Y]|RADIANCE|RANGE|REL_(ANGLE|DIST)|RIGHT|SCALE_(XY|X|Y)|SCYCLES|SCYCLE|SCALE|SDIST|SIDES|SIDE|SIZE_[X-Y]|SKILL[1-8]|SPEED|STRINGS|SVDIST|SVOL|TARGET_(MAP|X|Y)|TARGET|TEXTURE[1-4]|THING_HGT|TITLE|TOP|TOUCH|TYPE|VAL|VBAR|VSLIDER|VSPEED|WAYPOINT|WINDOW|[X-Z][1-2]|[X-Z])" token="property" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(ACCEL|ADD_STRING|ADDT|ADD|AND|BEEP|BRANCH|BREAK|CALL|DROP|END|EXCLUSIVE|EXEC_RULES|EXIT|EXPLODE|FADE_PAL|FIND|FREEZE|GETMIDI|GOTO|IF_(ABOVE|BELOW|EQUAL|MAX|MIN|NEQUAL)|INKEY|INPORT|LEVEL|LIFT|LOAD_INFO|LOAD|LOCATE|MAP|MIDI_COM|NEXT_(MY_THERE|MY|THERE)|NOP|OUTPORT|PLACE|PLAY_(CD|DEMO|FLICFILE|FLIC|SONG_ONCE|SONG|SOUNDFILE|SOUND)|PRINTFILE|PRINT_(STRING|VALUE)|PUSH|RANDOMIZE|ROTATE|SAVE_(DEMO|INFO)|SCAN|SCREENSHOT|SETMIDI|SET_(ALL|INFO|SKILL|STRING)|SET|SHAKE|SHIFT|SHOOT|SKIP|STOP_(DEMO|FLIC|SOUND)|SUBT|SUB|TILT|TO_STRING|WAITT|WAIT_TICKS|WAIT)" token="command" color="#E1FFFF"/>
         <READ value="((EACH_TICK|EACH_SEC|PANELS|LAYERS|MESSAGES)\.(1[0-6]|[1-9]))" token="list" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|APPEND_MODE|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPED|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FLOOR_MODE|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRAME_COLOR|FRICTION|HALF_PI|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|INV_DIST|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|JOY4|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MINV_DIST|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|MY_(X[1-2]|Y[1-2]|Z[1-2]|X|Y)|PANEL_LAYER|PI|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|MSIN|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REAL_SPEED|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|SPANS|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(ACTIONS|CLIPPING|CORR|DRAW|FAC|FBUFFER|SLICES|TARGETS|VERTICES)|TOUCH_(DIST|MODE|RANGE|STATE)|TWO_PI|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE|PALANIM_DELAY)" token="skill" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(THERE|MY|HIT|TOUCH_TEXT|TOUCHED|TOUCH_TEX|TOUCH_REG|COMMAND_LINE|REGION[1-8])" token="synonym" color="#E1FFFF"/>
@@ -56,9 +53,7 @@
         <READ value="RANDOM" token="ambigChar95mathChar95skillChar95property" color="#E1FFFF"/>
         <READ value="HERE" token="ambigChar95synonymChar95flag" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(FLOOR_HGT|CEIL_HGT|AMBIENT|RESULT|NODE)" token="ambigChar95skillChar95property" color="#E1FFFF"/>
-        <READ value="SAVE" token="ambigChar95commandChar95flag" color="#E1FFFF"/>
         <READ value="MSPRITE" token="ambigChar95globalChar95synonymChar95property" color="#E1FFFF"/>
-        <READ value="DO" token="ambigChar95commandChar95property" color="#E1FFFF"/>
         <READ value="(FLAG[1-8])" token="ambigChar95skillChar95flag" color="#E1FFFF"/>
         <READ value="[0-9]+" token="integer" color="#E1FFFF"/>
         <READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
@@ -137,16 +132,16 @@ else
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="FunctionDef"/>
+                <RULE name="ObjectDef"/>
                 <CODE>
-                    $$ = Sections.AddActionSection($1);
+                    $$ = Sections.AddObjectSection($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="ObjectDef"/>
+                <RULE name="FunctionDef"/>
                 <CODE>
-                    $$ = Sections.AddObjectSection($1);
+                    $$ = Sections.AddActionSection($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -182,28 +177,28 @@ else
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = Formatter.FormatGlobal($1); //TODO: remove after globals are refactored
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = Formatter.FormatGlobal($1); //TODO: remove after globals are refactored
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="global"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = Formatter.FormatGlobal($1); //TODO: remove after globals are refactored
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Skill"/>
                 <CODE>
-                    $$ = Formatter.FormatTargetSkill($1);
+                    $$ = Formatter.FormatTargetSkill(Formatter.FormatSkill($1)); //TODO: temporary - remove after refactoring
 
                 </CODE>
             </RIGHTSIDE>
@@ -254,7 +249,8 @@ Globals.AddParameter($1);
             <RIGHTSIDE>
                 <RULE name="Identifier"/>
                 <CODE>
-                    $$ = $1;
+                    //$$ = $1;
+$$ = Formatter.FormatIdentifier($1); //temporary - remove after updating grammar for globals/events
 
                 </CODE>
             </RIGHTSIDE>
@@ -396,7 +392,7 @@ Assets.AddParameter($1);
         </RULE>
         <RULE name="PropertyDef" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Property"/>
+                <RULE name="BasicKeyword"/>
                 <RULE name="PropertyValueList"/>
                 <TOKEN name="Char59"/>
                 <CODE>
@@ -485,15 +481,6 @@ $$ = "";
         </RULE>
         <RULE name="Instructions" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="identifier"/>
-                <TOKEN name="Char59"/>
-                <RULE name="Instructions"/>
-                <CODE>
-                    $$ = Actions.CreateMarker($1, $3);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <TOKEN name="Char123"/>
                 <RULE name="Instructions"/>
                 <TOKEN name="Char125"/>
@@ -542,16 +529,6 @@ $$ = "";
                 <TOKEN name="Char59"/>
                 <CODE>
                     $$ = Actions.CreateInstruction($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Identifier"/>
-                <RULE name="ParameterList"/>
-                <TOKEN name="Char59"/>
-                <CODE>
-                    //Capture and discard bogus code
-$$ = Actions.CreateInvalidInstruction($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -825,16 +802,6 @@ Actions.AddInstructionParameter($1);
         </RULE>
         <RULE name="Primary" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="integer"/>
-                <TOKEN name="integer"/>
-                <CODE>
-                    //$$ = $1 + "." + $2); //fixes things like "18,4"
-Console.WriteLine("(W) PARSER discarded superfluous token in expression: , " + $2);
-$$ = $1; //this is what supposedly happens in A3
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <RULE name="Math"/>
                 <TOKEN name="Char40"/>
                 <RULE name="Expression"/>
@@ -854,17 +821,27 @@ $$ = $1; //this is what supposedly happens in A3
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
+                <TOKEN name="integer"/>
+                <TOKEN name="integer"/>
+                <CODE>
+                    //$$ = $1 + "." + $2); //fixes things like "18,4"
+Console.WriteLine("(W) PARSER discarded superfluous token in expression: , " + $2);
+$$ = Formatter.FormatNumber($1); //this is what supposedly happens in A3
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
                 <RULE name="Keyword"/>
                 <TOKEN name="integer"/>
                 <CODE>
                     //$$ = Formatter.FormatTargetSkill($1 + $2); //fixes things like "Skill 6"
 Console.WriteLine("(W) PARSER discarded superfluous token in expression: " + $1);
-$$ = $2; //this is what supposedly happens in A3
+$$ = Formatter.FormatNumber($2); //this is what supposedly happens in A3
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="UnNumber"/>
+                <RULE name="List"/>
                 <CODE>
                     $$ = $1;
 
@@ -873,12 +850,12 @@ $$ = $2; //this is what supposedly happens in A3
             <RIGHTSIDE>
                 <RULE name="Keyword"/>
                 <CODE>
-                    $$ = Formatter.FormatTargetSkill($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <RULE name="List"/>
+                <RULE name="UnNumber"/>
                 <CODE>
                     $$ = $1;
 
@@ -998,8 +975,7 @@ $$ = $2; //this is what supposedly happens in A3
                 <TOKEN name="RULE"/>
                 <RULE name="Expression"/>
                 <CODE>
-                    //$$ = $1 + $2;
-$$ = Actions.CreateExpression($2);
+                    $$ = Actions.CreateExpression($2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1009,8 +985,7 @@ $$ = Actions.CreateExpression($2);
                 <RULE name="OpAssign"/>
                 <RULE name="Expression"/>
                 <CODE>
-                    //$$ = $1 + $2 + $3 + $4;
-$$ = Actions.CreateExpression(Formatter.FormatExpression($2, $3, $4));
+                    $$ = Actions.CreateExpression($2, $3, $4);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1019,8 +994,7 @@ $$ = Actions.CreateExpression(Formatter.FormatExpression($2, $3, $4));
                 <RULE name="OpAssign"/>
                 <RULE name="Expression"/>
                 <CODE>
-                    //$$ = $1 + $2 + $3;
-$$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
+                    $$ = Actions.CreateExpression($1, $2, $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1123,25 +1097,16 @@ $$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
             <RIGHTSIDE>
                 <RULE name="BasicKeyword"/>
                 <TOKEN name="Char46"/>
-                <RULE name="Flag"/>
-                <CODE>
-                    $$ = $1 + "." + $3;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <RULE name="BasicKeyword"/>
-                <TOKEN name="Char46"/>
-                <RULE name="Property"/>
                 <CODE>
-                    $$ = $1 + "." + $3;
+                    $$ = Formatter.FormatKeyword($1 + "." + $3);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="BasicKeyword"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatKeyword($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1163,108 +1128,6 @@ $$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
                 </CODE>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Flag" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95commandChar95flag"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95objectChar95flag"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95skillChar95flag"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95synonymChar95flag"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="flag"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="Property" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95commandChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95eventChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95globalChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95mathChar95skillChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95skillChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="property"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="ObjectRef"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="AssetRef"/>
-                <CODE>
-                    $$ = Formatter.FormatProperty($1);
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
         <RULE name="Command" color="#FFE1FF">
             <RIGHTSIDE>
                 <TOKEN name="ELSE"/>
@@ -1274,28 +1137,7 @@ $$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="ambigChar95commandChar95flag"/>
-                <CODE>
-                    $$ = Formatter.FormatCommand($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95commandChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatCommand($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95mathChar95command"/>
-                <CODE>
-                    $$ = Formatter.FormatCommand($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="command"/>
+                <RULE name="BasicKeyword"/>
                 <CODE>
                     $$ = Formatter.FormatCommand($1);
 
@@ -1322,14 +1164,14 @@ $$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
             <RIGHTSIDE>
                 <TOKEN name="fixed"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="integer"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Formatter.FormatNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1372,7 +1214,7 @@ $$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
             <RIGHTSIDE>
                 <TOKEN name="identifier"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1390,128 +1232,93 @@ $$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95mathChar95skillChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatSkill($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95skillChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatSkill($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="skill"/>
                 <CODE>
-                    $$ = Formatter.FormatSkill($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
         </RULE>
         <RULE name="EngineKeywords" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="ambigChar95commandChar95flag"/>
-                <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95commandChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <TOKEN name="ambigChar95eventChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatEvent($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95mathChar95command"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95objectChar95flag"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="asset"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="command"/>
-                <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="event"/>
                 <CODE>
-                    $$ = Formatter.FormatEvent($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="flag"/>
-                <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="function"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="global"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="math"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="object"/>
                 <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="property"/>
-                <CODE>
-                    $$ = Formatter.FormatIdentifier($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1520,49 +1327,49 @@ $$ = Actions.CreateExpression(Formatter.FormatExpression($1, $2, $3));
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95mathChar95skillChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatSkill($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95skillChar95flag"/>
                 <CODE>
-                    $$ = Formatter.FormatSkill($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95skillChar95property"/>
                 <CODE>
-                    $$ = Formatter.FormatSkill($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="ambigChar95synonymChar95flag"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="skill"/>
                 <CODE>
-                    $$ = Formatter.FormatSkill($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="synonym"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>

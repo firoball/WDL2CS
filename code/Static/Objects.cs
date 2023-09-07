@@ -12,10 +12,8 @@ namespace WDL2CS
 
         public static string AddStringObject(string type, string name, string text)
         {
-            type = Formatter.FormatObject(type);
-            name = Formatter.FormatObjectId(name, type);
             Identifiers.Register(type, name);
-            string o = new Object(type, name, text, true).Serialize();
+            string o = new Object(type, name, false, text, true).Serialize();
 
             return o;
         }
@@ -27,21 +25,35 @@ namespace WDL2CS
 
         public static string AddObject(string type, string name, string stream)
         {
-            type = Formatter.FormatObject(type);
-            name = Formatter.FormatObjectId(name, type);
-            Identifiers.Register(type, name);
-            string o = new Object(type, name, stream).Serialize();
+            bool initialize = false;
+            //Exclude predefined skills
+            if (!(type.Equals("skill", StringComparison.OrdinalIgnoreCase) && Identifier.IsSkill(ref name)))
+                Identifiers.Register(type, name);
+            else
+                initialize = true; //make sure predefined skills are moved to init section 
+
+            string o = new Object(type, name, initialize, stream).Serialize();
 
             return o;
         }
 
         public static string CreateProperty(string property)
         {
-            Property prop = new Property(property, s_values);
+            if (Identifier.IsProperty(ref property) || Identifier.IsFlag(ref property))
+            {
+                Property prop = new Property(property, s_values);
 
-            //Clean up
-            s_values.Clear();
-            return prop.Serialize();
+                //Clean up
+                s_values.Clear();
+                return prop.Serialize();
+            }
+            else
+            {
+                //Clean up
+                s_values.Clear();
+                Console.WriteLine("(W) OBJECTS discarded invalid property: " + property);
+                return string.Empty;
+            }
         }
 
         public static void AddPropertyValue(string value)

@@ -22,17 +22,20 @@ ObjectRef -> object
 %TODO is this special case still required?
 Object -> ObjectRef | ambig_object_flag 
 PropertyDefs -> PropertyDef PropertyDefs | EPSILON
-PropertyDef -> Property PropertyValueList ; | ;
+%PropertyDef -> Property PropertyValueList ; | ;
+PropertyDef -> BasicKeyword PropertyValueList ; | ;
 PropertyValueList -> PropertyValue PropertyValueList | PropertyValue 
 PropertyValue -> Number | File | String | KeywordPar
 
 FunctionDef -> Function FunctionId { Instructions }
 Function -> function
 %Compatibility patch - Goto markers may also be terminated by ; instead of : (use identifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
-Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | { Instructions } Instructions | EPSILON
+%OLD Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | { Instructions } Instructions | EPSILON
+Instructions -> Instruction Instructions | GotoMarker : Instructions | Flow Instructions | { Instructions } Instructions | EPSILON
 %Compatibility patch - A3 allows bogus instructions (capture as Identifier)
 %Instruction -> Command ; | Command ParameterList ; | Rule ; | ;
-Instruction -> Command ; | Command ParameterList ; | Rule ; | Identifier ParameterList ; | ;
+%OLD Instruction -> Command ; | Command ParameterList ; | Rule ; | Identifier ParameterList ; | ;
+Instruction -> Command ; | Command ParameterList ; | Rule ; | ;
 
 ParameterList -> Parameter ParameterList | Parameter
 Parameter -> Number | File | String | KeywordPar | List
@@ -68,11 +71,13 @@ Math -> math | ambig_math_command | ambig_math_skill_property
 %Flow -> IF Expression { Instructions } | IF Expression { Instructions } ELSE { Instructions } | WHILE Expression { Instructions }
 Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expression { Instructions }
 
-Keyword -> BasicKeyword | BasicKeyword . Property | BasicKeyword . Flag
+%OLD Keyword -> BasicKeyword | BasicKeyword . Property | BasicKeyword . Flag
+Keyword -> BasicKeyword | BasicKeyword . BasicKeyword
 KeywordPar -> OpUn Keyword | Keyword
-Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag | ambig_skill_flag
-Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
-Command -> command | ambig_command_flag | ambig_command_property | ambig_math_command | ELSE
+%OLD Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag | ambig_skill_flag
+%OLD Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
+%OLD Command -> command | ambig_command_flag | ambig_command_property | ambig_math_command | ELSE
+Command -> BasicKeyword | ELSE
 Number -> Integer | Fixed
 UnNumber -> integer | fixed
 Integer -> OpUn integer | integer
@@ -82,7 +87,8 @@ List -> list
 
 Skill -> skill | ambig_skill_property | ambig_math_skill_property
 
-EngineKeywords -> event | global | asset | object | function | math | flag | property | command | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command | ambig_command_flag | ambig_command_property
+%OLD EngineKeywords -> event | global | asset | object | function | math | flag | property | command | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command | ambig_command_flag | ambig_command_property
+EngineKeywords -> event | global | asset | object | function | math | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command
 EngineObjects -> skill | synonym | ambig_math_skill_property | ambig_synonym_flag | ambig_skill_property | ambig_global_synonym_property | ambig_skill_flag
 BasicKeyword -> EngineKeywords | EngineObjects | Identifier | NULL
 %add stupid "identifier-name" / "identifier-123" workarounds

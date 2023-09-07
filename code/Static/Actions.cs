@@ -11,7 +11,6 @@ namespace WDL2CS
 
         public static string AddAction(string name, string stream)
         {
-            name = Formatter.FormatActionId(name);
             Identifiers.Register("Action", name);
             string a = new Action(name, stream).Serialize();
 
@@ -68,17 +67,52 @@ namespace WDL2CS
 
         public static string CreateExpression(string expr)
         {
+            //ridiculous patch: A3 accepts RULE statements without assignment
+            //TODO: find out real behaviour in A3, currently first identifier is treated as assignee
+            //patch is derived from the behaviour of A3 for statements like "+ =" - seems like "=" is optional for WDL parser
+            if (!expr.Contains("="))
+            {
+                Console.WriteLine("(W) ACTIONS patched invalid rule: " + expr);
+                string[] fragments = expr.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                fragments[1] += "="; //first operator is changed to assignment operator
+                expr = string.Join(" ", fragments);
+            }
+            Instruction inst = new Instruction("Rule", expr);
+
+            return inst.Serialize();
+        }
+
+        public static string CreateExpression(string assignee, string op, string expr)
+        {
+            expr = assignee + op + expr; 
             Instruction inst = new Instruction("Rule", expr);
             return inst.Serialize();
         }
-        
-        public static string CreateInstruction(string type)
-        {
-            Instruction inst = new Instruction(type, s_parameters);
 
-            //Clean up
-            s_parameters.Clear();
-            return inst.Serialize();
+        public static string CreateInstruction(string command)
+        {
+            if (Identifier.IsCommand(ref command))
+            {
+                Instruction inst = new Instruction(command, s_parameters);
+
+                //Clean up
+                s_parameters.Clear();
+                return inst.Serialize();
+            }
+            else if (s_parameters.Count == 0) //take care of wrongly defined goto marker (ends with ; instead of :)
+            {
+                Console.WriteLine("(W) ACTIONS crrect malformed goto marker: " + command);
+                Instruction inst = new Instruction(Formatter.FormatGotoMarker(command), false);
+                return inst.Serialize();
+            }
+            else
+            {
+                //Clean up
+                s_parameters.Clear();
+
+                Console.WriteLine("(W) ACTIONS ignore invalid command: " + command);
+                return string.Empty;
+            }
         }
 
         public static void AddInstructionParameter(string param)
@@ -86,13 +120,5 @@ namespace WDL2CS
             s_parameters.Insert(0, param);
         }
 
-        public static string CreateInvalidInstruction(string type)
-        {
-            //Clean up
-            s_parameters.Clear();
-
-            Console.WriteLine("(W) ACTIONS ignore invalid command: " + type);
-            return string.Empty;
-        }
     }
 }

@@ -10,8 +10,6 @@ namespace WDL2CS
         private static List<string> s_parameters = new List<string>();
         public static string AddAsset(string type, string name, string file)
         {
-            type = Formatter.FormatObject(type);
-            name = Formatter.FormatAssetId(name);
             Identifiers.Register(type, name);
             string a = new Asset(type, name, file, s_parameters).Serialize();
 

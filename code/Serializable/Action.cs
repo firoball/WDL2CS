@@ -65,7 +65,7 @@ namespace WDL2CS
         {
             bool interruptable = false;
             string className = Formatter.FormatActionClass(m_name);
-            string instName = m_name;
+            string instName = Formatter.FormatIdentifier(m_name);
 
             //Update instruction list in order to make it compatible to C#
             interruptable = ProcessInstructions();
