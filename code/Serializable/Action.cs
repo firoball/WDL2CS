@@ -65,7 +65,7 @@ namespace WDL2CS
         {
             bool interruptable = false;
             string className = Formatter.FormatActionClass(m_name);
-            string instName = Formatter.FormatIdentifier(m_name);
+            string instName = Formatter.FormatObjectId(m_name);
 
             //Update instruction list in order to make it compatible to C#
             interruptable = ProcessInstructions();
@@ -85,13 +85,13 @@ namespace WDL2CS
                     {
                         //WDL allows isolated "else" (bug of scripting language)
                         //keep track of the last if, so the isolated "else" can be fixed with a negated condition
-                        if (inst.Command.StartsWith("if") && inst.Parameters.Count > 0)
+                        if (inst.Command.StartsWith("if", StringComparison.OrdinalIgnoreCase) && inst.Parameters.Count > 0)
                         {
                             PushCondition(inst.Parameters[0]);
                         }
                         //special case: "else" was found without previous closing bracket
                         //take last stored "if"-condiftion, negate it and replace "else" with an "if"
-                        if ((last != null) && !last.Command.StartsWith("}") && inst.Command.StartsWith("else"))
+                        if ((last != null) && !last.Command.StartsWith("}") && inst.Command.StartsWith("else", StringComparison.OrdinalIgnoreCase))
                         {
                             Instruction patch;
                             string cond = PopCondition();
@@ -111,7 +111,7 @@ namespace WDL2CS
                         else
                         {
                             Instruction temp = inst;
-                            if (inst.Command.StartsWith("else") && string.IsNullOrEmpty(PopCondition()))
+                            if (inst.Command.StartsWith("else", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(PopCondition()))
                             {
                                 Console.WriteLine("(W) ACTION ELSE without IF detected - disabling");
                                 temp = new Instruction("if", "(false) //disabled by transpiler");
@@ -159,13 +159,30 @@ namespace WDL2CS
                 //iterate through instruction list from end, so that new instructions can be inserted directly
                 for (int i = m_instructions.Count - 1; i >= 0; i--)
                 {
-                    if (m_instructions[i].Command.StartsWith("Wait") || m_instructions[i].Command.StartsWith("Inkey"))
+                    if (m_instructions[i].Command.StartsWith("Wait", StringComparison.OrdinalIgnoreCase) || m_instructions[i].Command.StartsWith("Inkey", StringComparison.OrdinalIgnoreCase))
                     {
                         interruptable = true;
                     }
 
+                    //C# does not allow jumpin at end of { } block - move label after block
+                    //this check must take place before the later checks as these might get triggered by error due to goto marker naming
+                    else if (m_instructions[i].Command.EndsWith(":"))
+                    {
+                        int m = i;
+                        while ((m < m_instructions.Count - 1) && (m_instructions[m + 1].Command[0] == '}'))
+                        {
+                            m++;
+                        }
+                        if (m > i)
+                        {
+                            Console.WriteLine("(I) ACTION jump marker moved after closing bracket");
+                            m_instructions.Insert(m + 1, m_instructions[i]);
+                            m_instructions.RemoveAt(i);
+                        }
+                    }
+
                     //Transform "Skip" to "goto" and jump marker
-                    else if (m_instructions[i].Command.StartsWith("Skip"))
+                    else if (m_instructions[i].Command.StartsWith("Skip", StringComparison.OrdinalIgnoreCase))
                     {
                         //standard case: Skip comes with number of lines to skip as parameter
                         if (Int32.TryParse(m_instructions[i].Parameters[0], out int num))
@@ -205,8 +222,8 @@ namespace WDL2CS
 
                     //add brackets for "If_..." instructions, since these are transformed to bare "if"
                     //don't do this in case of a third parameter is supplied. In this special case an goto instruction got inserted already - no brackets needed
-                    else if ((m_instructions[i].Command.StartsWith("If_") && (m_instructions[i].Parameters.Count < 3)) ||
-                        (m_instructions[i].Command.StartsWith("Else") && (i < m_instructions.Count - 1) && (m_instructions[i + 1].Command[0] != '{')))
+                    else if ((m_instructions[i].Command.StartsWith("If_", StringComparison.OrdinalIgnoreCase) && (m_instructions[i].Parameters.Count < 3) && (m_instructions[i].Parameters.Count > 0)) ||
+                        (m_instructions[i].Command.StartsWith("Else", StringComparison.OrdinalIgnoreCase) && (i < m_instructions.Count - 1) && (m_instructions[i + 1].Command[0] != '{')))
                     {
                         if (i < m_instructions.Count - 1)
                         {
@@ -223,22 +240,6 @@ namespace WDL2CS
                         }
                     }
 
-                    //C# does not allow jumpin at end of { } block - move label after block
-                    else if (m_instructions[i].Command.EndsWith(":"))
-                    {
-                        int m = i;
-                        while ((m < m_instructions.Count - 1) && (m_instructions[m + 1].Command[0] == '}'))
-                        {
-                            m++;
-                        }
-                        if (m > i)
-                        {
-                            Console.WriteLine("(I) ACTION jump marker moved after closing bracket");
-                            m_instructions.Insert(m + 1, m_instructions[i]);
-                            m_instructions.RemoveAt(i);
-                        }
-                    }
-
                     //check if any buffered instructions need to be inserted at current position
                     if (inserts.TryGetValue(i, out Instruction insert))
                     {
@@ -246,10 +247,10 @@ namespace WDL2CS
                     }
                 }
                 //always yield at end of function!
-                if (!m_instructions.Last().Command.Equals("Branch") &&
-                    !m_instructions.Last().Command.Equals("End") &&
-                    !m_instructions.Last().Command.Equals("Goto") &&
-                    !m_instructions.Last().Command.Equals("Exit")
+                if (!m_instructions.Last().Command.Equals("Branch", StringComparison.OrdinalIgnoreCase) &&
+                    !m_instructions.Last().Command.Equals("End", StringComparison.OrdinalIgnoreCase) &&
+                    !m_instructions.Last().Command.Equals("Goto", StringComparison.OrdinalIgnoreCase) &&
+                    !m_instructions.Last().Command.Equals("Exit", StringComparison.OrdinalIgnoreCase)
                     )
                     m_instructions.Add(new Instruction("yield break;", false));
             }
@@ -271,7 +272,7 @@ namespace WDL2CS
         {
             int endpos = pos + 1;
             //nested "if" with brackets found
-            if (m_instructions[pos].Command.StartsWith("If_") && (pos < m_instructions.Count - 1) && (m_instructions[pos + 1].Command[0] == '{'))
+            if (m_instructions[pos].Command.StartsWith("If_", StringComparison.OrdinalIgnoreCase) && (pos < m_instructions.Count - 1) && (m_instructions[pos + 1].Command[0] == '{'))
             {
                 endpos = CountInstructionGroup(pos + 2);
             }
@@ -351,7 +352,7 @@ namespace WDL2CS
             if (count > 0)
             {
                 //correct index by one for positive skips only - make sure marker is never placed directly behind "If"
-                if (!m_instructions[i].Command.StartsWith("If"))
+                if (!m_instructions[i].Command.StartsWith("If", StringComparison.OrdinalIgnoreCase))
                     i++;
                 else //code tries to jump into if block - C# does not allow this; at least make file compilable by moving marker up
                     Console.WriteLine("(W) ACTION patch invalid jump marker after " + m_name + ": " + m_instructions[i].Command + " " + m_instructions[i].Parameters[0]);

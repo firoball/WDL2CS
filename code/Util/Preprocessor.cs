@@ -71,6 +71,7 @@ namespace WDL2CS
             Console.WriteLine("(I) PREPROCESSOR finished in " + watch.Elapsed);
             watch.Stop();
 
+            //Console.WriteLine(sb.ToString());
             return sb.ToString();
         }
 
@@ -94,13 +95,6 @@ namespace WDL2CS
                         if (m.Success)
                         {
                             length = m.Value.Length;
-                            //Console.Write(r+" MATCH ");
-                            //Console.Write("[" + m.Groups[0].Value + "]");
-
-                            /*foreach (Group g in m.Groups)
-                            {
-                                Console.Write("[" + g.Value + "]");
-                            }*/
                             success = true;
                             ProcessMatch(sb, r, pos, m, ref stream, ref ignore);
                             break;
@@ -170,11 +164,12 @@ namespace WDL2CS
                     break;
 
                 case ProcId.Endif:
-                    m_directives.Add(new string('\t', m_stack.Count-1) + (ignore ? "(ENDIF)" : "ENDIF"));
                     if (m_stack.Count > 0)
                         ignore = m_stack.Pop();
                     else
                         Console.WriteLine("(W) PREPROCESSOR missing ENDIF detected");
+
+                    m_directives.Add(new string('\t', m_stack.Count) + (ignore ? "(ENDIF)" : "ENDIF"));
                     break;
 
                 case ProcId.Code:

@@ -37,24 +37,14 @@
         <READ value="WHILE" token="WHILE" color="#E1FFFF"/>
         <READ value="\." token="Char46" color="#E1FFFF"/>
         <READ value="NULL" token="NULL" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(EACH_SEC|IF_(AE|ALT|ANYKEY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|EQUALS|ESC|HOME|INS|JOY4|LEFT|LOAD|MIDDLE|MINUS|MSTOP|OE|PAUSE|PERIOD|PGDN|PGUP|PLUS|RIGHT|SEMIC|SLASH|SPACE|START|SZ|TAB|TAST|UE|F(1[0-2]|[1-9])|[0-9A-Z])|LAYERS|MESSAGES|PANELS)" token="event" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(VIDEO|NEXUS|LIGHT_ANGLE|IBANK|DRUMBANK|MIDI_PITCH|BIND|MAPFILE|SAVEDIR|PATH|DITHER|SAVE_KEYS|REMOTE_KEYS)" token="global" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(MODEL|SOUND|MUSIC|FLIC|BMAP|OVLY|FONT)" token="asset" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(OVERLAY|PANEL|PALETTE|REGION|SKILL|STRING|SYNONYM|TEXTURE|TEXT|VIEW|WALL|WAY)" token="object" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(ACTION|RULES)" token="function" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(ACOS|COS|ATAN|TAN|SIGN|INT|EXP|LOG10|LOG2|LOG)" token="math" color="#E1FFFF"/>
         <READ value="((EACH_TICK|EACH_SEC|PANELS|LAYERS|MESSAGES)\.(1[0-6]|[1-9]))" token="list" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(ACCELERATION|ACTIONS|ACTIVE_(NEXUS|OBJTICKS|TARGETS)|ACTOR_(CEIL_HGT|CLIMB|DIST|FLOOR_HGT|IMPACT_V[X-Z]|WIDTH)|APPEND_MODE|ASPECT|BLUR_MODE|BOUNCE_V[X-Y]|CDAUDIO_VOL|CD_TRACK|CHANNEL_[0-7]|CHANNEL|CLIPPED|CLIPPING|COLOR_(ACTORS|BORDER|PLAYER|THINGS|WALLS)|DARK_DIST|DEBUG_MODE|DELTA_ANGLE|ERROR|FLIC_FRAME|FLOOR_MODE|FORCE_(AHEAD|ROT|STRAFE|TILT|UP)|FRAME_COLOR|FRICTION|HALF_PI|HIT_(DIST|MINDIST|X|Y)|IMPACT_V(ROT|[X-Z])|INERTIA|INV_DIST|JOYSTICK_[X-Y]|JOY_(4|SENSE)|KEY_(ALT|ANY|APO|BKSL|BKSP|BRACKL|BRACKR|CAL|CAR|COMMA|CTRL|CUD|CUL|CUR|CUU|DEL|END|ENTER|EQUALS|ESC|HOME|INS|JOY4|MINUS|PAUSE|PERIOD|PGDN|PGUP|PLUS|SEMIC|SENSE|SHIFT|SLASH|SPACE|SZ|TAB|F(1[0-2]|[1-9])|[A-Z0-9])|LIGHT_DIST|LOAD_MODE|MAP_(CENTER[X-Y]|(EDGE_[X-Y][1-2])|LAYER|MAX[X-Y]|MIN[X-Y]|MODE|OFFS[X-Y]|ROT|SCALE)|MAX_DIST|MICKEY_[X-Y]|MINV_DIST|MOTION_BLUR|MOUSE_(ANGLE|CALM|LEFT|MIDDLE|MODE|MOVING|RIGHT|SENSE|TIME|X|Y)|MOVE_(ANGLE|MODE)|MUSIC_VOL|MY_(X[1-2]|Y[1-2]|Z[1-2]|X|Y)|PANEL_LAYER|PI|PLAYER_(ANGLE|ARC|CLIMB|COS|DEPTH|HGT|LAST_[X-Y]|LIGHT|MSIN|SIN|SIZE|SPEED|TILT|VROT|V[X-Z]|WIDTH|[X-Z])|PSOUND_(TONE|VOL)|REAL_SPEED|REMOTE_[0-1]|RENDER_MODE|SCREEN_(HGT|WIDTH|X|Y)|SECS|SHIFT_SENSE|SHOOT_(ANGLE|FAC|RANGE|SECTOR|X|Y)|SKIP_FRAMES|SKY_OFFS_[X-Y]|SLOPE_(AHEAD|SIDE|X|Y)|SOUND_VOL|SPANS|STEPS|STR_LEN|TEXT_LAYER|THING_(DIST|WIDTH)|TICKS|TIME_(ACTIONS|CLIPPING|CORR|DRAW|FAC|FBUFFER|SLICES|TARGETS|VERTICES)|TOUCH_(DIST|MODE|RANGE|STATE)|TWO_PI|WALK_(PERIOD|TIME)|WALK|WAVE_PERIOD|WAVE|PALANIM_DELAY)" token="skill" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(THERE|MY|HIT|TOUCH_TEXT|TOUCHED|TOUCH_TEX|TOUCH_REG|COMMAND_LINE|REGION[1-8])" token="synonym" color="#E1FFFF"/>
-        <READ value="CLIP_DIST" token="ambigChar95globalChar95property" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(EACH_TICK|IF_ENTER|IF_HIT|IF_KLICK)" token="ambigChar95eventChar95property" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(THING|ACTOR)" token="ambigChar95objectChar95flag" color="#E1FFFF"/>
         <READ value="(?=[A-Z])(SIN|ASIN|SQRT|ABS)" token="ambigChar95mathChar95command" color="#E1FFFF"/>
         <READ value="RANDOM" token="ambigChar95mathChar95skillChar95property" color="#E1FFFF"/>
-        <READ value="HERE" token="ambigChar95synonymChar95flag" color="#E1FFFF"/>
-        <READ value="(?=[A-Z])(FLOOR_HGT|CEIL_HGT|AMBIENT|RESULT|NODE)" token="ambigChar95skillChar95property" color="#E1FFFF"/>
-        <READ value="MSPRITE" token="ambigChar95globalChar95synonymChar95property" color="#E1FFFF"/>
-        <READ value="(FLAG[1-8])" token="ambigChar95skillChar95flag" color="#E1FFFF"/>
         <READ value="[0-9]+" token="integer" color="#E1FFFF"/>
         <READ value="([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)" token="fixed" color="#E1FFFF"/>
         <READ value="[A-Za-z0-9_][A-Za-z0-9_\?]*(\.[1-9][0-9]?)?" token="identifier" color="#E1FFFF"/>
@@ -155,11 +145,11 @@ else
         </RULE>
         <RULE name="GlobalDef" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="Event"/>
+                <RULE name="Global"/>
                 <RULE name="ObjectIdList"/>
                 <TOKEN name="Char59"/>
                 <CODE>
-                    $$ = Globals.AddEvent($1);
+                    $$ = Globals.AddGlobal($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -175,59 +165,14 @@ else
         </RULE>
         <RULE name="Global" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="ambigChar95globalChar95property"/>
+                <RULE name="ReducedKeyword"/>
                 <CODE>
-                    $$ = Formatter.FormatGlobal($1); //TODO: remove after globals are refactored
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatGlobal($1); //TODO: remove after globals are refactored
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="global"/>
-                <CODE>
-                    $$ = Formatter.FormatGlobal($1); //TODO: remove after globals are refactored
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Skill"/>
-                <CODE>
-                    $$ = Formatter.FormatTargetSkill(Formatter.FormatSkill($1)); //TODO: temporary - remove after refactoring
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="Event" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95eventChar95property"/>
-                <CODE>
-                    $$ = Formatter.FormatEvent($1);
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="event"/>
-                <CODE>
-                    $$ = Formatter.FormatEvent($1);
+                    $$ = Formatter.FormatKeyword($1); //TODO: review
 
                 </CODE>
             </RIGHTSIDE>
         </RULE>
         <RULE name="ObjectIdList" color="#FFE1FF">
-            <RIGHTSIDE>
-                <RULE name="ObjectId"/>
-                <CODE>
-                    $$ = "";
-Globals.AddParameter($1);
-
-                </CODE>
-            </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="ObjectId"/>
                 <RULE name="ObjectIdList"/>
@@ -237,20 +182,18 @@ Globals.AddParameter($1);
 
                 </CODE>
             </RIGHTSIDE>
+            <RIGHTSIDE>
+                <CODE>
+                    $$ = "";
+
+                </CODE>
+            </RIGHTSIDE>
         </RULE>
         <RULE name="GlobalParameter" color="#FFE1FF">
             <RIGHTSIDE>
                 <RULE name="String"/>
                 <CODE>
                     $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <RULE name="Identifier"/>
-                <CODE>
-                    //$$ = $1;
-$$ = Formatter.FormatIdentifier($1); //temporary - remove after updating grammar for globals/events
 
                 </CODE>
             </RIGHTSIDE>
@@ -1132,14 +1075,14 @@ $$ = Formatter.FormatNumber($2); //this is what supposedly happens in A3
             <RIGHTSIDE>
                 <TOKEN name="ELSE"/>
                 <CODE>
-                    $$ = Formatter.FormatCommand($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="BasicKeyword"/>
                 <CODE>
-                    $$ = Formatter.FormatCommand($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1228,46 +1171,16 @@ $$ = Formatter.FormatNumber($2); //this is what supposedly happens in A3
                 </CODE>
             </RIGHTSIDE>
         </RULE>
-        <RULE name="Skill" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95mathChar95skillChar95property"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95skillChar95property"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="skill"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
         <RULE name="EngineKeywords" color="#FFE1FF">
             <RIGHTSIDE>
-                <TOKEN name="ambigChar95eventChar95property"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95globalChar95property"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <TOKEN name="ambigChar95mathChar95command"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="ambigChar95mathChar95skillChar95property"/>
                 <CODE>
                     $$ = $1;
 
@@ -1288,21 +1201,7 @@ $$ = Formatter.FormatNumber($2); //this is what supposedly happens in A3
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
-                <TOKEN name="event"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
                 <TOKEN name="function"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="global"/>
                 <CODE>
                     $$ = $1;
 
@@ -1317,57 +1216,6 @@ $$ = Formatter.FormatNumber($2); //this is what supposedly happens in A3
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="object"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-        </RULE>
-        <RULE name="EngineObjects" color="#FFE1FF">
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95globalChar95synonymChar95property"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95mathChar95skillChar95property"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95skillChar95flag"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95skillChar95property"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="ambigChar95synonymChar95flag"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="skill"/>
-                <CODE>
-                    $$ = $1;
-
-                </CODE>
-            </RIGHTSIDE>
-            <RIGHTSIDE>
-                <TOKEN name="synonym"/>
                 <CODE>
                     $$ = $1;
 
@@ -1396,8 +1244,24 @@ $$ = Formatter.FormatNumber($2); //this is what supposedly happens in A3
 
                 </CODE>
             </RIGHTSIDE>
+        </RULE>
+        <RULE name="ReducedKeyword" color="#FFE1FF">
             <RIGHTSIDE>
-                <RULE name="EngineObjects"/>
+                <TOKEN name="ambigChar95mathChar95command"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <TOKEN name="math"/>
+                <CODE>
+                    $$ = $1;
+
+                </CODE>
+            </RIGHTSIDE>
+            <RIGHTSIDE>
+                <RULE name="Identifier"/>
                 <CODE>
                     $$ = $1;
 

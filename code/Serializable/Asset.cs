@@ -69,7 +69,7 @@ namespace WDL2CS
         {
             string scope = "public static ";
             string type = Formatter.FormatReserved(m_type);
-            string name = Formatter.FormatIdentifier(m_name);
+            string name = Formatter.FormatObjectId(m_name);
 
             string pars = string.Empty;
             if (m_parameters != null && m_parameters.Count > 0)

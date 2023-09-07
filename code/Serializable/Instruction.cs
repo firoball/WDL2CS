@@ -309,7 +309,7 @@ namespace WDL2CS
                         break;
 
                     case "Play_flic":
-                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
+                        //m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
                         o = $"Media.Play_flic({m_parameters[0]});";
                         break;
 
@@ -318,17 +318,17 @@ namespace WDL2CS
                         break;
 
                     case "Play_song":
-                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
+                        //m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
                         o = $"Media.Play_song({m_parameters[0]}, {m_parameters[1]}, true);";
                         break;
 
                     case "Play_song_once":
-                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
+                        //m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
                         o = $"Media.Play_song({m_parameters[0]}, {m_parameters[1]}, false);";
                         break;
 
                     case "Play_sound":
-                        m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]);
+                        //m_parameters[0] = Formatter.FormatAssetIdRef(m_parameters[0]); //TODO: extra formatting required?
                         if (m_parameters.Count > 2)
                         {
                             //check for specific properties containing an object, e.g. <object>.Genius - checking for dot may lead to false positives
@@ -468,7 +468,7 @@ namespace WDL2CS
                         break;
 
                     case "Set_skill":
-                        o = $"{Formatter.FormatTargetSkill(m_parameters[0])} = Convert.ToDouble({m_parameters[1]});";
+                        o = $"{m_parameters[0]} = Convert.ToDouble({m_parameters[1]});";
                         break;
 
                     case "Set_string":
@@ -545,7 +545,6 @@ namespace WDL2CS
 
                     case "While":
                         //while(1) patch -> C# needs while(true)
-                        Console.WriteLine("WHILE " + m_parameters[0]);
                         string x = m_parameters[0].Trim(new[] { '(', ')' });
                         if(int.TryParse(x, out int n) && n > 0)
                             o = $"while (true)";

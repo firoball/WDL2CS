@@ -10,14 +10,7 @@ namespace WDL2CS
     {
         public static string FormatActionClass(string s)
         {
-            return "Action__" + FormatIdentifier(s);
-        }
-
-        public static string FormatActionId(string s)
-        {
-            int g = s.LastIndexOf('.');
-            string label = g < 0 ? s : s.Substring(g + 1);
-            return FormatIdentifier(label);
+            return "Action__" + FormatObjectId(s);
         }
 
         //Targets are not detected specifically in the parser due to complexity limit
@@ -30,41 +23,13 @@ namespace WDL2CS
             else return s;
         }
 
-        public static string FormatAssetId(string asset)
-        {
-            //WDL accepts numbers as asset IDs -> prefix these for valid C# identifiers
-            if (int.TryParse(asset, out int n))
-                return "__" + asset;
-            else
-                return FormatIdentifier(asset);
-        }
-
         public static string FormatAssetIdRef(string asset)
         {
             //allow "null" for asset references
             if (asset.Equals("null"))
                 return asset;
             else
-                return FormatAssetId(asset);
-        }
-
-        public static string FormatCommand(string s)//TODO really own function required?
-        {
-            s = Ucfirst(s);
-            return s;
-        }
-
-        //Lists are not detected specifically in the parser due to complexity limit
-        //Therefore, hard code the different targets here
-        private static string[] s_lists = { "Each_tick", "Each_sec", "Panels", "Messages", "Layers" };
-        public static string FormatEvent(string s)
-        {
-            if (!string.IsNullOrEmpty(s))
-                s = FormatReserved(s);
-            if (s_lists.Contains(s))
-                return "Globals." + s;
-            else
-                return "Events." + s;
+                return FormatIdentifier(asset);
         }
 
         public static string FormatFile(string s)
@@ -237,45 +202,13 @@ namespace WDL2CS
             return s;
         }
 
-        public static string FormatObjectId(string obj, string type)
+        public static string FormatObjectId(string id)
         {
-            //parser grammar needs to avoid shift/reduce conflicts
-            //due to this some specific patches for ambiguous keywords are required to be applied
-            if (obj.Equals("random"))
-                return FormatSkill(obj);
-            else if (obj.StartsWith("Skills.") && type.Equals("Skill")) //Global Skills are a special case and prefix needs to be preserved
-                return obj;
+            //escape "null" for object/asset identifiers
+            if (id.Equals("null", StringComparison.OrdinalIgnoreCase))
+                return "__" + id;
             else
-            {
-                int g = obj.LastIndexOf('.');
-                string label = g < 0 ? obj : obj.Substring(g + 1);
-                return FormatIdentifier(label);
-            }
-        }
-
-        /*public static string FormatProperty(string s)
-        {
-            //somewhat dirty workaround due to "base" identifier being patched to avoid clash with C# language
-            //remove leading underscores and capitalize first char
-            while (s[0] == '_')
-                s = s.Substring(1);
-            s = Ucfirst(s);
-            return s;
-        }*/
-
-        public static string FormatPropertyValue(string s)
-        {
-            //test if local skill with name identical to global skill exists
-            //use local skill in this case
-            int g = s.LastIndexOf('.');
-            string label = g < 0 ? s : s.Substring(g + 1);
-            //make sure numbers do not get prefixed by accident
-            if (!int.TryParse(label, out int i) && ! float.TryParse(label, out float f))
-                label = FormatIdentifier(label);
-            if (Identifiers.Identify(out string type, label))
-                s = label;
-
-            return s;
+                return FormatIdentifier(id);
         }
 
         public static string FormatReserved(string s)
@@ -303,26 +236,6 @@ namespace WDL2CS
             //convert escaping of quotation marks
             s = s.Replace("\\\"", "\"\"");
             return "@" + s;
-        }
-
-        public static string FormatTargetSkill(string target)
-        {
-            //C# does not allow overloading of = operator, therefore auto-assignment to Skill.Val is not possible
-            //Work around by generating explicit assignment after identifying target as Skill
-            if (
-                    (target.StartsWith("Skills.") || target.Contains(".Skill")) &&
-                    !(target.EndsWith(".Min") || target.EndsWith(".Max"))
-                )
-            {
-                target += ".Val";
-            }
-            else
-            {
-                string identifier = FormatIdentifier(target); //eliminate ambiguity between skill and property
-                if (Identifiers.Is("Skill", identifier)) //resolve const references in order to detect redefined skills as well
-                    target = identifier + ".Val";
-            }
-            return target;
         }
 
         public static string FormatVideo(string s)

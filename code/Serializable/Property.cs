@@ -135,12 +135,12 @@ namespace WDL2CS
                     case "Bmap":
                     case "Bmaps":
                         //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                        p = "Bmaps = new Bmap[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatAssetIdRef(x))) + " }";
+                        p = "Bmaps = new Bmap[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatIdentifier(x))) + " }";
                         break;
 
                     case "Ovlys":
                         //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                        p = "Ovlys = new Ovly[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatAssetIdRef(x))) + " }";
+                        p = "Ovlys = new Ovly[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatIdentifier(x))) + " }";
                         break;
 
                     case "Offset_x":

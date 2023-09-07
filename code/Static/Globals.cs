@@ -9,7 +9,7 @@ namespace WDL2CS
     {
         static List<string> s_eventPars = new List<string>();
 
-        public static string AddEvent(string name)
+        public static string AddGlobal(string name)
         {
             string g = new Global(name, s_eventPars).Serialize();
 
@@ -22,7 +22,6 @@ namespace WDL2CS
         public static string AddGlobal(string name, string parameter)
         {
             string g = string.Empty;
-            //name = Formatter.FormatGlobal(name);//TODO: move to formatter
             //ignore Bind and Path statements
             switch (name)
             {
@@ -43,10 +42,7 @@ namespace WDL2CS
 
         public static void AddParameter(string parameter)
         {
-            parameter = Formatter.FormatActionId(parameter); //Events always take action references as parameter
-            //parser does not explicitly take care of null parameters, therefore patch these manually
-            if (parameter.Equals(Formatter.FormatIdentifier("null")))
-                parameter = Formatter.FormatNull();
+            parameter = Formatter.FormatIdentifier(parameter); //Events always take action references as parameter TODO: should this be here or outside?
 
             s_eventPars.Insert(0, parameter);
         }

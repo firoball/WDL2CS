@@ -6,11 +6,11 @@ Sections -> Section Sections | Keyword | EPSILON
 Section -> ObjectDef | FunctionDef | AssetDef | GlobalDef | } | { | ;
 %Superfluous closing curly braces and semicolons may be put - capture these as dummy section
 
-GlobalDef -> Global GlobalParameter ; | Event ObjectIdList ;
-Global -> global | ambig_global_property | ambig_global_synonym_property | Skill
-Event -> event | ambig_event_property
-ObjectIdList -> ObjectId ObjectIdList | ObjectId
-GlobalParameter -> Number | File | String | Identifier
+GlobalDef -> Global GlobalParameter ; | Global ObjectIdList ;
+Global -> ReducedKeyword
+ObjectIdList -> ObjectId ObjectIdList | EPSILON
+%Identifier clashes with ObjectId of ObjectIdList
+GlobalParameter -> Number | File | String 
 
 AssetDef -> AssetRef AssetId File AssetParams ;
 AssetParams -> AssetParam AssetParams | EPSILON 
@@ -22,7 +22,6 @@ ObjectRef -> object
 %TODO is this special case still required?
 Object -> ObjectRef | ambig_object_flag 
 PropertyDefs -> PropertyDef PropertyDefs | EPSILON
-%PropertyDef -> Property PropertyValueList ; | ;
 PropertyDef -> BasicKeyword PropertyValueList ; | ;
 PropertyValueList -> PropertyValue PropertyValueList | PropertyValue 
 PropertyValue -> Number | File | String | KeywordPar
@@ -30,11 +29,7 @@ PropertyValue -> Number | File | String | KeywordPar
 FunctionDef -> Function FunctionId { Instructions }
 Function -> function
 %Compatibility patch - Goto markers may also be terminated by ; instead of : (use identifier instead of GotoMarker for patch; causes reduce/reduce conflicts otherwise)
-%OLD Instructions -> Instruction Instructions | GotoMarker : Instructions | identifier ; Instructions | Flow Instructions | { Instructions } Instructions | EPSILON
 Instructions -> Instruction Instructions | GotoMarker : Instructions | Flow Instructions | { Instructions } Instructions | EPSILON
-%Compatibility patch - A3 allows bogus instructions (capture as Identifier)
-%Instruction -> Command ; | Command ParameterList ; | Rule ; | ;
-%OLD Instruction -> Command ; | Command ParameterList ; | Rule ; | Identifier ParameterList ; | ;
 Instruction -> Command ; | Command ParameterList ; | Rule ; | ;
 
 ParameterList -> Parameter ParameterList | Parameter
@@ -71,26 +66,20 @@ Math -> math | ambig_math_command | ambig_math_skill_property
 %Flow -> IF Expression { Instructions } | IF Expression { Instructions } ELSE { Instructions } | WHILE Expression { Instructions }
 Flow -> IF Expression { Instructions } | ELSE { Instructions } | WHILE Expression { Instructions }
 
-%OLD Keyword -> BasicKeyword | BasicKeyword . Property | BasicKeyword . Flag
 Keyword -> BasicKeyword | BasicKeyword . BasicKeyword
 KeywordPar -> OpUn Keyword | Keyword
-%OLD Flag -> flag | ambig_synonym_flag | ambig_object_flag | ambig_command_flag | ambig_skill_flag
-%OLD Property -> property | AssetRef | ObjectRef | ambig_event_property | ambig_skill_property | ambig_global_synonym_property | ambig_global_property | ambig_math_skill_property | ambig_command_property
-%OLD Command -> command | ambig_command_flag | ambig_command_property | ambig_math_command | ELSE
 Command -> BasicKeyword | ELSE
 Number -> Integer | Fixed
 UnNumber -> integer | fixed
 Integer -> OpUn integer | integer
 Fixed -> OpUn fixed | fixed
 Identifier -> identifier
-List -> list
+List -> list %TODO: move out of grammar
 
-Skill -> skill | ambig_skill_property | ambig_math_skill_property
-
-%OLD EngineKeywords -> event | global | asset | object | function | math | flag | property | command | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command | ambig_command_flag | ambig_command_property
-EngineKeywords -> event | global | asset | object | function | math | ambig_global_property | ambig_event_property | ambig_object_flag | ambig_math_command
-EngineObjects -> skill | synonym | ambig_math_skill_property | ambig_synonym_flag | ambig_skill_property | ambig_global_synonym_property | ambig_skill_flag
-BasicKeyword -> EngineKeywords | EngineObjects | Identifier | NULL
+ambig_command_property
+EngineKeywords -> asset | object | function | math | ambig_object_flag | ambig_math_command | ambig_math_skill_property
+BasicKeyword -> EngineKeywords | Identifier | NULL
+ReducedKeyword -> math | ambig_math_command | Identifier
 %add stupid "identifier-name" / "identifier-123" workarounds
 HackKeyword -> BasicKeyword | identifier - identifier | identifier - integer
 %ObjectId -> BasicKeyword
@@ -107,16 +96,16 @@ File -> file
 String -> string
 
 %Ambiguous keyword lists - used in case some keywords are used multiple times in different contexts
-%- ambig_event_property
-%- ambig_skill_property
-%- ambig_global_property
-%- ambig_global_synonym_property
-%- ambig_synonym_flag
+%- ambig_event_property (moved out of grammar)
+%- ambig_skill_property (moved out of grammar)
+%- ambig_global_property (moved out of grammar)
+%- ambig_global_synonym_property (moved out of grammar)
+%- ambig_synonym_flag (moved out of grammar)
 %- ambig_object_flag
 %- ambig_math_command
 %- ambig_math_skill_property
-%- ambig_command_property
-%- ambig_skill_flag
+%- ambig_command_property (moved out of grammar)
+%- ambig_skill_flag (moved out of grammar)
 
 %Regex patches - Odd behavior captured with regex and needs to be taken care of by code generator
 %- Combined assign operators += etc. may have spaces inbetween. 

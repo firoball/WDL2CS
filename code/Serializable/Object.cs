@@ -87,7 +87,7 @@ namespace WDL2CS
             if (m_isInitialized)
                 m_name = Formatter.FormatSkill(m_name);
             else
-                m_name = Formatter.FormatIdentifier(m_name);
+                m_name = Formatter.FormatObjectId(m_name);
 
             string properties;
             //string carries text instead of (serialized) properties
