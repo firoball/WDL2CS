@@ -148,7 +148,7 @@ namespace WDL2CS
             }
 
             //known identifiers can override predefined keywords
-            if (Identifiers.Identify(out string obj, identifier))
+            if (Registry.Identify(out string obj, identifier))
             {
                 string formattedIdentifier = FormatIdentifier(identifier);
                 if (obj.Equals("Skill") && string.IsNullOrEmpty(formattedProperty)) //skills must be accessed through property, defaults to ".Val"

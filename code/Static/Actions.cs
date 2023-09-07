@@ -11,7 +11,7 @@ namespace WDL2CS
 
         public static string AddAction(string name, string stream)
         {
-            Identifiers.Register("Action", name);
+            Registry.Register("Action", name);
             string a = new Action(name, stream).Serialize();
 
             return a;

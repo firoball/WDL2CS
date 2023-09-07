@@ -12,7 +12,7 @@ namespace WDL2CS
 
         public static string AddStringObject(string type, string name, string text)
         {
-            Identifiers.Register(type, name);
+            Registry.Register(type, name);
             string o = new Object(type, name, false, text, true).Serialize();
 
             return o;
@@ -28,7 +28,7 @@ namespace WDL2CS
             bool initialize = false;
             //Exclude predefined skills
             if (!(type.Equals("skill", StringComparison.OrdinalIgnoreCase) && Identifier.IsSkill(ref name)))
-                Identifiers.Register(type, name);
+                Registry.Register(type, name);
             else
                 initialize = true; //make sure predefined skills are moved to init section 
 

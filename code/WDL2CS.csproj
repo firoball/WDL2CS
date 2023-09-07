@@ -50,11 +50,10 @@
     <Compile Include="Static\Formatter.cs" />
     <Compile Include="Serializable\Global.cs" />
     <Compile Include="Static\Globals.cs" />
-    <Compile Include="Static\Identifier.cs" />
-    <Compile Include="Static\Identifiers.cs" />
     <Compile Include="Serializable\Instruction.cs" />
     <Compile Include="Serializable\Object.cs" />
     <Compile Include="Static\Script.cs" />
+    <Compile Include="Util\Identifier.cs" />
     <Compile Include="Util\ObjectData.cs" />
     <Compile Include="Static\Objects.cs" />
     <Compile Include="Parser.cs" />
@@ -63,6 +62,7 @@
     <Compile Include="Serializable\ISerializable.cs" />
     <Compile Include="Serializable\Section.cs" />
     <Compile Include="Static\Sections.cs" />
+    <Compile Include="Util\Registry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -10,7 +10,7 @@ namespace WDL2CS
         private static List<string> s_parameters = new List<string>();
         public static string AddAsset(string type, string name, string file)
         {
-            Identifiers.Register(type, name);
+            Registry.Register(type, name);
             string a = new Asset(type, name, file, s_parameters).Serialize();
 
             //Clean up

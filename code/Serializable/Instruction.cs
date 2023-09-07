@@ -332,7 +332,7 @@ namespace WDL2CS
                         if (m_parameters.Count > 2)
                         {
                             //check for specific properties containing an object, e.g. <object>.Genius - checking for dot may lead to false positives
-                            if (Identifiers.Is("Thing", m_parameters[2]) || Identifiers.Is("Actor", m_parameters[2]) || Identifiers.Is("Wall", m_parameters[2]) ||
+                            if (Registry.Is("Thing", m_parameters[2]) || Registry.Is("Actor", m_parameters[2]) || Registry.Is("Wall", m_parameters[2]) ||
                                 m_parameters[2].StartsWith("Globals.") || m_parameters[2].EndsWith(".Genius") || (string.Compare(m_parameters[2], "My") == 0)
                                 )
                             {

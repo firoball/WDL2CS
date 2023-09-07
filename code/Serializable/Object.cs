@@ -260,7 +260,7 @@ namespace WDL2CS
                         //Ways can be "inlined" in object definitions
                         //if way is not yet defined, create and register it outside of serialized parser stream
                         //during formatting, formatted way object will be printend along with this object
-                        if (!Identifiers.Is("Way", property.Values[0]))
+                        if (!Registry.Is("Way", property.Values[0]))
                         {
                             Console.WriteLine("(I) OBJECT add missing Way definition for: " + property.Values[0]);
                             string obj = Objects.AddObject("Way", property.Values[0]);
