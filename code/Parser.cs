@@ -134,9 +134,11 @@ namespace VCCCompiler
         int yyflag = 0;
         int yyfnone = 0;
         int[] yys = new int[20000];
-        string[] yyv = new string[20000];
+        //string[] yyv = new string[20000];
+        Node[] yyv = new Node[20000];
 
-        string yyval = "";
+        //string yyval = "";
+        Node yyval = new Node();
 
         FileStream OutputStream;
         //StreamWriter Output;
@@ -311,26 +313,26 @@ namespace VCCCompiler
                 ////////////////////////////////////////////////////////////////
 							case    1 : 
          yyval = yyv[yysp-0];
-         if (DeserializeOutput)
-         Output.WriteLine(Script.Format(Scriptname, yyval));
-         else
-         Output.Write(yyval);
+         //if (DeserializeOutput)
+         Output.WriteLine(Script.Format(Scriptname));
+         //else
+         //    Output.Write(yyval);
          
        break;
 							case    2 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node (yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case    3 : 
-         yyval = ""; //bogus keyword at EOF - just discard
+         yyval = null; //bogus keyword at EOF - just discard
          
        break;
 							case    4 : 
-         yyval = "";
+         yyval = null;
          
        break;
 							case    5 : 
-         yyval = "";
+         yyval = null;
          
        break;
 							case    6 : 
@@ -342,19 +344,19 @@ namespace VCCCompiler
          
        break;
 							case    8 : 
-         yyval = Sections.AddGlobalSection(yyv[yysp-0]);
+         yyval = Sections.AddSection(yyv[yysp-0]);
          
        break;
 							case    9 : 
-         yyval = Sections.AddObjectSection(yyv[yysp-0]);
+         yyval = Sections.AddSection(yyv[yysp-0]);
          
        break;
 							case   10 : 
-         yyval = Sections.AddActionSection(yyv[yysp-0]);
+         yyval = Sections.AddSection(yyv[yysp-0]);
          
        break;
 							case   11 : 
-         yyval = Sections.AddAssetSection(yyv[yysp-0]);
+         yyval = Sections.AddSection(yyv[yysp-0]);
          
        break;
 							case   12 : 
@@ -366,16 +368,15 @@ namespace VCCCompiler
          
        break;
 							case   14 : 
-         yyval = Formatter.FormatKeyword(yyv[yysp-0]); //TODO: reduce to simpler variant?
-
+         yyval = NodeFormatter.FormatKeyword(yyv[yysp-0]); //TODO: review
+         
        break;
 							case   15 : 
-         yyval = "";
-         Globals.AddParameter(yyv[yysp-1]);
+         yyval = Globals.AddParameter(yyv[yysp-1]);
          
        break;
 							case   16 : 
-         yyval = "";
+         yyval = null;
          
        break;
 							case   17 : 
@@ -395,12 +396,11 @@ namespace VCCCompiler
          
        break;
 							case   21 : 
-         yyval = "";
-         Assets.AddParameter(yyv[yysp-1]);
+         yyval = Assets.AddParameter(yyv[yysp-1]);
          
        break;
 							case   22 : 
-         yyval = "";
+         yyval = null;
          
        break;
 							case   23 : 
@@ -412,7 +412,7 @@ namespace VCCCompiler
          
        break;
 							case   25 : 
-         yyval = Objects.AddObject(yyv[yysp-4], yyv[yysp-3], yyv[yysp-1]);
+         yyval = Objects.AddObject(yyv[yysp-4], yyv[yysp-3]);
          
        break;
 							case   26 : 
@@ -436,11 +436,11 @@ namespace VCCCompiler
          
        break;
 							case   31 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node (yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case   32 : 
-         yyval = "";
+         yyval = null;
          
        break;
 							case   33 : 
@@ -448,17 +448,15 @@ namespace VCCCompiler
          
        break;
 							case   34 : 
-         yyval = "";
+         yyval = null;
          
        break;
 							case   35 : 
-         Objects.AddPropertyValue(yyv[yysp-0]);
-         yyval = "";
+         yyval = Objects.AddPropertyValue(yyv[yysp-0]);
          
        break;
 							case   36 : 
-         Objects.AddPropertyValue(yyv[yysp-1]);
-         yyval = "";
+         yyval = Objects.AddPropertyValue(yyv[yysp-1]);
          
        break;
 							case   37 : 
@@ -486,7 +484,7 @@ namespace VCCCompiler
          
        break;
 							case   43 : 
-         yyval = yyv[yysp-2] + yyv[yysp-0];
+         yyval = new Node (yyv[yysp-2], yyv[yysp-0]);
          
        break;
 							case   44 : 
@@ -494,15 +492,15 @@ namespace VCCCompiler
          
        break;
 							case   45 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node (yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case   46 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case   47 : 
-         yyval = "";
+         yyval = null;
          
        break;
 							case   48 : 
@@ -518,17 +516,15 @@ namespace VCCCompiler
          
        break;
 							case   51 : 
-         yyval = "";
+         yyval = null;
          
        break;
 							case   52 : 
-         yyval = "";
-         Actions.AddInstructionParameter(yyv[yysp-0]);
+         yyval = Actions.AddInstructionParameter(yyv[yysp-0]);
          
        break;
 							case   53 : 
-         yyval = "";
-         Actions.AddInstructionParameter(yyv[yysp-1]);
+         yyval = Actions.AddInstructionParameter(yyv[yysp-1]);
          
        break;
 							case   54 : 
@@ -556,7 +552,7 @@ namespace VCCCompiler
          
        break;
 							case   60 : 
-         yyval = yyv[yysp-2] + " || " + yyv[yysp-0];
+         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " || ", yyv[yysp-0]);
          
        break;
 							case   61 : 
@@ -564,7 +560,7 @@ namespace VCCCompiler
          
        break;
 							case   62 : 
-         yyval = yyv[yysp-2] + " && " + yyv[yysp-0];
+         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " && ", yyv[yysp-0]);
          
        break;
 							case   63 : 
@@ -572,7 +568,7 @@ namespace VCCCompiler
          
        break;
 							case   64 : 
-         yyval = yyv[yysp-2] + " | " + yyv[yysp-0];
+         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " | ", yyv[yysp-0]);
          
        break;
 							case   65 : 
@@ -580,7 +576,7 @@ namespace VCCCompiler
          
        break;
 							case   66 : 
-         yyval = yyv[yysp-2] + " ^ " + yyv[yysp-0];
+         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " ^ ", yyv[yysp-0]);
          
        break;
 							case   67 : 
@@ -588,7 +584,7 @@ namespace VCCCompiler
          
        break;
 							case   68 : 
-         yyval = yyv[yysp-2] + " & " + yyv[yysp-0];
+         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " & ", yyv[yysp-0]);
          
        break;
 							case   69 : 
@@ -600,7 +596,7 @@ namespace VCCCompiler
          
        break;
 							case   71 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case   72 : 
@@ -608,7 +604,7 @@ namespace VCCCompiler
          
        break;
 							case   73 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case   74 : 
@@ -616,7 +612,7 @@ namespace VCCCompiler
          
        break;
 							case   75 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case   76 : 
@@ -624,7 +620,7 @@ namespace VCCCompiler
          
        break;
 							case   77 : 
-         yyval = yyv[yysp-2] + yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case   78 : 
@@ -632,27 +628,25 @@ namespace VCCCompiler
          
        break;
 							case   79 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case   80 : 
-         yyval = Formatter.FormatMath(yyv[yysp-3]) + "(" + yyv[yysp-1] + ")";
+         yyval = NodeFormatter.FormatMath(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   81 : 
-         yyval = "(" + yyv[yysp-1] + ")";
+         yyval = NodeFormatter.FormatParentheses(yyv[yysp-1]);
          
        break;
 							case   82 : 
-         //yyval = yyv[yysp-1] + "." + yyv[yysp-0]); //fixes things like "18,4"
-         Console.WriteLine("(W) PARSER discarded superfluous token in expression: , " + yyv[yysp-0]);
-         yyval = Formatter.FormatNumber(yyv[yysp-1]); //this is what supposedly happens in A3
+         //fixes things like "18,4"
+         yyval = NodeFormatter.FormatNumberPatch(yyv[yysp-1], yyv[yysp-0]); //this is what supposedly happens in A3
          
        break;
 							case   83 : 
-         //yyval = Formatter.FormatTargetSkill(yyv[yysp-1] + yyv[yysp-0]); //fixes things like "Skill 6"
-         Console.WriteLine("(W) PARSER discarded superfluous token in expression: " + yyv[yysp-1]);
-         yyval = Formatter.FormatNumber(yyv[yysp-0]); //this is what supposedly happens in A3
+         //fixes things like "Skill 6"
+         yyval = NodeFormatter.FormatNumberPatch(yyv[yysp-0], yyv[yysp-1]); //this is what supposedly happens in A3
          
        break;
 							case   84 : 
@@ -668,59 +662,59 @@ namespace VCCCompiler
          
        break;
 							case   87 : 
-         yyval = " != ";
+         yyval = new Node(" != ");
          
        break;
 							case   88 : 
-         yyval = " == ";
+         yyval = new Node(" == ");
          
        break;
 							case   89 : 
-         yyval = " < ";
+         yyval = new Node(" < ");
          
        break;
 							case   90 : 
-         yyval = " <= ";
+         yyval = new Node(" <= ");
          
        break;
 							case   91 : 
-         yyval = " > ";
+         yyval = new Node(" > ");
          
        break;
 							case   92 : 
-         yyval = " >= ";
+         yyval = new Node(" >= ");
          
        break;
 							case   93 : 
-         yyval = " + ";
+         yyval = new Node(" + ");
          
        break;
 							case   94 : 
-         yyval = " - ";
+         yyval = new Node(" - ");
          
        break;
 							case   95 : 
-         yyval = " % ";
+         yyval = new Node(" % ");
          
        break;
 							case   96 : 
-         yyval = " * ";
+         yyval = new Node(" * ");
          
        break;
 							case   97 : 
-         yyval = " / ";
+         yyval = new Node(" / ");
          
        break;
 							case   98 : 
-         yyval = "!";
+         yyval = new Node("!");
          
        break;
 							case   99 : 
-         yyval = "+";
+         yyval = new Node("+");
          
        break;
 							case  100 : 
-         yyval = "-";
+         yyval = new Node("-");
          
        break;
 							case  101 : 
@@ -736,23 +730,23 @@ namespace VCCCompiler
          
        break;
 							case  104 : 
-         yyval = " *= ";
+         yyval = new Node(" *= ");
          
        break;
 							case  105 : 
-         yyval = " += ";
+         yyval = new Node(" += ");
          
        break;
 							case  106 : 
-         yyval = " -= ";
+         yyval = new Node(" -= ");
          
        break;
 							case  107 : 
-         yyval = " /= ";
+         yyval = new Node(" /= ");
          
        break;
 							case  108 : 
-         yyval = " = ";
+         yyval = new Node(" = ");
          
        break;
 							case  109 : 
@@ -780,11 +774,11 @@ namespace VCCCompiler
          
        break;
 							case  115 : 
-         yyval = Formatter.FormatKeyword(yyv[yysp-2] + "." + yyv[yysp-0]);
+         yyval = NodeFormatter.FormatKeywordProperty(yyv[yysp-2], yyv[yysp-0]);
          
        break;
 							case  116 : 
-         yyval = Formatter.FormatKeyword(yyv[yysp-0]);
+         yyval = NodeFormatter.FormatKeyword(yyv[yysp-0]);
          
        break;
 							case  117 : 
@@ -792,35 +786,35 @@ namespace VCCCompiler
          
        break;
 							case  118 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-1], yyv[yysp-0]);
          
        break;
-							case  119 :
-         yyval = yyv[yysp - 0];//Formatter.FormatCommand(yyv[yysp-0]);
+							case  119 : 
+         yyval = yyv[yysp-0];
          
        break;
 							case  120 : 
-         yyval = yyv[yysp - 0];//Formatter.FormatCommand(yyv[yysp-0]);
-
-                    break;
+         yyval = yyv[yysp-0];
+         
+       break;
 							case  121 : 
-         yyval = Formatter.FormatNumber(yyv[yysp-0]);
+         yyval = NodeFormatter.FormatNumber(yyv[yysp-0]);
          
        break;
 							case  122 : 
-         yyval = Formatter.FormatNumber(yyv[yysp-0]);
+         yyval = NodeFormatter.FormatNumber(yyv[yysp-0]);
          
        break;
 							case  123 : 
-         yyval = Formatter.FormatNumber(yyv[yysp-0]);
+         yyval = NodeFormatter.FormatNumber(yyv[yysp-0]);
          
        break;
 							case  124 : 
-         yyval = Formatter.FormatNumber(yyv[yysp-0]);
+         yyval = NodeFormatter.FormatNumber(yyv[yysp-0]);
          
        break;
 							case  125 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case  126 : 
@@ -828,7 +822,7 @@ namespace VCCCompiler
          
        break;
 							case  127 : 
-         yyval = yyv[yysp-1] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case  128 : 
@@ -840,7 +834,7 @@ namespace VCCCompiler
          
        break;
 							case  130 : 
-         yyval = Formatter.FormatList(yyv[yysp-0]);
+         yyval = NodeFormatter.FormatList(yyv[yysp-0]);
          
        break;
 							case  131 : 
@@ -872,7 +866,7 @@ namespace VCCCompiler
          
        break;
 							case  138 : 
-         yyval = Formatter.FormatNull();
+         yyval = NodeFormatter.FormatNull();
          
        break;
 							case  139 : 
@@ -896,11 +890,11 @@ namespace VCCCompiler
          
        break;
 							case  144 : 
-         yyval = yyv[yysp-2] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-2], yyv[yysp-0]);
          
        break;
 							case  145 : 
-         yyval = yyv[yysp-2] + yyv[yysp-0];
+         yyval = new Node(yyv[yysp-2], yyv[yysp-0]);
          
        break;
 							case  146 : 
@@ -928,11 +922,11 @@ namespace VCCCompiler
          
        break;
 							case  152 : 
-         yyval = Formatter.FormatFile(yyv[yysp-0]);
+         yyval = NodeFormatter.FormatFile(yyv[yysp-0]);
          
        break;
 							case  153 : 
-         yyval = Formatter.FormatString(yyv[yysp-0]);
+         yyval = NodeFormatter.FormatString(yyv[yysp-0]);
          
        break;
                default: return;
@@ -3924,19 +3918,22 @@ namespace VCCCompiler
         }
 
         int yylexpos = -1;
-        string yylval = "";
+        //string yylval = "";
+        Node yylval = new Node();
 
         public int yylex()
         {
             yylexpos++;
             if (yylexpos >= TokenList.Count)
             {
-                yylval = "";
+                //yylval = "";
+                yylval = new Node();
                 return 0;
             }
             else
             {
-                yylval = ((AToken)TokenList[yylexpos]).val;
+                //yylval = ((AToken)TokenList[yylexpos]).val;
+                yylval = new Node(((AToken)TokenList[yylexpos]).val);
                 return ((AToken)TokenList[yylexpos]).token;
             }
         }
@@ -4015,7 +4012,7 @@ namespace VCCCompiler
                 yyv[z] = null;
 
             yysp -= l;
-//            yysp -= yyr[-yyn].len;
+            //yysp -= yyr[-yyn].len;
 
             if (yygoto(yys[yysp], yyr[-yyn].sym, ref yyn)) yystate = yyn;
 

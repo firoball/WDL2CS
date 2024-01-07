@@ -39,7 +39,6 @@ namespace WDL2CS
         {
             if (s_registry.TryGetValue(obj, out List<string> skills))
             {
-
                 return skills.Contains(name, StringComparer.OrdinalIgnoreCase);
             }
             return false;

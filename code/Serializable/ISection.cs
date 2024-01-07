@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WDL2CS
 {
-    interface ISerializable
+    interface ISection
     {
         string Name
         {
@@ -16,7 +16,6 @@ namespace WDL2CS
         {
             get;
         }
-        string Serialize();
         void Format(StringBuilder sb);
         bool IsInitialized();
     }

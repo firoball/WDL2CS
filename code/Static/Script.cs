@@ -8,12 +8,10 @@ namespace WDL2CS
 {
     class Script
     {
-        public static string Format(string className, string stream)
+        public static string Format(string className)
         {
             Stopwatch watch = new Stopwatch();
             watch.Start();
-
-            Sections.Deserialize(ref stream);
 
             StringBuilder sb = new StringBuilder();
             sb.Append(@"

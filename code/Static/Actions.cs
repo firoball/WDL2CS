@@ -9,101 +9,96 @@ namespace WDL2CS
     {
         private static List<string> s_parameters = new List<string>();
 
-        public static string AddAction(string name, string stream)
+        public static Node AddAction(Node name, Node stream)
         {
-            Registry.Register("Action", name);
-            string a = new Action(name, stream).Serialize();
+            string sname = name.ToString();
+            Registry.Register("Action", sname);
+            Node a = new Action(sname, stream);
 
             return a;
         }
 
-
-        public static string CreateMarker(string name, string stream)
+        public static Node CreateMarker(Node name, Node stream)
         {
-            string s = string.Empty;
-
-            s += new Instruction(Formatter.FormatGotoMarker(name), false).Serialize();
-            s += stream;
+            string sname = name.ToString();
+            Node inst = new Instruction(Formatter.FormatGotoMarker(sname), false);
+            Node s = new Node(inst, stream);
 
             return s;
 
         }
 
-        public static string CreateIfCondition(string expr, string stream)
+        public static Node CreateIfCondition(Node expr, Node stream)
         {
-            string s = string.Empty;
-
-            s += new Instruction("if", "(" + expr + ")").Serialize();
-            s += new Instruction("{", false).Serialize();
-            s += stream;
-            s += new Instruction("}", false).Serialize();
+            Node i1 = new Instruction("if", "(" + expr.ToString() + ")");
+            Node i2 = new Instruction("{", false);
+            Node i3 = new Instruction("}", false);
+            Node s = new Node(new[] { i1, i2, stream, i3});
 
             return s;
         }
 
-        public static string CreateElseCondition(string stream)
+        public static Node CreateElseCondition(Node stream)
         {
-            string s = string.Empty;
-
-            s += new Instruction("else").Serialize();
-            s += new Instruction("{", false).Serialize();
-            s += stream;
-            s += new Instruction("}", false).Serialize();
+            Node i1 = new Instruction("else");
+            Node i2 = new Instruction("{", false);
+            Node i3 = new Instruction("}", false);
+            Node s = new Node(new[] { i1, i2, stream, i3 });
 
             return s;
         }
 
-        public static string CreateWhileCondition(string expr, string stream)
+        public static Node CreateWhileCondition(Node expr, Node stream)
         {
-            string s = string.Empty;
-
-            s += new Instruction("while", "(" + expr + ")").Serialize();
-            s += new Instruction("{", false).Serialize();
-            s += stream;
-            s += new Instruction("}", false).Serialize();
+            Node i1 = new Instruction("while", "(" + expr.ToString() + ")");
+            Node i2 = new Instruction("{", false);
+            Node i3 = new Instruction("}", false);
+            Node s = new Node(new[] { i1, i2, stream, i3 });
 
             return s;
         }
 
-        public static string CreateExpression(string expr)
+        public static Node CreateExpression(Node expr)
         {
+            string sexpr = expr.ToString();
             //ridiculous patch: A3 accepts RULE statements without assignment
             //TODO: find out real behaviour in A3, currently first identifier is treated as assignee
             //patch is derived from the behaviour of A3 for statements like "+ =" - seems like "=" is optional for WDL parser
-            if (!expr.Contains("="))
+            if (!sexpr.Contains("="))
             {
                 Console.WriteLine("(W) ACTIONS patched invalid rule: " + expr);
-                string[] fragments = expr.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] fragments = sexpr.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 fragments[1] += "="; //first operator is changed to assignment operator
-                expr = string.Join(" ", fragments);
+                sexpr = string.Join(" ", fragments);
             }
-            Instruction inst = new Instruction("Rule", expr);
+            Instruction inst = new Instruction("Rule", sexpr);
 
-            return inst.Serialize();
+            return inst;
         }
 
-        public static string CreateExpression(string assignee, string op, string expr)
+        public static Node CreateExpression(Node assignee, Node op, Node expr)
         {
-            expr = assignee + op + expr; 
-            Instruction inst = new Instruction("Rule", expr);
-            return inst.Serialize();
+            string sexpr = assignee.ToString() + op.ToString() + expr.ToString(); 
+            Instruction inst = new Instruction("Rule", sexpr);
+            return inst;
         }
 
-        public static string CreateInstruction(string command)
+        public static Node CreateInstruction(Node command)
         {
-            if (Identifier.IsCommand(ref command))
+            string scommand = command.ToString();
+            if (Identifier.IsCommand(ref scommand))
             {
-                Instruction inst = new Instruction(command, s_parameters);
+                Instruction inst = new Instruction(scommand, s_parameters);
 
                 //Clean up
                 s_parameters.Clear();
-                return inst.Serialize();
+                return inst;
             }
             else if (s_parameters.Count == 0) //take care of wrongly defined goto marker (ends with ; instead of :)
             {
                 Console.WriteLine("(W) ACTIONS crrect malformed goto marker: " + command);
-                Instruction inst = new Instruction(Formatter.FormatGotoMarker(command), false);
-                return inst.Serialize();
+                Instruction inst = new Instruction(Formatter.FormatGotoMarker(scommand), false);
+                return inst;
             }
             else
             {
@@ -111,13 +106,14 @@ namespace WDL2CS
                 s_parameters.Clear();
 
                 Console.WriteLine("(W) ACTIONS ignore invalid command: " + command);
-                return string.Empty;
+                return null;
             }
         }
 
-        public static void AddInstructionParameter(string param)
+        public static Node AddInstructionParameter(Node param)
         {
-            s_parameters.Insert(0, param);
+            s_parameters.Insert(0, param.ToString());
+            return null;
         }
 
     }

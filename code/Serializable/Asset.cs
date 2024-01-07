@@ -5,10 +5,8 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Asset : ISerializable
+    class Asset : Node, ISection
     {
-        private static readonly string s_sepAss = "#[A]#";
-        private static readonly string s_sepPar = "#[P]#";
         private static readonly string s_indent = "\t\t";
         private readonly string m_type;
         private string m_name;
@@ -42,27 +40,6 @@ namespace WDL2CS
         public bool IsInitialized()
         {
             return false;
-        }
-
-        public string Serialize()
-        {
-            string s = m_type + s_sepAss + m_name + s_sepAss + m_file;
-            s += s_sepAss + string.Join(s_sepPar, m_parameters);
-            return s;
-        }
-
-        public static Asset Deserialize(ref string stream)
-        {            
-            string[] fragments = stream.Split(new[] { s_sepAss }, StringSplitOptions.None);
-            string type = fragments[0];
-            string name = fragments[1];
-            string file = fragments[2];
-            List<string> parameters = null;
-            if (!string.IsNullOrEmpty(fragments[3]))
-            {
-                parameters = fragments[3].Split(new[] { s_sepPar }, StringSplitOptions.None).ToList();
-            }
-            return new Asset(type, name, file, parameters);
         }
 
         public void Format(StringBuilder sb)

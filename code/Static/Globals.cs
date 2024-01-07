@@ -9,9 +9,10 @@ namespace WDL2CS
     {
         static List<string> s_eventPars = new List<string>();
 
-        public static string AddGlobal(string name)
+        public static Node AddGlobal(Node name)
         {
-            string g = new Global(name, s_eventPars).Serialize();
+            string sname = name.ToString();
+            Node g = new Global(sname, s_eventPars);
 
             //Clean up
             s_eventPars.Clear();
@@ -19,32 +20,36 @@ namespace WDL2CS
             return g;
         }
 
-        public static string AddGlobal(string name, string parameter)
+        public static Node AddGlobal(Node name, Node parameter)
         {
-            string g = string.Empty;
+            string sname = name.ToString();
+            string sparameter = parameter.ToString();
+            Node g = new Node();
             //ignore Bind and Path statements
-            switch (name)
+            switch (sname)
             {
                 case "Globals.Bind":
-                    Console.WriteLine("(I) GLOBALS ignore BIND definition: " + parameter);
+                    Console.WriteLine("(I) GLOBALS ignore BIND definition: " + sparameter);
                     break;
 
                 case "Globals.Path":
-                    Console.WriteLine("(I) GLOBALS ignore PATH definition: " + parameter);
+                    Console.WriteLine("(I) GLOBALS ignore PATH definition: " + sparameter);
                     break;
 
                 default:
-                    g = new Global(name, parameter).Serialize();
+                    g = new Global(sname, sparameter);
                     break;
             }
             return g;
         }
 
-        public static void AddParameter(string parameter)
+        public static Node AddParameter(Node parameter)
         {
-            parameter = Formatter.FormatIdentifier(parameter); //Events always take action references as parameter TODO: should this be here or outside?
+            string sparameter = parameter.ToString();
+            sparameter = Formatter.FormatIdentifier(sparameter); //Events always take action references as parameter TODO: should this be here or outside?
 
-            s_eventPars.Insert(0, parameter);
+            s_eventPars.Insert(0, sparameter);
+            return null;
         }
     }
 }

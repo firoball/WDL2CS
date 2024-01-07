@@ -5,10 +5,8 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Global : ISerializable
+    class Global : Node, ISection
     {
-        private static readonly string s_sepGlob = "#[G]#";
-        private static readonly string s_sepPar = "#[P]#";
         private static readonly string s_indent = "\t\t\t";
         private string m_name;
         private List<string> m_parameters;
@@ -34,25 +32,6 @@ namespace WDL2CS
         public bool IsInitialized()
         {
             return true;
-        }
-
-        public string Serialize()
-        {
-            string s = m_name + s_sepGlob;
-            s += string.Join(s_sepPar, m_parameters);
-            return s;
-        }
-
-        public static Global Deserialize(ref string stream)
-        {
-            string[] fragments = stream.Split(new[] { s_sepGlob }, StringSplitOptions.None);
-            string name = fragments[0];
-            List<string> parameterss = null;
-            if (!string.IsNullOrEmpty(fragments[1]))
-            {
-                parameterss = fragments[1].Split(new[] { s_sepPar }, StringSplitOptions.None).ToList();
-            }
-            return new Global(name, parameterss);
         }
 
         public void Format(StringBuilder sb)
@@ -95,7 +74,7 @@ namespace WDL2CS
             }
             else
             {
-                string parameter = m_parameters[0];
+                string parameter = m_parameters[0].ToString();
                 //Patch for video mode definition
                 if (m_name.Contains("Video"))
                     parameter = Formatter.FormatVideo(parameter);

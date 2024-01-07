@@ -44,9 +44,11 @@ namespace VCCCompiler
         int yyflag = 0;
         int yyfnone = 0;
         int[] yys = new int[20000];
-        string[] yyv = new string[20000];
+        //string[] yyv = new string[20000];
+        Node[] yyv = new Node[20000];
 
-        string yyval = "";
+        //string yyval = "";
+        Node yyval = new Node();
 
         FileStream OutputStream;
         //StreamWriter Output;
@@ -203,19 +205,22 @@ namespace VCCCompiler
         }
 
         int yylexpos = -1;
-        string yylval = "";
+        //string yylval = "";
+        Node yylval = new Node();
 
         public int yylex()
         {
             yylexpos++;
             if (yylexpos >= TokenList.Count)
             {
-                yylval = "";
+                //yylval = "";
+                yylval = new Node();
                 return 0;
             }
             else
             {
-                yylval = ((AToken)TokenList[yylexpos]).val;
+                //yylval = ((AToken)TokenList[yylexpos]).val;
+                yylval = new Node(((AToken)TokenList[yylexpos]).val);
                 return ((AToken)TokenList[yylexpos]).token;
             }
         }
@@ -294,7 +299,7 @@ namespace VCCCompiler
                 yyv[z] = null;
 
             yysp -= l;
-//            yysp -= yyr[-yyn].len;
+            //yysp -= yyr[-yyn].len;
 
             if (yygoto(yys[yysp], yyr[-yyn].sym, ref yyn)) yystate = yyn;
 

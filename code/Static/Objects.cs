@@ -9,56 +9,58 @@ namespace WDL2CS
     class Objects
     {
         private static List<string> s_values = new List<string>();
+        private static List<Property> s_properties = new List<Property>();
 
-        public static string AddStringObject(string type, string name, string text)
+        public static Node AddStringObject(Node type, Node name, Node text)
         {
-            Registry.Register(type, name);
-            string o = new Object(type, name, false, text, true).Serialize();
+            string stype = type.ToString();
+            string sname = name.ToString();
+            Registry.Register(stype, sname);
+            Node o = new Object(stype, sname, false, text.ToString());
 
             return o;
         }
 
-        public static string AddObject(string type, string name)
+        public static Node AddObject(Node type, Node name)
         {
-            return AddObject(type, name, string.Empty);
-        }
-
-        public static string AddObject(string type, string name, string stream)
-        {
+            string stype = type.ToString();
+            string sname = name.ToString();
             bool initialize = false;
             //Exclude predefined skills
-            if (!(type.Equals("skill", StringComparison.OrdinalIgnoreCase) && Identifier.IsSkill(ref name)))
-                Registry.Register(type, name);
+            if (!(stype.Equals("skill", StringComparison.OrdinalIgnoreCase) && Identifier.IsSkill(ref sname)))
+                Registry.Register(stype, sname);
             else
                 initialize = true; //make sure predefined skills are moved to init section 
 
-            string o = new Object(type, name, initialize, stream).Serialize();
+            Node o = new Object(stype, sname, initialize, s_properties);
+            //Clean up
+            s_properties.Clear();
 
             return o;
         }
 
-        public static string CreateProperty(string property)
+        public static Node CreateProperty(Node property)
         {
-            if (Identifier.IsProperty(ref property) || Identifier.IsFlag(ref property))
+            string sproperty = property.ToString();
+            if (Identifier.IsProperty(ref sproperty) || Identifier.IsFlag(ref sproperty))
             {
-                Property prop = new Property(property, s_values);
-
-                //Clean up
-                s_values.Clear();
-                return prop.Serialize();
+                Property prop = new Property(sproperty, s_values);
+                s_properties.Add(prop);
             }
             else
             {
-                //Clean up
-                s_values.Clear();
                 Console.WriteLine("(W) OBJECTS discarded invalid property: " + property);
-                return string.Empty;
             }
+            //Clean up
+            s_values.Clear();
+
+            return null;
         }
 
-        public static void AddPropertyValue(string value)
+        public static Node AddPropertyValue(Node value)
         {
-            s_values.Insert(0, value);
+            s_values.Insert(0, value.ToString());
+            return null;
         }
 
     }

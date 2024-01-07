@@ -107,14 +107,15 @@ namespace WDL2CS
             return FormatIdentifier(s) + ":";
         }
 
+        //patch all identifiers conflicting with C# language (except for null)
+        private static CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
+
         public static string FormatIdentifier(string s)
         {
             //remove unknown and non-allowed characters
             s = s.Replace("-", "");
             s = s.Replace("?", "");
             s = s.ToLower();
-            //patch all identifiers conflicting with C# language (except for null)
-            CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
             if (!provider.IsValidIdentifier(s) && !s.Equals("null"))
                 s = "__" + s;
             return s;

@@ -7,16 +7,14 @@ namespace WDL2CS
 {
     class Property
     {
-        private static readonly string s_sepProp = "#[P]#";
-        private static readonly string s_sepCont = "#[C]#";
-        private static readonly string s_sepVal = "#[V]#";
+        private static readonly string s_nl = Environment.NewLine;
 
         private string m_name;
-        private bool m_allowMerge; //do not serialize, can easily be recreated
-        private bool m_allowMultiple; //do not serialize, can easily be recreated
+        private bool m_allowMerge;
+        private bool m_allowMultiple;
         private List<string> m_values;
 
-        public string Name { get => m_name; set { m_name = value; SetFlags(); } }
+        public string Name { get => m_name; }//set { m_name = value; SetFlags(); } }
         public List<string> Values { get => m_values; set => m_values = value; }
         public bool AllowMerge { get => m_allowMerge; }
         public bool AllowMultiple { get => m_allowMultiple; }
@@ -29,39 +27,12 @@ namespace WDL2CS
             m_values = new List<string>();
         }
 
-        public Property(string property) : this(property, new List<string>()) { }
-        public Property(string property, string value) : this(property, new[] { value }.ToList()) { }
-
         public Property(string property, List<string> values) : this()
         {
             m_name = property;
+            SetFlags();
             if (values != null)
                 m_values.AddRange(values);
-        }
-
-        public string Serialize()
-        {
-            string s = s_sepProp + m_name;
-            s += s_sepCont + string.Join(s_sepVal, m_values);
-            return s;
-        }
-
-        public static Property Deserialize(ref string stream)
-        {
-            //kill any leading object seperator - it is used for serializing multiple instructions only
-            string[] fragments = stream.Split(new[] { s_sepProp }, StringSplitOptions.RemoveEmptyEntries);
-
-            fragments = fragments[0].Split(new[] { s_sepCont }, StringSplitOptions.None);
-            Property prop = new Property
-            {
-                Name = fragments[0]
-            };
-            if ((fragments.Length > 1) && !string.IsNullOrEmpty(fragments[1]))
-            {
-                prop.Values = fragments[1].Split(new[] { s_sepVal }, StringSplitOptions.None).ToList();
-            }
-
-            return prop;
         }
 
         public string Format(string obj)
@@ -71,9 +42,6 @@ namespace WDL2CS
             //m_name = Formatter.FormatReserved(m_name);
             try
             {
-                //Sanitize property values
-                //m_values = m_values.Select(x => Formatter.FormatPropertyValue(x)).ToList();
-                
                 //TODO: add List length checks for explicite array access
                 //TODO: add prefix patch for integer asset IDs for all asset types
                 switch (m_name)
@@ -198,17 +166,6 @@ namespace WDL2CS
                 Console.WriteLine("(E) PROPERTY: " + e);
             }
             return p;
-        }
-
-        public static List<Property> DeserializeList(string stream)
-        {
-            string[] fragments = stream.Split(new[] { s_sepProp }, StringSplitOptions.RemoveEmptyEntries);
-            List<Property> properties = new List<Property>();
-            for (int i = 0; i < fragments.Length; i++)
-            {
-                properties.Add(Deserialize(ref fragments[i]));
-            }
-            return properties;
         }
 
         private void SetFlags()

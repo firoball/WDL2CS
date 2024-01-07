@@ -5,13 +5,10 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Instruction
+    class Instruction : Node 
     {
-        private static readonly string s_sepObj = "#[O]#";
-        private static readonly string s_sepInst = "#[I]#";
-        private static readonly string s_sepPar = "#[P]#";
         private string m_command;
-        private bool m_count;
+        private readonly bool m_count;
         private List<string> m_parameters;
 
         public string Command { get => m_command; set => m_command = value; }
@@ -37,27 +34,6 @@ namespace WDL2CS
             if (parameters != null)
                 m_parameters.AddRange(parameters);
             m_count = count;
-        }
-
-        public string Serialize()
-        {
-            string s = s_sepObj + m_count.ToString() + s_sepInst + m_command;
-            s += s_sepInst + string.Join(s_sepPar, m_parameters);
-            return s;
-        }
-
-        public void Deserialize(ref string stream)
-        {
-            //kill any leading object seperator - it is used for serializing multiple instructions only
-            string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.RemoveEmptyEntries);
-
-            fragments = fragments[0].Split(new[] { s_sepInst }, StringSplitOptions.None);
-            m_count = Convert.ToBoolean(fragments[0]);
-            m_command = fragments[1];
-            if (!string.IsNullOrEmpty(fragments[2]))
-            {
-                m_parameters = fragments[2].Split(new[] { s_sepPar }, StringSplitOptions.None).ToList();
-            }
         }
 
         public string Format(string function)
@@ -576,19 +552,6 @@ namespace WDL2CS
             }
 
             return o;
-        }
-
-        public static List<Instruction> DeserializeList(string stream)
-        {
-            string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.RemoveEmptyEntries);
-            List<Instruction> instructions = new List<Instruction>();
-            for (int i = 0; i < fragments.Length; i++)
-            {
-                Instruction inst = new Instruction();
-                inst.Deserialize(ref fragments[i]);
-                instructions.Add(inst);
-            }
-            return instructions;
         }
 
     }

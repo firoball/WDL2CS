@@ -5,60 +5,31 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Action : ISerializable
+    class Action : Node, ISection
     {
-        private static readonly string s_sepAct = "#[A]#";
         private static string s_indent = string.Empty;
         private static int s_indents = 2;
         private static readonly string s_nl = Environment.NewLine;
 
         private string m_name;
-        private readonly string m_serializedInstructions;
         private List<Instruction> m_instructions;
         private Dictionary<int, string> s_conditions = new Dictionary<int, string>();
 
         public string Name { get => m_name; set => m_name = value; }
         public string Type { get => "Action"; }
 
-        public Action(string name, string instructions)
+        public Action(string name, Node instructions)
         {
             m_name = name;
-            m_serializedInstructions = instructions;
-            m_instructions = null;
+            List<Node> nodes = instructions.GetAll();
+            m_instructions = nodes.Where(x => x is Instruction).Select(x => x as Instruction).ToList();
         }
 
-        public Action(string name, List<Instruction> instructions)
-        {
-            m_name = name;
-            m_serializedInstructions = string.Empty;
-            m_instructions = instructions;
-        }
-
-        public Action() : this(string.Empty, string.Empty) { }
-        public Action(string name) : this(name, string.Empty) { }
+        public Action() : this(string.Empty, null) { }
 
         public bool IsInitialized()
         {
             return false;
-        }
-
-        public string Serialize()
-        {
-            string s = m_name + s_sepAct + m_serializedInstructions;
-            return s;
-        }
-
-        public static Action Deserialize(ref string stream)
-        {
-            List<Instruction> instructions = null;
-
-            string[] fragments = stream.Split(new[] { s_sepAct }, StringSplitOptions.None);
-            string name = fragments[0];
-            if (!string.IsNullOrEmpty(fragments[1]))
-            {
-                instructions = Instruction.DeserializeList(fragments[1]);
-            }
-            return new Action(name, instructions);
         }
 
         public void Format(StringBuilder sb)

@@ -8,13 +8,13 @@ This is a playground project for some work with context free grammar and compile
 
 ## How does it work?
 
-WDL2CS makes use of the freely available [AtoCC](https://atocc.de) toolchain which is based on the [Yacc](https://de.wikipedia.org/wiki/Yacc) compiler.
+WDL2CS makes use of the freely available [AtoCC](https://atocc.de) toolchain which is based on the [TP Lex/Yacc](https://github.com/martok/fpc-tply) compiler.
 Workflow is as follows:
 
 ![Process](process.jpg)
 
 __Important:__ At this very early stage the transpiler __does not do anything productive__ yet. It can be tested against actual WDL files in order to verify whether parsing works as intended or not.
-The generated code can be hooked into my [Acknex3 C# Api](https://github.com/firoball/AcknexCSApi) project and reviewed for syntax errors.
+The generated code can be compiled againat my [Acknex3 C# Api](https://github.com/firoball/AcknexCSApi) project and reviewed for syntax errors.
 
 
 ## Step by step instruction
@@ -30,7 +30,7 @@ The generated code can be hooked into my [Acknex3 C# Api](https://github.com/fir
 
 The AtoCC tool chain is pretty limited. With this transpiler getting more and more complex, several manual patches were required to be introduced in the somewhat tedious build process.
 Below, a step by step list is provided in order to get a successful compile done.
-The transpiler turned out to be very slow, which was a major roadblock. It showed, that the code generator produces very inefficient code. Unfortunately, that part is hardcoded into **VCC**, therefore some more manual patching was introduced. The optimized version processes large chunks of `.wdl` files in several seconds, whereas the non-optimized version takes minutes.
+The transpiler turned out to be very slow, which was a major roadblock. It showed, that the code generator produces very inefficient code. Unfortunately, that part is hardcoded into **VCC**, therefore some more manual patching was introduced. The optimized version processes large chunks of `.wdl` files in some seconds, whereas the non-optimized version takes minutes.
 
 #### Grammar
 
@@ -57,6 +57,10 @@ The transpiler turned out to be very slow, which was a major roadblock. It showe
 * Locate line `#warning Place tList and rList init in MyCompiler(){} (...)` in `code\parser.cs`.
 * Replace with previously copied content and save.
 
+**Required for advanced modifications only:**
+In case further changes to `code\parser.cs` are required, the updated template file `vcc\yacc.ctpl` has to be modified accordingly and afterwards copied to same folder as `vcc.exe` (admin rights required).
+Using this method, manual patching to `parser.cs` after compiling the transpiler core can be kept to the unavoidable minimum.
+
 #### Compile transpiler
 
 * Open `code\WDL2CS Transpiler.sln` in **Visual Studio** and build project.
@@ -67,6 +71,8 @@ The transpiler turned out to be very slow, which was a major roadblock. It showe
 * An example for parsing through all files in a specific folder is provided: `test\test.bat`
 * If preferred, output can be redirected to file (append `> out.cs` to command line) or output file name can be provided as additional parameter.
 
+For automated transpiling and (regression) testing larger amounts of WDL files the [WDL Transpiler Testsuite] (https://github.com/firoball/WDLTransTest) can be used.
+
 ## Architecture and Workflow 
 
 ![Architecture](architecture.jpg)
@@ -75,7 +81,9 @@ The parser code is generated through **VCC** tool (and manually patched afterwar
 
 ![Workflow](workflow.jpg)
 
-Since the parser operates string-based, any object represented by an internal data structure is serialized to a string-based stream. Once all incoming tokens have been processed, the whole stream is deserialized again into internal data structures. Based on certain criteria like required initialization or preprocessor conditions, all data is sorted.
+First, the preprocessor is executed. It merges all referenced WFL files into a single one, discards disabled parts due to preprocessor defines. Replacement preprocessor directives are resolved.
+The preprocessed WDL file is handed over to the parser.
+The parser uses a node system, in order to link all objects in correct order during parsing. Using this method expensive recursive string concating is avoided. Once all incoming tokens have been processed, the whole node structure is processed. During this phase each object, property and instruction is translated to C# syntax following individual rules. At the end of this phase the script is complete.
 As last step every object is formatted, meaning the corresponding C# code is generated.
 
 ## Current status
@@ -92,10 +100,13 @@ High-level road map:
 * [x] export C# scripts
 * [x] test exported code against AcknexCSApi
 * [x] automated regression tests, see [WDLTransTest](https://github.com/firoball/WDLTransTest)
-* [ ] test transpiler against all available Acknex3 games <-- __HERE__
-* [ ] handles reuse of keywords (duplicates)
-* [ ] introduce preprocessor
-* [ ] remove preprocessor defines from grammar
+* [x] introduce preprocessor
+* [x] remove preprocessor defines from grammar
+* [x] simplify grammar, reduce regex cases (performace boost)
+* [x] introduce regex-based identifier class (performace boost)
+* [x] replace serialization with linked nodes (performace boost)
+* [x] test transpiler against all available Acknex3 games
+* [ ] handles reuse of keywords (duplicates) <-- __HERE__
 
 ## Compatibility
 
@@ -123,6 +134,7 @@ Following Acknex3 games have been transpiled and compiled against [Acknex3 C# Ap
 * Tyrannizer Demo (Viper Byte Software)
 * Vampira (CWR-Spiele)
 * Varginha Incident / Alien Anarchy (Perceptum Informática)
+* Virus Explosion (oP Group Germany)
 * VRDemo (oP Group Germany)
 * VVL (CWR-Spiele) 
 * War Pac 3D (SKV Soft)
@@ -132,12 +144,11 @@ Following Acknex3 games have been transpiled, but don't compile:
 
 * Black Bekker (Min Bekker) - Game utilizes jumps into if-cases which is not supported by C#
 * Skaphander (oP Group Germany) - Name clashes between different object types and actions
-* Virus Explosion (oP Group Germany) - Complex preprocessor defines lead to incomplete C# code
 * VR Messe (oP Group Germany)  - Name clashes between different object types and actions
 
 Following Acknex3 games currently are **not** supported by the transpiler:
 
-* N/A
+* Skaphander (oP Group Germany) - Parser error due to garbage in script (workaround in preprocessor required to be implemented)
 
 Games I am looking forward to get hold off for testing:
 

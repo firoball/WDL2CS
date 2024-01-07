@@ -5,19 +5,18 @@ using System.Text;
 
 namespace WDL2CS
 {
-    class Object : ISerializable
+    class Object : Node, ISection
     {
-        private static readonly string s_sepObj = "#[O]#";
         private static readonly string s_indent = "\t\t";
         private static readonly string s_indentInit = "\t\t\t";
         private static readonly string s_nl = Environment.NewLine;
 
         private string m_name;
         private string m_type;
-        private bool m_isString;
+        private readonly bool m_isString;
         private readonly bool m_isInitialized;
-        private readonly string m_serializedProperties;
         private List<Property> m_properties;
+        private readonly string m_string;
         private Object m_way; //"inlined" Way object
 
         public string Name { get => m_name; set => m_name = value; }
@@ -28,57 +27,31 @@ namespace WDL2CS
             m_type = type;
             m_name = name;
             m_isString = isString;
-            m_serializedProperties = string.Empty;
             m_properties = new List<Property>();
             m_isInitialized = isInitialized;
         }
 
-        public Object(string type, string name, bool isInitialized, string properties) : this(type, name, isInitialized, properties, false) { }
+        public Object() : this(string.Empty, string.Empty) { }
+        public Object(string type, string name) : this(type, name, false, false) { }
 
-        public Object(string type, string name, bool isInitialized, string properties, bool isString) : this(type, name, isInitialized, isString)
-        {
-            //special case: string content is treated like serialized property
-            m_serializedProperties = properties;
-        }
 
-        public Object(string type, string name, bool initialized, List<Property> properties) : this(type, name, initialized, false)
+        public Object(string type, string name, bool isInitialized, List<Property> properties) : this(type, name, isInitialized, false)
         {
             if (properties != null)
+            {
                 m_properties.AddRange(properties);
+            }
         }
 
-        public Object() : this(string.Empty, string.Empty, false, false) { }
+        public Object(string type, string name, bool isInitialized, string str) : this(type, name, isInitialized, true)
+        {
+            m_string = str;
+        }
+
 
         public bool IsInitialized()
         {
             return m_isInitialized;
-        }
-
-        public string Serialize()
-        {
-            string s = m_type + s_sepObj + m_name + s_sepObj + m_isInitialized + s_sepObj + m_isString.ToString();
-            s += s_sepObj + m_serializedProperties;
-            return s;
-        }
-
-        public static Object Deserialize(ref string stream)
-        {
-            List<Property> properties = null;
-
-            string[] fragments = stream.Split(new[] { s_sepObj }, StringSplitOptions.None);
-            string type = fragments[0];
-            string name = fragments[1];
-            bool initialized = Convert.ToBoolean(fragments[2]);
-            if ((fragments.Length > 4) && !string.IsNullOrEmpty(fragments[4]))
-            {
-                //do not deserialize properties if object is of type String
-                //in this case, the fragment contains just the string content for direct use
-                if (Convert.ToBoolean(fragments[3]))
-                    return new Object(type, name, false, fragments[4], true);
-                else
-                    properties = Property.DeserializeList(fragments[4]);
-            }
-            return new Object(type, name, initialized, properties);
         }
 
         public void Format(StringBuilder sb)
@@ -90,9 +63,9 @@ namespace WDL2CS
                 m_name = Formatter.FormatObjectId(m_name);
 
             string properties;
-            //string carries text instead of (serialized) properties
+            //string carries text instead of properties
             if (m_isString)
-                properties = m_serializedProperties;
+                properties = m_string;
             else
                 properties = ProcessProperties();
 
@@ -150,12 +123,12 @@ namespace WDL2CS
         private string ProcessProperties()
         {
             //sort properties alphabetically
-            m_properties = m_properties.OrderBy(x => x.Name).ToList(); //TODO: sort AFTER formatting (as previously)
+            List<Property> properties = m_properties.OrderBy(x => x.Name).ToList(); //TODO: sort AFTER formatting (as previously)
 
             ObjectData objectData = new ObjectData();
             StringBuilder sb = new StringBuilder();
 
-            foreach (Property property in m_properties)
+            foreach (Property property in properties)
             {
                 //add property to active dataset
                 AddProperty(property, objectData.Properties);
@@ -263,8 +236,8 @@ namespace WDL2CS
                         if (!Registry.Is("Way", property.Values[0]))
                         {
                             Console.WriteLine("(I) OBJECT add missing Way definition for: " + property.Values[0]);
-                            string obj = Objects.AddObject("Way", property.Values[0]);
-                            m_way = Deserialize(ref obj);
+                            m_way = new Object("Way", property.Values[0]);
+                            Registry.Register("WAY", property.Values[0]);
                         }
                         goto default;
 

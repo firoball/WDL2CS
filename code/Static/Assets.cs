@@ -8,10 +8,13 @@ namespace WDL2CS
     class Assets
     {
         private static List<string> s_parameters = new List<string>();
-        public static string AddAsset(string type, string name, string file)
+        public static Node AddAsset(Node type, Node name, Node file)
         {
-            Registry.Register(type, name);
-            string a = new Asset(type, name, file, s_parameters).Serialize();
+            string stype = type.ToString();
+            string sname = name.ToString();
+            string sfile = file.ToString();
+            Registry.Register(stype, sname);
+            Node a = new Asset(stype, sname, sfile, s_parameters);
 
             //Clean up
             s_parameters.Clear();
@@ -19,9 +22,10 @@ namespace WDL2CS
             return a;
         }
 
-        public static void AddParameter(string value)
+        public static Node AddParameter(Node value)
         {
-            s_parameters.Insert(0, value);
+            s_parameters.Insert(0, value.ToString());
+            return null;
         }
 
     }
