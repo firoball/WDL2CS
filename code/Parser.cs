@@ -143,7 +143,6 @@ namespace VCCCompiler
         FileStream OutputStream;
         //StreamWriter Output;
         TextWriter Output;
-        bool DeserializeOutput = false;
         string Scriptname = "Script";
 
         class YYARec
@@ -273,7 +272,6 @@ namespace VCCCompiler
             ////////////////////////////////////////////////////////////////
             MyCompiler compiler = new MyCompiler();
             compiler.Output = null;
-            compiler.DeserializeOutput = true;
             compiler.Scriptname = Scriptname;
             if (OutputFilename != "")
             {

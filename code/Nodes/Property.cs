@@ -5,6 +5,8 @@ using System.Text;
 
 namespace WDL2CS
 {
+    //properties cannot be nested, therefore they are treated via static list (objects.cs)
+    //since this makes any linking obsolete, this class is not requried to inherit from Node
     class Property
     {
         private static readonly string s_nl = Environment.NewLine;

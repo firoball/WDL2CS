@@ -77,14 +77,17 @@ For automated transpiling and (regression) testing larger amounts of WDL files t
 
 ![Architecture](architecture.jpg)
 
-The parser code is generated through **VCC** tool (and manually patched afterwards). Any function hooked in the parser configuration file is strictly provided by a static interface class. Behind the static layer the actual core of the transpiler is abstracted. These parts are maintained manually and unrelated to the workflow of the **VCC** tool.
+The parser code is generated through **VCC** tool (and manually patched afterwards). Any function hooked in the parser configuration file is strictly provided by a static interface class.
+Behind the static layer the actual core of the transpiler is abstracted. These parts are maintained manually and unrelated to the workflow of the **VCC** tool.
 
 ![Workflow](workflow.jpg)
 
 First, the preprocessor is executed. It merges all referenced WFL files into a single one, discards disabled parts due to preprocessor defines. Replacement preprocessor directives are resolved.
 The preprocessed WDL file is handed over to the parser.
-The parser uses a node system, in order to link all objects in correct order during parsing. Using this method expensive recursive string concating is avoided. Once all incoming tokens have been processed, the whole node structure is processed. During this phase each object, property and instruction is translated to C# syntax following individual rules. At the end of this phase the script is complete.
-As last step every object is formatted, meaning the corresponding C# code is generated.
+The parser uses a node system, in order to link all objects in correct order during parsing. Using this method expensive recursive string concating is avoided.
+Once all incoming tokens have been processed, the whole node structure is processed. During this phase each object, property and instruction is translated to C# syntax following individual rules. 
+At the end of this phase the script is complete.
+The last step is responsible for formatting all objects, the corresponding C# code is generated.
 
 ## Current status
 
@@ -106,7 +109,8 @@ High-level road map:
 * [x] introduce regex-based identifier class (performace boost)
 * [x] replace serialization with linked nodes (performace boost)
 * [x] test transpiler against all available Acknex3 games
-* [ ] handles reuse of keywords (duplicates) <-- __HERE__
+* [ ] handle reuse of keywords (duplicates) <-- __HERE__
+* [ ] strip trailing bogus code from files in Preprocessor
 
 ## Compatibility
 
@@ -158,7 +162,7 @@ Games I am looking forward to get hold off for testing:
 * Pikto (Phaestos)
 * Queste (oP Group Germany)
 * Shades (LifeGbR)
-* Timeteap 3D (Michael Meyer)
+* Timetrap 3D (Michael Meyer)
 * other A3 games I am not aware of
 
 Source code is not freely available for all of the listed games, therefore transpiled code is not uploaded to GitHub.

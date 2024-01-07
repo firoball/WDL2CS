@@ -43,25 +43,25 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Serializable\Action.cs" />
+    <Compile Include="Nodes\Action.cs" />
+    <Compile Include="Nodes\Asset.cs" />
+    <Compile Include="Nodes\Global.cs" />
+    <Compile Include="Nodes\Instruction.cs" />
+    <Compile Include="Nodes\Object.cs" />
+    <Compile Include="Nodes\Property.cs" />
     <Compile Include="Static\Actions.cs" />
-    <Compile Include="Serializable\Asset.cs" />
     <Compile Include="Static\Assets.cs" />
     <Compile Include="Static\Formatter.cs" />
-    <Compile Include="Serializable\Global.cs" />
     <Compile Include="Static\Globals.cs" />
-    <Compile Include="Serializable\Instruction.cs" />
-    <Compile Include="Serializable\Object.cs" />
     <Compile Include="Static\NodeFormatter.cs" />
     <Compile Include="Static\Script.cs" />
     <Compile Include="Util\Identifier.cs" />
+    <Compile Include="Util\ISection.cs" />
     <Compile Include="Util\Node.cs" />
     <Compile Include="Util\ObjectData.cs" />
     <Compile Include="Static\Objects.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Util\Preprocessor.cs" />
-    <Compile Include="Serializable\Property.cs" />
-    <Compile Include="Serializable\ISection.cs" />
     <Compile Include="Static\Sections.cs" />
     <Compile Include="Util\Registry.cs" />
   </ItemGroup>
