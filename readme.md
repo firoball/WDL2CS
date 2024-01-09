@@ -109,8 +109,8 @@ High-level road map:
 * [x] introduce regex-based identifier class (performace boost)
 * [x] replace serialization with linked nodes (performace boost)
 * [x] test transpiler against all available Acknex3 games
-* [ ] handle reuse of keywords (duplicates) <-- __HERE__
-* [ ] strip trailing bogus code from files in Preprocessor
+* [x] handle reuse of keywords (duplicates)
+* [ ] strip trailing bogus code from files in Preprocessor <-- __HERE__
 
 ## Compatibility
 
@@ -152,7 +152,7 @@ Following Acknex3 games have been transpiled, but don't compile:
 
 Following Acknex3 games currently are **not** supported by the transpiler:
 
-* Skaphander (oP Group Germany) - Parser error due to garbage in script (workaround in preprocessor required to be implemented)
+* N/A
 
 Games I am looking forward to get hold off for testing:
 

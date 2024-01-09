@@ -21,8 +21,11 @@ namespace WDL2CS
         public Action(string name, Node instructions)
         {
             m_name = name;
-            List<Node> nodes = instructions.GetAll();
-            m_instructions = nodes.Where(x => x is Instruction).Select(x => x as Instruction).ToList();
+            if (instructions != null)
+            {
+                List<Node> nodes = instructions.GetAll();
+                m_instructions = nodes.Where(x => x is Instruction).Select(x => x as Instruction).ToList();
+            }
         }
 
         public Action() : this(string.Empty, null) { }

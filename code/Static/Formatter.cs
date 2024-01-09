@@ -115,6 +115,7 @@ namespace WDL2CS
             //remove unknown and non-allowed characters
             s = s.Replace("-", "");
             s = s.Replace("?", "");
+            s = s.Replace(".", "");
             s = s.ToLower();
             if (!provider.IsValidIdentifier(s) && !s.Equals("null"))
                 s = "__" + s;
@@ -258,7 +259,8 @@ namespace WDL2CS
             //skip leading underscores
             while (i < a.Length && (a[i] == '_' || (a[i] >= 48 && a[i] <= 57)))
                 i++;
-            a[i] = char.ToUpper(a[i]);
+            if (i < a.Length)
+                a[i] = char.ToUpper(a[i]);
             return new string(a);
         }
     }

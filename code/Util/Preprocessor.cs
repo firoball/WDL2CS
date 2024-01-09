@@ -29,8 +29,10 @@ namespace WDL2CS
             Include = 7,
             Comment = 8,
             String = 9,
-            Code = 10,
-            Identifier = 11,
+            Whitespace = 10,
+            Terminator = 11,
+            Code = 12,
+            Identifier = 13,
         }
 
         public Preprocess() : this(string.Empty) { }
@@ -49,8 +51,12 @@ namespace WDL2CS
             m_regex.Add(new Regex(@"\G(#.*(\n|$)|//.*[\n|$]|/\*(.|[\r\n])*?\*/)"));
             //strings
             m_regex.Add(new Regex(@"\G(""(\\""|.|[\r\n])*?"")"));
+            //whitespaces
+            m_regex.Add(new Regex(@"\G(\s+)"));
+            //terminators
+            m_regex.Add(new Regex(@"\G([;}])"));
             //standard code
-            m_regex.Add(new Regex(@"\G(\s+|[\x21-\x2F\x3A-\x40\x5B-\x5D\x7B-\x7E])"));
+            m_regex.Add(new Regex(@"\G([\x21-\x2F\x3A-\x40\x5B-\x5D\x7B-\x7E])"));
             //identifier
             m_regex.Add(new Regex(@"\G([\w\?_]+)"));
 
@@ -83,6 +89,7 @@ namespace WDL2CS
                 int pos = 0;
                 bool success = false;
                 int length = 0;
+                int lastTermPos = sb.Length;
                 bool ignore = false;
                 Match m;
 
@@ -97,6 +104,8 @@ namespace WDL2CS
                             length = m.Value.Length;
                             success = true;
                             ProcessMatch(sb, r, pos, m, ref stream, ref ignore);
+                            if (r == (int)ProcId.Terminator || r < (int)ProcId.Comment)
+                                lastTermPos = sb.Length;
                             break;
                         }
                     }
@@ -107,6 +116,8 @@ namespace WDL2CS
                     }
                     pos = pos + length;
                 }
+                //trim trailing garbage code
+                Trim(sb, lastTermPos);
             }
             catch
             {
@@ -172,6 +183,8 @@ namespace WDL2CS
                     m_directives.Add(new string('\t', m_stack.Count) + (ignore ? "(ENDIF)" : "ENDIF"));
                     break;
 
+                case ProcId.Whitespace: //intended
+                case ProcId.Terminator: //intended
                 case ProcId.Code:
                     if (!ignore)
                     {
@@ -258,6 +271,16 @@ namespace WDL2CS
             }
         }
 
+        private void Trim(StringBuilder sb, int pos)
+        {
+            //remove any garbage after last instruction (anything followed after last ; or } )
+            int length = sb.Length - pos;
+            string tail = sb.ToString(pos, length);
+            if (!string.IsNullOrWhiteSpace(tail))
+                Console.WriteLine("(W) PREPROCESSOR removed invalid trailing code: [" + tail + "]");
+            sb.Remove(pos, length);
+            sb.AppendLine();
+        }
         private void Statistics()
         {
             Console.WriteLine("(I) PREPROCESSOR statistics:");
@@ -297,5 +320,6 @@ namespace WDL2CS
 
             Console.WriteLine();
         }
+
     }
 }
