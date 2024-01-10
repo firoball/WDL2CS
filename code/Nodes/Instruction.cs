@@ -41,6 +41,7 @@ namespace WDL2CS
             string o = string.Empty;
             try
             {
+                Registry.ApplyDecorators(ref m_parameters);
                 string command = Formatter.FormatReserved(m_command);
                 /* don't format any parameter of IFs, RULEs or GOTOs
                  * detect RULEs either by command or by assignment operator in expression

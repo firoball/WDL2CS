@@ -40,7 +40,10 @@ namespace WDL2CS
             IEnumerable<string> sectionNames = s_sections.Select(x => x.Name);
             if (sectionNamesTypes.Contains(section.Name + "@" + section.Type))
             {
-                //TODO: find out whether 1st (delete) or last (move to Initialize routine) definition is the one evaluated by A3
+                //find position of identical named section and replace it with new section
+                int idx = s_sections.FindIndex(x => x.Name == section.Name);
+                if (idx != -1)
+                    s_sections[idx] = section;
                 Console.WriteLine("(W) SECTIONS ignore double definition: " + section.Name + " (" + section.Type + ")");
             }
             else if (sectionNames.Contains(section.Name))
