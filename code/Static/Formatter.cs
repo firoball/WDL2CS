@@ -240,6 +240,11 @@ namespace WDL2CS
             return "@" + s;
         }
 
+        public static string FormatToString(string s)
+        {
+            return "\"" + s + "\"";
+        }
+
         public static string FormatVideo(string s)
         {
             //somewhat dirty workaround due to identifier starting with number being patched to avoid clash with C' language

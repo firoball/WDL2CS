@@ -9,7 +9,6 @@ namespace WDL2CS
     {
         private static readonly string s_indent = "\t\t\t";
         private string m_name;
-        private bool m_decorator;
         private List<string> m_parameters;
 
         public string Name { get => m_name; set => m_name = value; }
@@ -19,7 +18,6 @@ namespace WDL2CS
         public Global()
         {
             m_name = string.Empty;
-            m_decorator = false;
             m_parameters = new List<string>();
         }
 
@@ -36,17 +34,11 @@ namespace WDL2CS
             return true;
         }
 
-        public void EnableDecorator()
-        {
-            m_decorator = true;
-        }
-
         public void Format(StringBuilder sb)
         {
             bool forceMulti = false;
             //identify data type for array definition
             string type = string.Empty;
-            Registry.ApplyDecorators(ref m_parameters);
             if (m_name.Contains("Each_"))
             {
                 type = "Function";

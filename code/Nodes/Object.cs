@@ -106,7 +106,11 @@ namespace WDL2CS
                             sb.Append(indent);
                         }
 
-                        sb.Append(m_name + " = new " + m_type + "()");
+                        sb.Append(m_name + " = new " + m_type);
+                        if (m_type.Equals("Skill")) //Skills are treated like variable instances, thus no name identifier is passed on construction
+                            sb.Append("()");
+                        else
+                            sb.Append("(" + Formatter.FormatToString(m_name) + ")");
 
                         if (!string.IsNullOrEmpty(properties))
                         {

@@ -40,12 +40,21 @@ namespace WDL2CS
             bool interruptable = false;
             string className = Formatter.FormatActionClass(m_name);
             string instName = Formatter.FormatObjectId(m_name);
+            string name = Formatter.FormatToString(instName);
 
             //Update instruction list in order to make it compatible to C#
             interruptable = ProcessInstructions();
 
             sb.Append(UpdateIndent("private class " + className + " : Function<" + className + ">"));
             sb.Append(UpdateIndent("{"));
+            sb.Append(UpdateIndent("public " + className + " () : base ()"));
+            sb.Append(UpdateIndent("{"));
+            if (interruptable)
+            {
+                sb.Append(UpdateIndent("Interruptable = true;"));
+            }
+            sb.Append(UpdateIndent("Name = " + name + ";"));
+            sb.Append(UpdateIndent("}"));
             sb.Append(UpdateIndent("public override IEnumerator Logic()"));
             sb.Append(UpdateIndent("{"));
 
@@ -108,6 +117,7 @@ namespace WDL2CS
             string c = "public static Function " + instName + " = new " + className + "()";
 
             //flag any action which was identified as interruptable
+            /*
             if (interruptable)
             {
                 sb.Append(UpdateIndent(c));
@@ -116,6 +126,7 @@ namespace WDL2CS
                 sb.Append(UpdateIndent("};"));
             }
             else
+            */
             {
                 sb.Append(UpdateIndent(c + ";"));
             }

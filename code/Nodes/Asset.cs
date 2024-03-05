@@ -47,11 +47,14 @@ namespace WDL2CS
             string scope = "public static ";
             string type = Formatter.FormatReserved(m_type);
             string name = Formatter.FormatObjectId(m_name);
+            string nameStr = Formatter.FormatToString(name);
 
             string pars = string.Empty;
             if (m_parameters != null && m_parameters.Count > 0)
                pars = ", " + string.Join(", ", m_parameters);
-            sb.Append(s_indent + scope + type + " " + name + " = new " + type + "(" + m_file + pars + ");");
+            sb.Append(s_indent + scope + type + " " + name);
+            sb.Append(" = new " + type + "(" + nameStr);
+            sb.Append(", " + m_file + pars + ");");
         }
 
     }
