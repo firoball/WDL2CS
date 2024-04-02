@@ -8,7 +8,7 @@ namespace WDL2CS
 {
     class Script
     {
-        public static string Format(string className)
+        public static string Format(string className, bool skipProperties)
         {
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -25,11 +25,11 @@ namespace Acknex3.Script
 		public void Initialize()
 		{
 ");
-            Sections.Format(sb, true); //initialized data
+            Sections.Format(sb, true, false); //initialized data
             sb.Append(@"
 		}
 ");
-            Sections.Format(sb, false); //static data
+            Sections.Format(sb, false, skipProperties); //static data
             sb.Append(@"
 	}
 }
@@ -37,8 +37,15 @@ namespace Acknex3.Script
             Console.WriteLine("(I) SCRIPT formatting finished in " + watch.Elapsed);
             watch.Stop();
 
+
             return sb.ToString();
         }
 
+        public static PropertyList ToList()
+        {
+            PropertyList list = new PropertyList();
+            Sections.ToList(list);
+            return list;
+        }
     }
 }

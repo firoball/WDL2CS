@@ -61,10 +61,10 @@
                 <RULE name="Sections"/>
                 <CODE>
                     $$ = $1;
-//if (DeserializeOutput)
-   Output.WriteLine(Script.Format(Scriptname));
-//else
-//    Output.Write($$);
+output = Script.Format(scriptName, generatePropertyList);
+if (generatePropertyList)
+   propertyList = Script.ToList().List;
+
 
                 </CODE>
             </RIGHTSIDE>

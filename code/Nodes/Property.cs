@@ -170,6 +170,22 @@ namespace WDL2CS
             return p;
         }
 
+        public List<string> FormatList()
+        {
+
+            switch (m_name)
+            {
+                case "Bmaps":
+                case "Ovlys":
+                    //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
+                    return m_values.Select(x => Formatter.FormatIdentifier(x)).ToList();
+
+                default:
+                    return m_values;
+            }
+
+        }
+
         private void SetFlags()
         {
             m_name = Formatter.FormatReserved(m_name);

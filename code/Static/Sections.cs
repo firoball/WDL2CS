@@ -22,15 +22,23 @@ namespace WDL2CS
             return null;
         }
 
-        public static void Format(StringBuilder sb, bool isInitialized)
+        public static void Format(StringBuilder sb, bool isInitialized, bool skipProperties)
         {
             foreach (ISection section in s_sections)
             {
                 if (section.IsInitialized() == isInitialized)
                 {
-                    section.Format(sb);
+                    section.Format(sb, skipProperties);
                     sb.AppendLine();
                 }
+            }
+        }
+
+        public static void ToList(PropertyList list)
+        {
+            foreach (ISection section in s_sections)
+            {
+                section.ToList(list);
             }
         }
 

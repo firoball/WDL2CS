@@ -110,7 +110,11 @@ High-level road map:
 * [x] replace serialization with linked nodes (performace boost)
 * [x] test transpiler against all available Acknex3 games
 * [x] handle reuse of keywords (duplicates)
-* [ ] strip trailing bogus code from files in Preprocessor <-- __HERE__
+* [x] strip trailing bogus code from files in Preprocessor
+* [x] add optional support for property string list export 
+* [ ] Cleanup NodeFormatter - allow late formatting <-- __HERE__
+* [ ] Support WDL output aditionally to CS
+* [ ] fix naming edge cases for property string lists
 
 ## Compatibility
 
@@ -154,7 +158,7 @@ Following Acknex3 games currently are **not** supported by the transpiler:
 
 * N/A
 
-Games I am looking forward to get hold off for testing:
+Games I am looking forward to get hold of for testing:
 
 * Adventure Demo (Conitec GmbH) - is this same as Adeptus?
 * Banana Kong (Lutz Hüls)

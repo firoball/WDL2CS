@@ -42,20 +42,36 @@ namespace WDL2CS
             return false;
         }
 
-        public void Format(StringBuilder sb)
+        public void Format(StringBuilder sb, bool skipProperties)
         {
             string scope = "public static ";
             string type = Formatter.FormatReserved(m_type);
             string name = Formatter.FormatObjectId(m_name);
             string nameStr = Formatter.FormatToString(name);
 
-            string pars = string.Empty;
-            if (m_parameters != null && m_parameters.Count > 0)
-               pars = ", " + string.Join(", ", m_parameters);
             sb.Append(s_indent + scope + type + " " + name);
             sb.Append(" = new " + type + "(" + nameStr);
-            sb.Append(", " + m_file + pars + ");");
+            if (!skipProperties)
+            {
+                string pars = string.Empty;
+                if (m_parameters != null && m_parameters.Count > 0)
+                {
+                    pars = ", " + string.Join(", ", m_parameters);
+                }
+                sb.Append(", " + m_file + pars);
+            }
+            sb.Append(");");
         }
 
+        public void ToList(PropertyList list)
+        {
+            string type = Formatter.FormatReserved(m_type);
+            string name = Formatter.FormatObjectId(m_name);
+            string file = m_file.Trim('"');
+            var item = list.AddItem(type, name);
+            list.AddProperty(item, "File", m_file);
+            if (m_parameters != null && m_parameters.Count > 0)
+                list.AddProperty(item, "Options", m_parameters);
+        }
     }
 }

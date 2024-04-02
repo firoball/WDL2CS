@@ -34,7 +34,7 @@ namespace WDL2CS
             return true;
         }
 
-        public void Format(StringBuilder sb)
+        public void Format(StringBuilder sb, bool skipProperties)
         {
             bool forceMulti = false;
             //identify data type for array definition
@@ -80,6 +80,11 @@ namespace WDL2CS
                     parameter = Formatter.FormatVideo(parameter);
                 sb.Append(s_indent + m_name + " = " + parameter + ";");
             }
+        }
+
+        public void ToList(PropertyList list)
+        {
+            //not supported by Global
         }
 
     }

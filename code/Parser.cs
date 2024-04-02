@@ -12,11 +12,11 @@ namespace VCCCompiler
     /// <summary>
     /// Zusammenfassung für MyCompiler.
     /// </summary>
-    class MyCompiler
+    class WDLCompiler
     {
         List<int> tList = new List<int>();
         List<Regex> rList = new List<Regex>();
-        MyCompiler()
+        public WDLCompiler()
         {
             tList.Add(t_Char59);
             rList.Add(new Regex("\\G(;)"));
@@ -113,7 +113,8 @@ namespace VCCCompiler
             tList.Add(t_string);
             rList.Add(new Regex("\\G(\"(\\\\\"|.|[\\r\\n])*?\")"));
             tList.Add(t_ignore);
-            rList.Add(new Regex("\\G([\\r\\n\\t\\s\\x00,]|:=|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))")); Regex.CacheSize += rList.Count;
+            rList.Add(new Regex("\\G([\\r\\n\\t\\s\\x00,]|:=|(#.*(\\n|$))|(//.*(\\n|$))|(/\\*(.|[\\r\\n])*?\\*/))"));
+            Regex.CacheSize += rList.Count;
         }
         YYARec[] yya;
         YYARec[] yyg;
@@ -140,10 +141,12 @@ namespace VCCCompiler
         //string yyval = "";
         Node yyval = new Node();
 
-        FileStream OutputStream;
         //StreamWriter Output;
-        TextWriter Output;
-        string Scriptname = "Script";
+        string output;
+        string scriptName = "Script";
+        bool showTokens = false;
+        bool generatePropertyList = false;
+        Dictionary<string, Dictionary<string, Dictionary<string, List<List<string>>>>> propertyList;
 
         class YYARec
         {
@@ -217,50 +220,16 @@ namespace VCCCompiler
 ///////////////////////////////////////////////////////////
 
 
-        /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
-        /// </summary>
-        [STAThread]
-        static int Main(string[] args)
+        public string ScriptName { get => scriptName; set => scriptName = value; }
+        public bool ShowTokens { get => showTokens; set => showTokens = value; }
+        public bool GeneratePropertyList { get => generatePropertyList; set => generatePropertyList = value; }        
+        public Dictionary<string, Dictionary<string, Dictionary<string, List<List<string>>>>> PropertyList { get => propertyList; }
+
+        public int Parse(string inFile, out string outData)
         {
-
-            bool ShowTokens = false;
-            string InputFilename = "";
-            string OutputFilename = "";
-            string Scriptname = "";
-
-            foreach (string s in args)
-            {
-                if (s.ToLower() == "-t")
-                {
-                    ShowTokens = true;
-                }
-                else
-                {
-                    if (InputFilename == "") InputFilename = s;
-                    else
-                    if (OutputFilename == "") OutputFilename = s;
-                    else
-                    if (Scriptname == "") Scriptname = s;
-                    else
-                    {
-                        Console.WriteLine("Too many arguments!");
-                        return 1;
-                    }
-                }
-            }
-            if (InputFilename == "")
-            {
-                System.Console.WriteLine("You need to specify input and (optional) outputfile: compiler.exe input.txt [output.txt] [C# Class Identifier]");
-                return 1;
-            }
-            if (Scriptname == "")
-            {
-                Scriptname = Path.GetFileNameWithoutExtension(InputFilename);
-            }
-
-            string inputstream = File.ReadAllText(InputFilename, Encoding.ASCII);
-            string path = Path.GetDirectoryName(InputFilename);
+            outData = string.Empty;
+            string inputstream = File.ReadAllText(inFile, Encoding.ASCII);
+            string path = Path.GetDirectoryName(inFile);
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -270,38 +239,25 @@ namespace VCCCompiler
             ////////////////////////////////////////////////////////////////
             /// Compiler Code:
             ////////////////////////////////////////////////////////////////
-            MyCompiler compiler = new MyCompiler();
-            compiler.Output = null;
-            compiler.Scriptname = Scriptname;
-            if (OutputFilename != "")
-            {
-                File.Delete(OutputFilename);
-                compiler.OutputStream = File.OpenWrite(OutputFilename);
-                compiler.Output = new StreamWriter(compiler.OutputStream, new System.Text.UTF8Encoding(false));
-            }
-            else
-            {
-                compiler.Output = new StreamWriter(Console.OpenStandardOutput(), new System.Text.UTF8Encoding(false));
 
-            }
-
-            //                        if (!compiler.Scanner(inputstream)) return 1;
-            if (!compiler.ScannerOpt(inputstream)) return 1;
+            //                        if (!Scanner(inputstream)) return 1;
+            if (!ScannerOpt(inputstream)) return 1;
             if (ShowTokens)
             {
-                foreach (AToken t in compiler.TokenList)
+                foreach (AToken t in TokenList)
                 {
                     Console.WriteLine("TokenID: " + t.token + "  =  " + t.val);
                 }
             }
-            compiler.InitTables();
-            if (!compiler.yyparse()) return 1;
+            InitTables();
+            if (!yyparse()) return 1;
 
-            if (compiler.Output != null) compiler.Output.Close();
             Console.WriteLine("(I) PARSER compilation finished in " + watch.Elapsed);
             watch.Stop();
+            outData = output;
             return 0;
         }
+
         public void yyaction(int yyruleno)
         {
             switch (yyruleno)
@@ -311,10 +267,10 @@ namespace VCCCompiler
                 ////////////////////////////////////////////////////////////////
 							case    1 : 
          yyval = yyv[yysp-0];
-         //if (DeserializeOutput)
-         Output.WriteLine(Script.Format(Scriptname));
-         //else
-         //    Output.Write(yyval);
+         output = Script.Format(scriptName, generatePropertyList);
+         if (generatePropertyList)
+         propertyList = Script.ToList().List;
+         
          
        break;
 							case    2 : 

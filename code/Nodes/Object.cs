@@ -54,41 +54,53 @@ namespace WDL2CS
             return m_isInitialized;
         }
 
-        public void Format(StringBuilder sb)
+        public void Format(StringBuilder sb, bool skipProperties)
         {
             m_type = Formatter.FormatReserved(m_type);
-            if (m_isInitialized)
+            if (m_isInitialized) //format predefined Skill
                 m_name = Formatter.FormatSkill(m_name);
             else
                 m_name = Formatter.FormatObjectId(m_name);
 
-            string properties;
+            string properties = string.Empty;
+            bool isSkill = false;
             //string carries text instead of properties
+/*
             if (m_isString)
                 properties = m_string;
             else
                 properties = ProcessProperties();
-
+*/
             string scope = "public static ";
 
             switch (m_type)
             {
                 case "Synonym":
+                    properties = ProcessProperties();
                     sb.Append(s_indent + scope + properties + ";");
                     break;
 
                 case "String":
+                    properties = m_string; //string carries text instead of properties
                     sb.Append(s_indent + scope + "string " + m_name);
                     if (!string.IsNullOrEmpty(properties))
                         sb.Append(" = " + properties);
                     sb.Append(";");
                     break;
 
+                case "Skill":
+                    isSkill = true;
+                    goto default;
+
                 default:
+                    if (isSkill || !skipProperties) //Skills always need their properties and thus must not be skipped
+                        properties = ProcessProperties(); //must be called early - will find "inlined" way definitions
+
                     //if "inlined" Way definition was found earlier, prepend Way definition here 
                     if (m_way != null)
                     {
-                        m_way.Format(sb);
+                        Console.WriteLine("NOW FORMATTING " + m_way.Name);
+                        m_way.Format(sb, skipProperties);
                         sb.AppendLine();
                     }
                     //Ways never have properties, but need to be instantiated nonetheless
@@ -107,7 +119,7 @@ namespace WDL2CS
                         }
 
                         sb.Append(m_name + " = new " + m_type);
-                        if (m_type.Equals("Skill")) //Skills are treated like variable instances, thus no name identifier is passed on construction
+                        if (isSkill) //Skills are treated like variable instances, thus no name identifier is passed on construction
                             sb.Append("()");
                         else
                             sb.Append("(" + Formatter.FormatToString(m_name) + ")");
@@ -119,6 +131,29 @@ namespace WDL2CS
                             sb.Append(indent + "}");
                         }
                         sb.Append(";");
+                    }
+                    break;
+            }
+        }
+
+        public void ToList(PropertyList list)
+        {
+            string type = Formatter.FormatReserved(m_type);
+            switch (type)
+            {
+                case "Synonym":
+                case "String":
+                case "Skill":
+                    break; //ignore - these objects are not exported in property list
+
+                default:
+                    string name = Formatter.FormatObjectId(m_name);
+                    var item = list.AddItem(type, name);
+                    //sort properties alphabetically
+                    List<Property> properties = m_properties.OrderBy(x => x.Name).ToList(); //TODO: sort AFTER formatting (as previously)
+                    foreach (Property property in properties)
+                    {
+                        list.AddProperty(item, property.Name, property.FormatList(), property.AllowMerge, property.AllowMultiple);
                     }
                     break;
             }

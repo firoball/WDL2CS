@@ -35,7 +35,7 @@ namespace WDL2CS
             return false;
         }
 
-        public void Format(StringBuilder sb)
+        public void Format(StringBuilder sb, bool skipProperties)
         {
             bool interruptable = false;
             string className = Formatter.FormatActionClass(m_name);
@@ -130,6 +130,11 @@ namespace WDL2CS
             {
                 sb.Append(UpdateIndent(c + ";"));
             }
+        }
+
+        public void ToList(PropertyList list)
+        {
+            //not supported by Action
         }
 
         private bool ProcessInstructions()
