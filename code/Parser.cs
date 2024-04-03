@@ -5,18 +5,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
-using WDL2CS;
 
-namespace VCCCompiler
+namespace WDL2CS
 {
-    /// <summary>
-    /// Zusammenfassung für MyCompiler.
-    /// </summary>
-    class WDLCompiler
+    public class WDLParser
     {
         List<int> tList = new List<int>();
         List<Regex> rList = new List<Regex>();
-        public WDLCompiler()
+        public WDLParser()
         {
             tList.Add(t_Char59);
             rList.Add(new Regex("\\G(;)"));
@@ -270,7 +266,6 @@ namespace VCCCompiler
          output = Script.Format(scriptName, generatePropertyList);
          if (generatePropertyList)
          propertyList = Script.ToList().List;
-         
          
        break;
 							case    2 : 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using VCCCompiler;
 
 namespace WDL2CS
 {
@@ -51,14 +50,14 @@ namespace WDL2CS
                 scriptname = Path.GetFileNameWithoutExtension(inputFilename);
             }
 
-            WDLCompiler compiler = new WDLCompiler()
+            WDLParser parser = new WDLParser()
             {
                 ScriptName = scriptname,
                 ShowTokens = showTokens,
                 GeneratePropertyList = generatePropertyList
             };
 
-            int result = compiler.Parse(inputFilename, out string code);
+            int result = parser.Parse(inputFilename, out string code);
             if (result == 0)
             {
                 StreamWriter output;
@@ -78,12 +77,12 @@ namespace WDL2CS
                     output.Close();
                 }
 
-                PrintProperties(compiler);
+                PrintProperties(parser);
             }
             return result;
         }
 
-        static void PrintProperties(WDLCompiler compiler)
+        static void PrintProperties(WDLParser parser)
         {
             /* Generic types only for avoiding any type dependencies on transpiler code
              *  Object/Asset type
@@ -91,9 +90,9 @@ namespace WDL2CS
              *          Object/Asset property ID
              *              property values (multiple sets)
              */
-            if (compiler.GeneratePropertyList)
+            if (parser.GeneratePropertyList)
             {
-                foreach (var objects in compiler.PropertyList)
+                foreach (var objects in parser.PropertyList)
                 {
                     Console.WriteLine(objects.Key);
                     foreach (var type in objects.Value)
