@@ -1,8 +1,6 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace WDL2CS
 {
@@ -107,9 +105,6 @@ namespace WDL2CS
             return FormatIdentifier(s) + ":";
         }
 
-        //patch all identifiers conflicting with C# language (except for null)
-        private static CodeDomProvider provider = CodeDomProvider.CreateProvider("C#");
-
         public static string FormatIdentifier(string s)
         {
             //remove unknown and non-allowed characters
@@ -117,8 +112,9 @@ namespace WDL2CS
             s = s.Replace("?", "");
             s = s.Replace(".", "");
             s = s.ToLower();
-            if (!provider.IsValidIdentifier(s) && !s.Equals("null"))
-                s = "__" + s;
+            //patch all identifiers conflicting with C# language (except for null)
+            if (!s.IsValidIdentifier() && !s.Equals("null"))
+                    s = "__" + s;
             return s;
         }
 

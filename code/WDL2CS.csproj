@@ -54,6 +54,7 @@
     <Compile Include="Static\Assets.cs" />
     <Compile Include="Static\Formatter.cs" />
     <Compile Include="Static\Globals.cs" />
+    <Compile Include="Static\Identifier.cs" />
     <Compile Include="Static\PropertyList.cs" />
     <Compile Include="Static\NodeFormatter.cs" />
     <Compile Include="Static\Script.cs" />
