@@ -4,3 +4,4 @@
 .vs
 *.bak
 /code/bin
+*.meta
