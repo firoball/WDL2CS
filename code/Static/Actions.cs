@@ -7,32 +7,33 @@ namespace WDL2CS
 {
     class Actions
     {
-        private static List<string> s_parameters = new List<string>();
+        private static List<Node> s_parameters = new List<Node>();
 
         public static Node AddAction(Node name, Node stream)
         {
-            string sname = name.ToString();
-            Registry.Register("Action", sname);
-            Node a = new Action(sname, stream);
+            name.NodeType = NodeType.Identifier;
+            Registry.Register("Action", name.Data);
+            Node a = new Action(name, stream);
 
             return a;
         }
 
-        public static Node CreateMarker(Node name, Node stream)
+        public static Node CreateMarker(Node label, Node stream)
         {
-            string sname = name.ToString();
-            Node inst = new Instruction(Formatter.FormatGotoMarker(sname), false);
+            label.NodeType = NodeType.GotoLabel;
+            Node inst = new Instruction(label, false);
             Node s = new Node(inst, stream);
 
             return s;
-
         }
 
         public static Node CreateIfCondition(Node expr, Node stream)
         {
-            Node i1 = new Instruction("if", "(" + expr.ToString() + ")");
-            Node i2 = new Instruction("{", false);
-            Node i3 = new Instruction("}", false);
+            Node parameters = new Node(new Node("("), expr, new Node(")"));
+
+            Node i1 = new Instruction(new Node("if"), parameters);
+            Node i2 = new Instruction(new Node("{"), false);
+            Node i3 = new Instruction(new Node("}"), false);
             Node s = new Node(new[] { i1, i2, stream, i3});
 
             return s;
@@ -40,9 +41,9 @@ namespace WDL2CS
 
         public static Node CreateElseCondition(Node stream)
         {
-            Node i1 = new Instruction("else");
-            Node i2 = new Instruction("{", false);
-            Node i3 = new Instruction("}", false);
+            Node i1 = new Instruction(new Node("else"));
+            Node i2 = new Instruction(new Node("{"), false);
+            Node i3 = new Instruction(new Node("}"), false);
             Node s = new Node(new[] { i1, i2, stream, i3 });
 
             return s;
@@ -50,9 +51,11 @@ namespace WDL2CS
 
         public static Node CreateWhileCondition(Node expr, Node stream)
         {
-            Node i1 = new Instruction("while", "(" + expr.ToString() + ")");
-            Node i2 = new Instruction("{", false);
-            Node i3 = new Instruction("}", false);
+            Node parameters = new Node(new Node("("), expr,  new Node(")"));
+
+            Node i1 = new Instruction(new Node("while"), parameters);
+            Node i2 = new Instruction(new Node("{"), false);
+            Node i3 = new Instruction(new Node("}"), false);
             Node s = new Node(new[] { i1, i2, stream, i3 });
 
             return s;
@@ -60,35 +63,41 @@ namespace WDL2CS
 
         public static Node CreateExpression(Node expr)
         {
-            string sexpr = expr.ToString();
             //ridiculous patch: A3 accepts RULE statements without assignment
             //TODO: find out real behaviour in A3, currently first identifier is treated as assignee
             //patch is derived from the behaviour of A3 for statements like "+ =" - seems like "=" is optional for WDL parser
-            if (!sexpr.Contains("="))
+            if ((expr.NodeType == NodeType.Container) && (expr.Children.Count > 2))
             {
-                Console.WriteLine("(W) ACTIONS patched invalid rule: " + expr);
-                string[] fragments = sexpr.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                fragments[1] += "="; //first operator is changed to assignment operator
-                sexpr = string.Join(" ", fragments);
+                Console.WriteLine("(W) ACTIONS patched invalid rule");
+                Node assignee = expr.Children[0];
+                Node patchOp = new Node(expr.Children[1].Data.TrimEnd() + "= ", NodeType.Operator);
+                expr.Children.RemoveAt(1); //remove operator from expression list
+                expr.Children.RemoveAt(0); //remove assignee from expression list
+                return CreateExpression(assignee, patchOp, expr);
             }
-            Instruction inst = new Instruction("Rule", sexpr);
-
-            return inst;
+            else
+            {
+                return expr; //TODO: some strange Node was found... for now just forward it as is
+            }
         }
 
         public static Node CreateExpression(Node assignee, Node op, Node expr)
         {
-            string sexpr = assignee.ToString() + op.ToString() + expr.ToString(); 
-            Instruction inst = new Instruction("Rule", sexpr);
+            //make sure Skills always have their "val" property
+            assignee = Util.UpdateSkill(assignee);
+            Node parameters = new Node(assignee, op, expr);
+
+            Instruction inst = new Instruction(new Node("Rule", NodeType.Reserved), parameters);
             return inst;
         }
 
         public static Node CreateInstruction(Node command)
         {
-            string scommand = command.ToString();
+            string scommand = command.Data;
             if (Identifier.IsCommand(ref scommand))
             {
-                Instruction inst = new Instruction(scommand, s_parameters);
+                command.NodeType = NodeType.Reserved;
+                Instruction inst = new Instruction(command, s_parameters);
 
                 //Clean up
                 s_parameters.Clear();
@@ -96,8 +105,9 @@ namespace WDL2CS
             }
             else if (s_parameters.Count == 0) //take care of wrongly defined goto marker (ends with ; instead of :)
             {
-                Console.WriteLine("(W) ACTIONS crrect malformed goto marker: " + command);
-                Instruction inst = new Instruction(Formatter.FormatGotoMarker(scommand), false);
+                Console.WriteLine("(W) ACTIONS crrect malformed goto marker: " + command.Data);
+                command.NodeType = NodeType.GotoLabel;
+                Instruction inst = new Instruction(command, false);
                 return inst;
             }
             else
@@ -105,14 +115,18 @@ namespace WDL2CS
                 //Clean up
                 s_parameters.Clear();
 
-                Console.WriteLine("(W) ACTIONS ignore invalid command: " + command);
+                Console.WriteLine("(W) ACTIONS ignore invalid command: " + command.Data);
                 return null;
             }
         }
 
         public static Node AddInstructionParameter(Node param)
         {
-            s_parameters.Insert(0, param.ToString());
+            //unknown nodes must be actions and therefore are treated as identifier
+            if (param.NodeType == NodeType.Default)
+                param.NodeType = NodeType.Identifier;
+            
+            s_parameters.Insert(0, param);
             return null;
         }
 

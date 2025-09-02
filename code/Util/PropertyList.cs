@@ -7,6 +7,8 @@ namespace WDL2CS
 {
     class PropertyList
     {
+        private Dictionary<string, List<List<string>>> m_lastAddeditem;
+
         /* Generic types only for avoiding any type dependencies on transpiler code
          *  Object/Asset type
          *      Object/Asset name
@@ -46,37 +48,29 @@ namespace WDL2CS
             {
                 m_list[type].Add(name, item);
             }
+            m_lastAddeditem = item; //store reference of new item inside class
             return item;
         }
 
         public void AddProperty(Dictionary<string, List<List<string>>> item, string property, string value)
         {
-            if (!item.ContainsKey(property))
-            {
-                item.Add(property, new List<List<string>>());
-            }
-            item[property].Add(new List<string>(new[] { value }));
+            AddProperty(item, property, new List<string> { value });
         }
 
         public void AddProperty(Dictionary<string, List<List<string>>> item, string property, List<string> values)
         {
-            AddProperty(item, property, values, false, false);
-        }
+            if (item == null && m_lastAddeditem != null)
+                item = m_lastAddeditem;
 
-        public void AddProperty(Dictionary<string, List<List<string>>> item, string property, List<string> values, bool allowMerge, bool allowMultiple)
-        {
-            if (!item.ContainsKey(property))
+            if (item != null)
             {
-                item.Add(property, new List<List<string>>());
+                if (!item.ContainsKey(property))
+                {
+                    item.Add(property, new List<List<string>>());
+                }
                 item[property].Add(values);
             }
-            else
-            {
-                if (allowMerge)
-                    item[property][0].AddRange(values);
-                if (allowMultiple)
-                    item[property].Add(values);
-            }
         }
+
     }
 }

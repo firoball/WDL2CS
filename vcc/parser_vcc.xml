@@ -61,10 +61,6 @@
                 <RULE name="Sections"/>
                 <CODE>
                     $$ = $1;
-output = Script.Format(scriptName, generatePropertyList);
-if (generatePropertyList)
-   propertyList = Script.ToList().List;
-
 
                 </CODE>
             </RIGHTSIDE>
@@ -167,7 +163,7 @@ if (generatePropertyList)
             <RIGHTSIDE>
                 <RULE name="ReducedKeyword"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatKeyword($1); //TODO: review
+                    $$ = Nodes.AddKeyword($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -516,7 +512,8 @@ if (generatePropertyList)
             <RIGHTSIDE>
                 <RULE name="KeywordPar"/>
                 <CODE>
-                    $$ = $1;
+                    //Skills need their Val property in instructions
+$$ = Util.UpdateSkill($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -564,7 +561,7 @@ if (generatePropertyList)
                 <TOKEN name="Char124Char124"/>
                 <RULE name="LogicAnd"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatOperator($1, " || ", $3);
+                    $$ = Nodes.AddOperator($1, " || ", $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -582,7 +579,7 @@ if (generatePropertyList)
                 <TOKEN name="Char38Char38"/>
                 <RULE name="BitOr"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatOperator($1, " &amp;&amp; ", $3);
+                    $$ = Nodes.AddOperator($1, " &amp;&amp; ", $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -600,7 +597,7 @@ if (generatePropertyList)
                 <TOKEN name="Char124"/>
                 <RULE name="BitXor"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatOperator($1, " | ", $3);
+                    $$ = Nodes.AddOperator($1, " | ", $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -618,7 +615,7 @@ if (generatePropertyList)
                 <TOKEN name="Char94"/>
                 <RULE name="BitAnd"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatOperator($1, " ^ ", $3);
+                    $$ = Nodes.AddOperator($1, " ^ ", $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -636,7 +633,7 @@ if (generatePropertyList)
                 <TOKEN name="Char38"/>
                 <RULE name="Equality"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatOperator($1, " &amp; ", $3);
+                    $$ = Nodes.AddOperator($1, " &amp; ", $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -744,7 +741,7 @@ if (generatePropertyList)
                 <RULE name="Expression"/>
                 <TOKEN name="Char41"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatMath($1, $3);
+                    $$ = Nodes.AddMath($1, $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -753,7 +750,7 @@ if (generatePropertyList)
                 <RULE name="Expression"/>
                 <TOKEN name="Char41"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatParentheses($2);
+                    $$ = Nodes.AddParentheses($2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -762,7 +759,7 @@ if (generatePropertyList)
                 <TOKEN name="integer"/>
                 <CODE>
                     //fixes things like "18,4"
-$$ = NodeFormatter.FormatNumberPatch($1, $2); //this is what supposedly happens in A3
+$$ = Nodes.AddNumberPatch($1, $2); //this is what supposedly happens in A3
 
                 </CODE>
             </RIGHTSIDE>
@@ -771,7 +768,7 @@ $$ = NodeFormatter.FormatNumberPatch($1, $2); //this is what supposedly happens 
                 <TOKEN name="integer"/>
                 <CODE>
                     //fixes things like "Skill 6"
-$$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens in A3
+$$ = Nodes.AddNumberPatch($2, $1); //this is what supposedly happens in A3
 
                 </CODE>
             </RIGHTSIDE>
@@ -785,7 +782,8 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
             <RIGHTSIDE>
                 <RULE name="Keyword"/>
                 <CODE>
-                    $$ = $1;
+                    //Skills need their Val property in expressions
+$$ = Util.UpdateSkill($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -910,7 +908,8 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
                 <TOKEN name="RULE"/>
                 <RULE name="Expression"/>
                 <CODE>
-                    $$ = Actions.CreateExpression($2);
+                    //required in order to support invalid rule with missing assignee
+$$ = Actions.CreateExpression($2);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1034,14 +1033,14 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
                 <TOKEN name="Char46"/>
                 <RULE name="BasicKeyword"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatKeywordProperty($1, $3);
+                    $$ = Nodes.AddKeywordProperty($1, $3);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="BasicKeyword"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatKeyword($1);
+                    $$ = Nodes.AddKeyword($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1083,14 +1082,14 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
             <RIGHTSIDE>
                 <RULE name="Fixed"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatNumber($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <RULE name="Integer"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatNumber($1);
+                    $$ = $1;
 
                 </CODE>
             </RIGHTSIDE>
@@ -1099,14 +1098,14 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
             <RIGHTSIDE>
                 <TOKEN name="fixed"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatNumber($1);
+                    $$ = Nodes.AddNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="integer"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatNumber($1);
+                    $$ = Nodes.AddNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1116,14 +1115,14 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
                 <RULE name="OpUn"/>
                 <TOKEN name="integer"/>
                 <CODE>
-                    $$ = new Node($1, $2);
+                    $$ = Nodes.AddNumber($1, $2);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="integer"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Nodes.AddNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1133,14 +1132,14 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
                 <RULE name="OpUn"/>
                 <TOKEN name="fixed"/>
                 <CODE>
-                    $$ = new Node($1, $2);
+                    $$ = Nodes.AddNumber($1, $2);
 
                 </CODE>
             </RIGHTSIDE>
             <RIGHTSIDE>
                 <TOKEN name="fixed"/>
                 <CODE>
-                    $$ = $1;
+                    $$ = Nodes.AddNumber($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1158,7 +1157,7 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
             <RIGHTSIDE>
                 <TOKEN name="list"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatList($1);
+                    $$ = Nodes.AddList($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1218,7 +1217,7 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
             <RIGHTSIDE>
                 <TOKEN name="NULL"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatNull();
+                    $$ = Nodes.AddNull();
 
                 </CODE>
             </RIGHTSIDE>
@@ -1266,7 +1265,8 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
                 <TOKEN name="Char45"/>
                 <TOKEN name="identifier"/>
                 <CODE>
-                    $$ = new Node($1, $3);
+                    //workaround for identifiers like "identifier-name" / "identifier-123"
+$$ = Nodes.AddIdentifierPatch($1, $2, $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1275,7 +1275,8 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
                 <TOKEN name="Char45"/>
                 <TOKEN name="integer"/>
                 <CODE>
-                    $$ = new Node($1, $3);
+                    //workaround for identifiers like "identifier-name" / "identifier-123"
+$$ = Nodes.AddIdentifierPatch($1, $2, $3);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1325,7 +1326,7 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
             <RIGHTSIDE>
                 <RULE name="BasicKeyword"/>
                 <CODE>
-                    $$ = $1; //TODO: FormatIdentifier?
+                    $$ = $1; //TODO: AddIdentifier?
 
                 </CODE>
             </RIGHTSIDE>
@@ -1334,7 +1335,7 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
             <RIGHTSIDE>
                 <TOKEN name="file"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatFile($1);
+                    $$ = Nodes.AddFile($1);
 
                 </CODE>
             </RIGHTSIDE>
@@ -1343,7 +1344,7 @@ $$ = NodeFormatter.FormatNumberPatch($2, $1); //this is what supposedly happens 
             <RIGHTSIDE>
                 <TOKEN name="string"/>
                 <CODE>
-                    $$ = NodeFormatter.FormatString($1);
+                    $$ = Nodes.AddString($1);
 
                 </CODE>
             </RIGHTSIDE>

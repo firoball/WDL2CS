@@ -7,7 +7,9 @@ namespace WDL2CS
 {
     class Sections
     {
-        private static List<ISection> s_sections = new List<ISection>();
+        private static List<ISection> s_sections = new List<ISection>(10000);
+
+        public static List<ISection> List { get => s_sections; }
 
         public static Node AddSection(Node section)
         {
@@ -20,26 +22,6 @@ namespace WDL2CS
         {
             Console.WriteLine("(W) SECTIONS ignore invalid section: " + section);
             return null;
-        }
-
-        public static void Format(StringBuilder sb, bool isInitialized, bool skipProperties)
-        {
-            foreach (ISection section in s_sections)
-            {
-                if (section.IsInitialized() == isInitialized)
-                {
-                    section.Format(sb, skipProperties);
-                    sb.AppendLine();
-                }
-            }
-        }
-
-        public static void ToList(PropertyList list)
-        {
-            foreach (ISection section in s_sections)
-            {
-                section.ToList(list);
-            }
         }
 
         private static void TryAddSection(ISection section)

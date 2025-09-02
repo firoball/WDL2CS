@@ -2,31 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace WDL2CS
 {
     class Global : Node, ISection
     {
-        private static readonly string s_indent = "\t\t\t";
-        private string m_name;
-        private List<string> m_parameters;
+        private static GlobalTransformer s_transformer = null;
+        private Node m_name;
+        private List<Node> m_parameters;
 
-        public string Name { get => m_name; set => m_name = value; }
-        public string Type { get => "Global"; }
-        public List<string> Parameters { get => m_parameters; set => m_parameters = value; }
+        public static new GlobalTransformer Transformer { get => s_transformer; set => s_transformer = value; }
+        public string Name { get => m_name.Data; }// set => m_name = value; }
+        public string Type { get => "GLOBAL"; }
+
+        //public List<Node> Parameters { get => m_parameters; set => m_parameters = value; }
 
         public Global()
         {
-            m_name = string.Empty;
-            m_parameters = new List<string>();
+            m_name = new Node();
+            m_parameters = new List<Node>();
         }
 
-        public Global(string name, string parameter) : this(name, new string[] { parameter }.ToList()) { }
-        public Global(string name, List<string> parameters) : this()
+        public Global(Node name, Node parameter) : this(name, new Node[] { parameter }.ToList()) { }
+        public Global(Node name, List<Node> parameters) : this()
         {
             m_name = name;
             if (parameters != null)
                 m_parameters.AddRange(parameters);
+            Setup();
         }
 
         public bool IsInitialized()
@@ -34,31 +39,21 @@ namespace WDL2CS
             return true;
         }
 
-        public void Format(StringBuilder sb, bool skipProperties)
+        public void Transform(object obj)
         {
-            bool forceMulti = false;
+            s_transformer?.Transform(obj, m_name, m_parameters);
+        }
+
+
+        private static string[] s_multi = new[] { "each_tick", "each_sec", "panels", "layers", "messages" };
+
+        private void Setup()
+        {
+            if (m_name.Data.ToLower().Equals("video")) //Patch for video mode definition
+                m_parameters[0].NodeType = NodeType.SimpleString;
+
             //identify data type for array definition
-            string type = string.Empty;
-            if (m_name.Contains("Each_"))
-            {
-                type = "Function";
-                forceMulti = true;
-            }
-            if (m_name.Contains("Panels"))
-            {
-                type = "Panel";
-                forceMulti = true;
-            }
-            if (m_name.Contains("Layers"))
-            {
-                type = "Overlay";
-                forceMulti = true;
-            }
-            if (m_name.Contains("Messages"))
-            {
-                type = "Text";
-                forceMulti = true;
-            }
+            bool forceMulti = s_multi.Contains(m_name.Data.ToLower());
 
             if (m_parameters.Count > 1 || forceMulti)
             {
@@ -66,26 +61,11 @@ namespace WDL2CS
                 int count = m_parameters.Count;
                 for (int i = count; i < 16; i++)
                 {
-                    m_parameters.Add(Formatter.FormatNull());
+                    m_parameters.Add(new Node("null", NodeType.Null));
                 }
 
-                string parameters = string.Join(", ", m_parameters);
-                sb.Append(s_indent + m_name + " = new " + type + "[] {" + parameters + "};");
             }
-            else
-            {
-                string parameter = m_parameters[0].ToString();
-                //Patch for video mode definition
-                if (m_name.Contains("Video"))
-                    parameter = Formatter.FormatVideo(parameter);
-                sb.Append(s_indent + m_name + " = " + parameter + ";");
-            }
-        }
 
-        public void ToList(PropertyList list)
-        {
-            //not supported by Global
         }
-
     }
 }

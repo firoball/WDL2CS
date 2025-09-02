@@ -7,14 +7,18 @@ namespace WDL2CS
 {
     class Assets
     {
-        private static List<string> s_parameters = new List<string>();
+        private static List<Node> s_parameters = new List<Node>();
         public static Node AddAsset(Node type, Node name, Node file)
         {
-            string stype = type.ToString();
-            string sname = name.ToString();
-            string sfile = file.ToString();
+            string stype = type.Data;
+            string sname = name.Data;
+            //Console.WriteLine("(I) ASSETS registered: " + sname + " of type " + stype);
             Registry.Register(stype, sname);
-            Node a = new Asset(stype, sname, sfile, s_parameters);
+
+            type.NodeType = NodeType.Reserved;
+            name.NodeType = NodeType.Identifier;
+            file.NodeType = NodeType.File;
+            Node a = new Asset(type, name, file, s_parameters);
 
             //Clean up
             s_parameters.Clear();
@@ -24,7 +28,8 @@ namespace WDL2CS
 
         public static Node AddParameter(Node value)
         {
-            s_parameters.Insert(0, value.ToString());
+            value.NodeType = NodeType.Number;
+            s_parameters.Insert(0, value);
             return null;
         }
 
