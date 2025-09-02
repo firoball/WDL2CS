@@ -67,7 +67,7 @@ Using this method, manual patching to `parser.cs` after compiling the transpiler
 
 #### Run transpiler
 
-* Run `parser <file>` or `parser -t <file>` (for listing all identified tokens) from command line.
+* Run `wdl2cs <file>` or `wdl2cs -t <file>` (for listing all identified tokens) from command line.
 * An example for parsing through all files in a specific folder is provided: `test\test.bat`
 * If preferred, output can be redirected to file (append `> out.cs` to command line) or output file name can be provided as additional parameter.
 
@@ -112,9 +112,11 @@ High-level road map:
 * [x] handle reuse of keywords (duplicates)
 * [x] strip trailing bogus code from files in Preprocessor
 * [x] add optional support for property string list export 
-* [ ] Cleanup NodeFormatter - allow late formatting <-- __HERE__
-* [ ] Support WDL output aditionally to CS
-* [ ] fix naming edge cases for property string lists
+* [x] Cleanup NodeFormatter - allow late formatting
+* [x] fix naming edge cases for property string lists
+* [ ] Support WDL output aditionally to CS <-- __HERE__
+* [ ] Support injection of nodes through property string lists
+* [ ] Resolve string issues in property string lists (reference vs. inlining)
 
 ## Compatibility
 
@@ -156,7 +158,7 @@ Following Acknex3 games have been transpiled, but don't compile:
 
 Following Acknex3 games currently are **not** supported by the transpiler:
 
-* N/A
+* 3D Hunting series (ManMachine Games) - syntax issues and relies on object memory after loading new .wrs
 
 Games I am looking forward to get hold of for testing:
 
