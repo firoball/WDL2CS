@@ -131,18 +131,13 @@ namespace WDL2CS
         int yyflag = 0;
         int yyfnone = 0;
         int[] yys = new int[20000];
-        //string[] yyv = new string[20000];
         Node[] yyv = new Node[20000];
 
-        //string yyval = "";
         Node yyval = new Node();
 
-        //StreamWriter Output;
-        string output;
-        string scriptName = "Script";
+
         bool showTokens = false;
-        bool generatePropertyList = false;
-        Dictionary<string, Dictionary<string, Dictionary<string, List<List<string>>>>> propertyList;
+        List<Transformer> transformers = new List<Transformer>();
 
         class YYARec
         {
@@ -216,14 +211,11 @@ namespace WDL2CS
 ///////////////////////////////////////////////////////////
 
 
-        public string ScriptName { get => scriptName; set => scriptName = value; }
-        public bool ShowTokens { get => showTokens; set => showTokens = value; }
-        public bool GeneratePropertyList { get => generatePropertyList; set => generatePropertyList = value; }        
-        public Dictionary<string, Dictionary<string, Dictionary<string, List<List<string>>>>> PropertyList { get => propertyList; }
 
-        public int Parse(string inFile, out string outData)
+        public bool ShowTokens { get => showTokens; set => showTokens = value; }
+        public List<Transformer> Transformers { get => transformers; set => transformers = value; }
+        public int Parse(string inFile)
         {
-            outData = string.Empty;
             string inputstream = File.ReadAllText(inFile, Encoding.ASCII);
             string path = Path.GetDirectoryName(inFile);
 
@@ -250,7 +242,6 @@ namespace WDL2CS
 
             Console.WriteLine("(I) PARSER compilation finished in " + watch.Elapsed);
             watch.Stop();
-            outData = output;
             return 0;
         }
 
@@ -263,9 +254,6 @@ namespace WDL2CS
                 ////////////////////////////////////////////////////////////////
 							case    1 : 
          yyval = yyv[yysp-0];
-         output = Script.Format(scriptName, generatePropertyList);
-         if (generatePropertyList)
-         propertyList = Script.ToList().List;
          
        break;
 							case    2 : 
@@ -317,7 +305,7 @@ namespace WDL2CS
          
        break;
 							case   14 : 
-         yyval = NodeFormatter.FormatKeyword(yyv[yysp-0]); //TODO: review
+         yyval = Nodes.AddKeyword(yyv[yysp-0]);
          
        break;
 							case   15 : 
@@ -477,7 +465,8 @@ namespace WDL2CS
          
        break;
 							case   54 : 
-         yyval = yyv[yysp-0];
+         //Skills need their Val property in instructions
+         yyval = Util.UpdateSkill(yyv[yysp-0]);
          
        break;
 							case   55 : 
@@ -501,7 +490,7 @@ namespace WDL2CS
          
        break;
 							case   60 : 
-         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " || ", yyv[yysp-0]);
+         yyval = Nodes.AddOperator(yyv[yysp-2], " || ", yyv[yysp-0]);
          
        break;
 							case   61 : 
@@ -509,7 +498,7 @@ namespace WDL2CS
          
        break;
 							case   62 : 
-         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " && ", yyv[yysp-0]);
+         yyval = Nodes.AddOperator(yyv[yysp-2], " && ", yyv[yysp-0]);
          
        break;
 							case   63 : 
@@ -517,7 +506,7 @@ namespace WDL2CS
          
        break;
 							case   64 : 
-         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " | ", yyv[yysp-0]);
+         yyval = Nodes.AddOperator(yyv[yysp-2], " | ", yyv[yysp-0]);
          
        break;
 							case   65 : 
@@ -525,7 +514,7 @@ namespace WDL2CS
          
        break;
 							case   66 : 
-         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " ^ ", yyv[yysp-0]);
+         yyval = Nodes.AddOperator(yyv[yysp-2], " ^ ", yyv[yysp-0]);
          
        break;
 							case   67 : 
@@ -533,7 +522,7 @@ namespace WDL2CS
          
        break;
 							case   68 : 
-         yyval = NodeFormatter.FormatOperator(yyv[yysp-2], " & ", yyv[yysp-0]);
+         yyval = Nodes.AddOperator(yyv[yysp-2], " & ", yyv[yysp-0]);
          
        break;
 							case   69 : 
@@ -581,21 +570,21 @@ namespace WDL2CS
          
        break;
 							case   80 : 
-         yyval = NodeFormatter.FormatMath(yyv[yysp-3], yyv[yysp-1]);
+         yyval = Nodes.AddMath(yyv[yysp-3], yyv[yysp-1]);
          
        break;
 							case   81 : 
-         yyval = NodeFormatter.FormatParentheses(yyv[yysp-1]);
+         yyval = Nodes.AddParentheses(yyv[yysp-1]);
          
        break;
 							case   82 : 
          //fixes things like "18,4"
-         yyval = NodeFormatter.FormatNumberPatch(yyv[yysp-1], yyv[yysp-0]); //this is what supposedly happens in A3
+         yyval = Nodes.AddNumberPatch(yyv[yysp-1], yyv[yysp-0]); //this is what supposedly happens in A3
          
        break;
 							case   83 : 
          //fixes things like "Skill 6"
-         yyval = NodeFormatter.FormatNumberPatch(yyv[yysp-0], yyv[yysp-1]); //this is what supposedly happens in A3
+         yyval = Nodes.AddNumberPatch(yyv[yysp-0], yyv[yysp-1]); //this is what supposedly happens in A3
          
        break;
 							case   84 : 
@@ -603,7 +592,8 @@ namespace WDL2CS
          
        break;
 							case   85 : 
-         yyval = yyv[yysp-0];
+         //Skills need their Val property in expressions
+         yyval = Util.UpdateSkill(yyv[yysp-0]);
          
        break;
 							case   86 : 
@@ -667,6 +657,7 @@ namespace WDL2CS
          
        break;
 							case  101 : 
+         //required in order to support invalid rule with missing assignee
          yyval = Actions.CreateExpression(yyv[yysp-0]);
          
        break;
@@ -723,11 +714,11 @@ namespace WDL2CS
          
        break;
 							case  115 : 
-         yyval = NodeFormatter.FormatKeywordProperty(yyv[yysp-2], yyv[yysp-0]);
+         yyval = Nodes.AddKeywordProperty(yyv[yysp-2], yyv[yysp-0]);
          
        break;
 							case  116 : 
-         yyval = NodeFormatter.FormatKeyword(yyv[yysp-0]);
+         yyval = Nodes.AddKeyword(yyv[yysp-0]);
          
        break;
 							case  117 : 
@@ -747,35 +738,35 @@ namespace WDL2CS
          
        break;
 							case  121 : 
-         yyval = NodeFormatter.FormatNumber(yyv[yysp-0]);
+         yyval = yyv[yysp-0];
          
        break;
 							case  122 : 
-         yyval = NodeFormatter.FormatNumber(yyv[yysp-0]);
+         yyval = yyv[yysp-0];
          
        break;
 							case  123 : 
-         yyval = NodeFormatter.FormatNumber(yyv[yysp-0]);
+         yyval = Nodes.AddNumber(yyv[yysp-0]);
          
        break;
 							case  124 : 
-         yyval = NodeFormatter.FormatNumber(yyv[yysp-0]);
+         yyval = Nodes.AddNumber(yyv[yysp-0]);
          
        break;
 							case  125 : 
-         yyval = new Node(yyv[yysp-1], yyv[yysp-0]);
+         yyval = Nodes.AddNumber(yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case  126 : 
-         yyval = yyv[yysp-0];
+         yyval = Nodes.AddNumber(yyv[yysp-0]);
          
        break;
 							case  127 : 
-         yyval = new Node(yyv[yysp-1], yyv[yysp-0]);
+         yyval = Nodes.AddNumber(yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case  128 : 
-         yyval = yyv[yysp-0];
+         yyval = Nodes.AddNumber(yyv[yysp-0]);
          
        break;
 							case  129 : 
@@ -783,7 +774,7 @@ namespace WDL2CS
          
        break;
 							case  130 : 
-         yyval = NodeFormatter.FormatList(yyv[yysp-0]);
+         yyval = Nodes.AddList(yyv[yysp-0]);
          
        break;
 							case  131 : 
@@ -815,7 +806,7 @@ namespace WDL2CS
          
        break;
 							case  138 : 
-         yyval = NodeFormatter.FormatNull();
+         yyval = Nodes.AddNull();
          
        break;
 							case  139 : 
@@ -839,11 +830,13 @@ namespace WDL2CS
          
        break;
 							case  144 : 
-         yyval = new Node(yyv[yysp-2], yyv[yysp-0]);
+         //workaround for identifiers like "identifier-name" / "identifier-123"
+         yyval = Nodes.AddIdentifierPatch(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case  145 : 
-         yyval = new Node(yyv[yysp-2], yyv[yysp-0]);
+         //workaround for identifiers like "identifier-name" / "identifier-123"
+         yyval = Nodes.AddIdentifierPatch(yyv[yysp-2], yyv[yysp-1], yyv[yysp-0]);
          
        break;
 							case  146 : 
@@ -871,11 +864,11 @@ namespace WDL2CS
          
        break;
 							case  152 : 
-         yyval = NodeFormatter.FormatFile(yyv[yysp-0]);
+         yyval = Nodes.AddFile(yyv[yysp-0]);
          
        break;
 							case  153 : 
-         yyval = NodeFormatter.FormatString(yyv[yysp-0]);
+         yyval = Nodes.AddString(yyv[yysp-0]);
          
        break;
                default: return;
@@ -3867,7 +3860,6 @@ namespace WDL2CS
         }
 
         int yylexpos = -1;
-        //string yylval = "";
         Node yylval = new Node();
 
         public int yylex()
@@ -3875,13 +3867,11 @@ namespace WDL2CS
             yylexpos++;
             if (yylexpos >= TokenList.Count)
             {
-                //yylval = "";
                 yylval = new Node();
                 return 0;
             }
             else
             {
-                //yylval = ((AToken)TokenList[yylexpos]).val;
                 yylval = new Node(((AToken)TokenList[yylexpos]).val);
                 return ((AToken)TokenList[yylexpos]).token;
             }
@@ -3978,6 +3968,8 @@ namespace WDL2CS
 
             Console.WriteLine("(I) PARSER parsing finished in " + watch.Elapsed);
             watch.Stop();
+
+            foreach (var t in transformers) t.Execute();
             return true;
 
             abort:
@@ -4010,9 +4002,9 @@ namespace WDL2CS
                     return true;
                 }
             }
-            System.Console.WriteLine(Input);
-            System.Console.WriteLine();
-            System.Console.WriteLine("No matching token found near: " + Input.Substring(pos));
+            Console.WriteLine(Input);
+            Console.WriteLine();
+            Console.WriteLine("No matching token found near: " + Input.Substring(pos));
             return false;
         }
         public AToken FindTokenOpt(string Rest, int startpos)

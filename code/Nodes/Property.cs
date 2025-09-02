@@ -9,15 +9,16 @@ namespace WDL2CS
     //since this makes any linking obsolete, this class is not requried to inherit from Node
     class Property
     {
-        private static readonly string s_nl = Environment.NewLine;
+        private static PropertyTransformer s_transformer = null;
 
-        private string m_name;
+        private Node m_name;
         private bool m_allowMerge;
         private bool m_allowMultiple;
-        private List<string> m_values;
+        private List<Node> m_values;
 
-        public string Name { get => m_name; }//set { m_name = value; SetFlags(); } }
-        public List<string> Values { get => m_values; set => m_values = value; }
+        public static /*new*/ PropertyTransformer Transformer { get => s_transformer; set => s_transformer = value; }
+        public string Name { get => m_name.Data; }
+        public List<Node> Values { get => m_values; set => m_values = value; }
         public bool AllowMerge { get => m_allowMerge; }
         public bool AllowMultiple { get => m_allowMultiple; }
 
@@ -25,192 +26,116 @@ namespace WDL2CS
         {
             m_allowMerge = false;
             m_allowMultiple = false;
-            m_name = string.Empty;
-            m_values = new List<string>();
+            m_name = new Node();
+            m_values = new List<Node>();
         }
 
-        public Property(string property, List<string> values) : this()
+        public Property(Node property, List<Node> values) : this()
         {
             m_name = property;
-            SetFlags();
             if (values != null)
                 m_values.AddRange(values);
+            //must be called after property values have been added!
+            SetTypes();
+            SetFlags();
         }
 
-        public string Format(string obj)
+        public void Transform(object obj, Node owner)
         {
-            string p = string.Empty;
-            //Name formatting is done in advance in SetFlags()
-            //m_name = Formatter.FormatReserved(m_name);
+            s_transformer?.Transform(obj, m_name, m_values, owner);
+        }
+
+        private void SetTypes()
+        {
+            string sname = m_name.Data.ToLower(); //TEMP
+
             try
             {
                 //TODO: add List length checks for explicite array access
-                //TODO: add prefix patch for integer asset IDs for all asset types
-                switch (m_name)
+                //TODO: add prefix patch for integer asset IDs for all asset types (really needed?)
+                switch (sname)
                 {
-                    case "Default":
-                        //Skill only: rename "Default" property to "Val" (undocumented)
-                        if (obj.Equals("Skill"))
-                            m_name = "Val";
-                        goto default;
-
-                    case "Type":
-                        p = m_name + " = " + Formatter.FormatSkillType(m_values[0]);
-                        break;
-
-                    case "Skill1":
-                    case "Skill2":
-                    case "Skill3":
-                    case "Skill4":
-                    case "Skill5":
-                    case "Skill6":
-                    case "Skill7":
-                    case "Skill8":
-                        p = m_name + " = new Skill(" + m_values[0] + ")";
+                    case "type":
+                        m_values[0].NodeType = NodeType.SkillType;
                         break;
 
                     //collect all panel control definitions for generation of multi-dimensional array
-                    case "Digits":
-                    case "Hbar":
-                    case "Vbar":
-                        p = "new " + m_name + "(" + m_values[0] + ", " + m_values[1] + ", " + m_values[2] + ", " + m_values[3] + ", " + m_values[4] + ", () => { return " + m_values[5] + "; } )";
+                    case "digits":
+                    case "hbar":
+                    case "vbar":
+                        m_values[5] = Util.UpdateSkill(m_values[5]);
                         break;
 
-                    case "Hslider":
-                    case "Vslider":
-                        p = "new " + m_name + "(" + m_values[0] + ", " + m_values[1] + ", " + m_values[2] + ", " + m_values[3] + ", () => { return " + m_values[4] + "; } )";
+                    case "hslider":
+                    case "vslider":
+                        m_values[4] = Util.UpdateSkill(m_values[4]);
                         break;
 
-                    case "Picture":
-                        p = "new " + m_name + "(" + m_values[0] + ", " + m_values[1] + ", " + m_values[2] + ", () => { return " + m_values[3] + "; } )";
+                    case "picture":
+                        m_values[3] = Util.UpdateSkill(m_values[3]);
                         break;
 
-                    case "Window":
-                        p = "new " + m_name + "(" + m_values[0] + ", " + m_values[1] + ", " + m_values[2] + ", " + m_values[3] + ", " + m_values[4] + ", () => { return " + m_values[5] + "; }, () => { return " + m_values[6] + "; } )";
+                    case "window":
+                        m_values[5] = Util.UpdateSkill(m_values[5]);
+                        m_values[6] = Util.UpdateSkill(m_values[6]);
                         break;
 
-                    case "Button":
-                        p = "new " + m_name + "(" + m_values[0] + ", " + m_values[1] + ", " + m_values[2] + ", " + m_values[3] + ", " + m_values[4] + ", " + m_values[5] + ")";
+                    case "flags":
+                        m_values.ForEach(x => x.NodeType = NodeType.Flag);
                         break;
 
-                    case "Flags":
-                        p = m_name + " = " + string.Join(" | ", m_values.Select(x => Formatter.FormatFlag(x)));
-                        break;
-
-                    case "Range":
-                        //collect all range definitions for generation of multi-dimensional array
-                        p = "{" + string.Join(", ", m_values) + "}";
-                        break;
-
-                    case "Bmap":
-                    case "Bmaps":
+                    case "bmap":
+                    case "bmaps":
                         //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                        p = "Bmaps = new Bmap[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatIdentifier(x))) + " }";
+                        m_values.ForEach(x => x.NodeType = (x.NodeType != NodeType.Null) ? NodeType.Identifier : NodeType.Null);
                         break;
 
-                    case "Ovlys":
+                    case "ovlys":
                         //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                        p = "Ovlys = new Ovly[] { " + string.Join(", ", m_values.Select(x => Formatter.FormatIdentifier(x))) + " }";
+                        m_values.ForEach(x => x.NodeType = (x.NodeType != NodeType.Null) ? NodeType.Identifier : NodeType.Null);
                         break;
 
-                    case "Offset_x":
-                    case "Offset_y":
-                        //for Wall only these properties are one-dimensional
-                        if (!obj.Equals("Wall"))
-                        {
-                            p = m_name + " = " + "new Var[] { " + string.Join(", ", m_values) + " }";
-                        }
-                        else
-                        {
-                            goto default;
-                        }
-                        break;
-
-                    case "String":
-                        //fix name ambiguity for Text objects
-                        if (obj.Equals("Text"))
-                        {
-                            p = "String_array = new string[] { " + string.Join(", ", m_values) + " }";
-                        }
-                        else
-                        {
-                            goto default;
-                        }
-                        break;
-
-                    //these properties always require array instantiation
-                    case "Mirror":
-                    case "Delay":
-                    case "Scycles":
-                        p = m_name + " = " + "new Var[] { " + string.Join(", ", m_values) + " }";
-                        break;
-
-                    case "Scale_xy":
-                        p = m_name + " = " + "new Var[] { " + string.Join(", ", m_values) + " }";
-                        break;
-
-                    case "Target":
-                        {
-                            p = m_name + " = " + Formatter.FormatActorTarget(m_values[0]);
-                        }
+                    case "target":
+                        m_values[0] = Util.UpdateActorTarget(m_values[0]);
                         break;
 
                     default:
-                        if (m_values.Count > 1)
-                            p = m_name + " = " + "new [] { " + string.Join(", ", m_values) + " }";
-                        else
-                            p = m_name + " = " + m_values[0];
                         break;
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("(E) PROPERTY: " + e);
+                Console.WriteLine("(E) PROPERTY SetTypes: " + e);
             }
-            return p;
-        }
-
-        public List<string> FormatList()
-        {
-
-            switch (m_name)
-            {
-                case "Bmaps":
-                case "Ovlys":
-                    //PATCH: Asset ID can be integer numbers in WDL, make sure to prefix these 
-                    return m_values.Select(x => Formatter.FormatIdentifier(x)).ToList();
-
-                default:
-                    return m_values;
-            }
-
         }
 
         private void SetFlags()
         {
-            m_name = Formatter.FormatReserved(m_name);
-            switch (m_name)
+            string sname = m_name.Data.ToLower();
+
+            switch (sname)
             {
                 //Apply patch for undocumented WDL syntax
-                case "Bmap":
-                    m_name = "Bmaps";
+                case "bmap":
+                    Console.WriteLine("(W) PROPERTY patched invalid identifier " + m_name.Data);
+                    m_name = new Node("bmaps", m_name.NodeType);
                     break;
 
                 //All definitions must be merged into single one
-                case "Flags":
+                case "flags":
                     m_allowMerge = true;
                     break;
 
                 //Multiple definitions per object allowed
-                case "Digits":
-                case "Hbar":
-                case "Vbar":
-                case "Hslider":
-                case "Vslider":
-                case "Picture":
-                case "Window":
-                case "Button":
-                case "Range":
+                case "digits":
+                case "hbar":
+                case "vbar":
+                case "hslider":
+                case "vslider":
+                case "picture":
+                case "window":
+                case "button":
+                case "range":
                     m_allowMultiple = true;
                     break;
 

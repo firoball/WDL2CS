@@ -8,23 +8,23 @@ namespace WDL2CS
 {
     class Objects
     {
-        private static List<string> s_values = new List<string>();
+        private static List<Node> s_values = new List<Node>();
         private static List<Property> s_properties = new List<Property>();
 
         public static Node AddStringObject(Node type, Node name, Node text)
         {
-            string stype = type.ToString();
-            string sname = name.ToString();
+            string stype = type.Data;
+            string sname = name.Data;
             Registry.Register(stype, sname);
-            Node o = new Object(stype, sname, false, text.ToString());
+            Node o = new Object(type, name, false, text);
 
             return o;
         }
 
         public static Node AddObject(Node type, Node name)
         {
-            string stype = type.ToString();
-            string sname = name.ToString();
+            string stype = type.Data;
+            string sname = name.Data;
             bool initialize = false;
             //Exclude predefined skills
             if (!(stype.Equals("skill", StringComparison.OrdinalIgnoreCase) && Identifier.IsSkill(ref sname)))
@@ -32,7 +32,7 @@ namespace WDL2CS
             else
                 initialize = true; //make sure predefined skills are moved to init section 
 
-            Node o = new Object(stype, sname, initialize, s_properties);
+            Node o = new Object(type, name, initialize, s_properties);
             //Clean up
             s_properties.Clear();
 
@@ -41,15 +41,17 @@ namespace WDL2CS
 
         public static Node CreateProperty(Node property)
         {
-            string sproperty = property.ToString();
+            string sproperty = property.Data;
+            property.NodeType = NodeType.Reserved;
+
             if (Identifier.IsProperty(ref sproperty) || Identifier.IsFlag(ref sproperty))
             {
-                Property prop = new Property(sproperty, s_values);
+                Property prop = new Property(property, s_values);
                 s_properties.Add(prop);
             }
             else
             {
-                Console.WriteLine("(W) OBJECTS discarded invalid property: " + property);
+                Console.WriteLine("(W) OBJECTS discarded invalid property: " + sproperty);
             }
             //Clean up
             s_values.Clear();
@@ -59,7 +61,7 @@ namespace WDL2CS
 
         public static Node AddPropertyValue(Node value)
         {
-            s_values.Insert(0, value.ToString());
+            s_values.Insert(0, value);
             return null;
         }
 

@@ -2,25 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace WDL2CS
 {
     class Node
     {
+        private static NodeTransformer s_transformer = null;
         private readonly string m_data;
+        private NodeType m_nodeType;
         private readonly List<Node> m_children;
 
-        protected List<Node> Children => m_children;
+        public static NodeTransformer Transformer { get => s_transformer; set => s_transformer = value; }
+        public string Data => m_data;
+        public NodeType NodeType { get => m_nodeType; set => m_nodeType = value; }
+        public /*protected*/ List<Node> Children => m_children;
+
 
         public Node() : this(string.Empty) {}
 
-        public Node (string data)
+        public Node(string data) : this(data, NodeType.Default) { }
+
+        public Node(string data, NodeType nodeType)
         {
             m_data = data;
+            m_nodeType = nodeType;
         }
 
         public Node(Node child)
         {
+            m_nodeType = NodeType.Container;
             m_children = new List<Node>();
             if (child != null)
                 m_children.Add(child);
@@ -40,7 +51,13 @@ namespace WDL2CS
 
         public Node (IEnumerable<Node> children)
         {
+            m_nodeType = NodeType.Container;
             m_children = new List<Node>(children.Where(x => x != null));
+        }
+
+        private string Transform()
+        {
+            return s_transformer?.Transform(m_data, m_nodeType) ?? m_data;
         }
 
         private void Concat(StringBuilder sb)
@@ -52,7 +69,7 @@ namespace WDL2CS
             }
             else
             {
-                sb.Append(m_data);
+                sb.Append(Transform());
             }
 
         }
@@ -63,12 +80,11 @@ namespace WDL2CS
             {
                 StringBuilder sb = new StringBuilder();
                 Concat(sb);
-                //Console.WriteLine("Node2string: " + sb);
                 return sb.ToString();
             }
             else
             {
-                return m_data;
+                return Transform();
             }
         }
 

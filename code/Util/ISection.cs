@@ -16,8 +16,8 @@ namespace WDL2CS
         {
             get;
         }
-        void Format(StringBuilder sb, bool skipProperties);
-        void ToList(PropertyList list);
+
+        void Transform(object obj);
         bool IsInitialized();
     }
 }

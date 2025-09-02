@@ -52,25 +52,46 @@
     <Compile Include="Program.cs" />
     <Compile Include="Static\Actions.cs" />
     <Compile Include="Static\Assets.cs" />
-    <Compile Include="Static\Formatter.cs" />
     <Compile Include="Static\Globals.cs" />
     <Compile Include="Static\Identifier.cs" />
-    <Compile Include="Static\PropertyList.cs" />
-    <Compile Include="Static\NodeFormatter.cs" />
-    <Compile Include="Static\Script.cs" />
+    <Compile Include="Util\PropertyList.cs" />
+    <Compile Include="Static\Nodes.cs" />
+    <Compile Include="Transformer.cs" />
+    <Compile Include="Transformers\ListTransformer.cs" />
+    <Compile Include="Transformers\CS\CSActionTransformer.cs" />
+    <Compile Include="Transformers\CS\CSInstructionTransformer.cs" />
+    <Compile Include="Transformers\CS\CSAssetTransformer.cs" />
+    <Compile Include="Transformers\CS\CSGlobalTransformer.cs" />
+    <Compile Include="Transformers\CS\CSNodeTransformer.cs" />
+    <Compile Include="Transformers\CS\CSObjectTransformer.cs" />
+    <Compile Include="Transformers\CS\CSPropertyTransformer.cs" />
+    <Compile Include="Transformers\CSTransformer.cs" />
+    <Compile Include="Transformers\base\ActionTransformer.cs" />
+    <Compile Include="Transformers\base\InstructionTransformer.cs" />
+    <Compile Include="Transformers\base\PropertyTransformer.cs" />
+    <Compile Include="Transformers\base\ObjectTransformer.cs" />
+    <Compile Include="Transformers\base\AssetTransformer.cs" />
+    <Compile Include="Transformers\base\GlobalTransformer.cs" />
+    <Compile Include="Transformers\List\ListObjectTransformer.cs" />
+    <Compile Include="Transformers\List\ListPropertyTransformer.cs" />
+    <Compile Include="Transformers\List\ListAssetTransformer.cs" />
+    <Compile Include="Transformers\List\ListNodeTransformer.cs" />
     <Compile Include="Util\Identifier.cs" />
     <Compile Include="Util\ISection.cs" />
-    <Compile Include="Util\Node.cs" />
-    <Compile Include="Util\ObjectData.cs" />
+    <Compile Include="Nodes\Node.cs" />
+    <Compile Include="Transformers\base\NodeTransformer.cs" />
+    <Compile Include="Util\NodeType.cs" />
     <Compile Include="Static\Objects.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Util\Preprocessor.cs" />
     <Compile Include="Static\Sections.cs" />
     <Compile Include="Util\Registry.cs" />
+    <Compile Include="Util\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

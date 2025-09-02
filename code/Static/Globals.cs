@@ -7,12 +7,11 @@ namespace WDL2CS
 {
     class Globals
     {
-        static List<string> s_eventPars = new List<string>();
+        static List<Node> s_eventPars = new List<Node>();
 
         public static Node AddGlobal(Node name)
         {
-            string sname = name.ToString();
-            Node g = new Global(sname, s_eventPars);
+            Node g = new Global(name, s_eventPars);
 
             //Clean up
             s_eventPars.Clear();
@@ -24,20 +23,22 @@ namespace WDL2CS
         {
             string sname = name.ToString();
             string sparameter = parameter.ToString();
-            Node g = new Node();
+            Node g;
             //ignore Bind and Path statements
-            switch (sname)
+            switch (name.Data.ToLower())
             {
-                case "Globals.Bind":
-                    Console.WriteLine("(I) GLOBALS ignore BIND definition: " + sparameter);
+                case "bind":
+                    g = new Node();
+                    Console.WriteLine("(I) GLOBALS ignore BIND definition: " + parameter.Data);
                     break;
 
-                case "Globals.Path":
-                    Console.WriteLine("(I) GLOBALS ignore PATH definition: " + sparameter);
+                case "path":
+                    g = new Node();
+                    Console.WriteLine("(I) GLOBALS ignore PATH definition: " + parameter.Data);
                     break;
 
                 default:
-                    g = new Global(sname, sparameter);
+                    g = new Global(name, parameter);
                     break;
             }
             return g;
@@ -45,10 +46,11 @@ namespace WDL2CS
 
         public static Node AddParameter(Node parameter)
         {
-            string sparameter = parameter.ToString();
-            sparameter = Formatter.FormatIdentifier(sparameter); //Events always take action references as parameter TODO: should this be here or outside?
-
-            s_eventPars.Insert(0, sparameter);
+            //due to grammar shift/reduce issues single parameters of Events are treated as single-item list
+            //NodeType for Event parameters is always Identifier, therefore set it as default here
+            if (parameter.NodeType != NodeType.Null)
+                parameter.NodeType = NodeType.Identifier;
+            s_eventPars.Insert(0, parameter);
             return null;
         }
     }
