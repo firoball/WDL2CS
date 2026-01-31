@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace WDL2CS
@@ -11,6 +12,7 @@ namespace WDL2CS
         static bool excludeProperties = false;
         static bool generatePropertyList = false;
         static bool showHelp = false;
+        static bool sortSections = false;
 
         static string inputFilename = "";
         static string outputFilename = "";
@@ -62,6 +64,10 @@ namespace WDL2CS
                     case "-p":
                         generatePropertyList = true;
                         excludeProperties = true;
+                        break;
+
+                    case "-s":
+                        sortSections = true;
                         break;
 
                     case "-f":
@@ -128,7 +134,7 @@ namespace WDL2CS
 
             if (generatePropertyList)
             {
-                transformers.Add(new ListTransformer());
+                transformers.Add(new ListTransformer(sortSections));
                 Console.WriteLine("Selected format: Property List");
             }
         }
@@ -168,7 +174,7 @@ namespace WDL2CS
              *  Object/Asset type
              *      Object/Asset name
              *          Object/Asset property ID
-             *              property values (multiple sets)
+             *              property value/type pairs (multiple sets)
              */
             foreach (var objects in transformer.List)
             {
@@ -181,7 +187,8 @@ namespace WDL2CS
                         Console.WriteLine("\t\t[" + property.Key + "]");
                         foreach (var values in property.Value)
                         {
-                            Console.WriteLine("\t\t\t" + string.Join(" ", values));
+                            var resolvedValues = values.Select(x => x.Item1 + " (" + x.Item2 + ")").ToList();
+                            Console.WriteLine("\t\t\t" + string.Join(" ", resolvedValues));
                         }
                     }
                 }

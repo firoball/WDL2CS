@@ -16,9 +16,10 @@ namespace WDL2CS.Transformers.List
             string sfile = file.ToString();
 
             var item = list.AddItem(stype, sname);
-            list.AddProperty(item, "File", sfile);
+            list.AddProperty(item, "File", new Tuple<string, string>(sfile, file.NodeType.ToString()));
             if (parameters != null && parameters.Count > 0)
-            list.AddProperty(item, "Parameters", parameters.Select(x => x.ToString()).ToList());
+//            list.AddProperty(item, "Parameters", parameters.Select(x => x.ToString()).ToList());
+            list.AddProperty(item, "Parameters", parameters.Select(x => new Tuple<string, string>(x.ToString(), x.NodeType.ToString())).ToList());
         }
     }
 }

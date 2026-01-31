@@ -48,5 +48,22 @@ namespace WDL2CS
                 s_sections.Add(section);
             }
         }
+
+        private static string[] s_sectionTypes = {
+            "bmap", "flic", "model", "music", "sound", "ovly", //Assets
+            "overlay", "panel", "palette", "region", "skill", "string", "synonym", "texture", "text", "view", "wall", "way", //Objects
+            "action" //Actions
+        };
+
+        public static List<ISection>[] GetSortedSections()
+        {
+            List<ISection>[] sections = new List<ISection>[s_sectionTypes.Length];
+            for (int i = 0; i < s_sectionTypes.Length; i++)
+            {
+                sections[i] = s_sections.Where(x => x.Type.ToLower().Equals(s_sectionTypes[i])).OrderBy(y => y.Name).ToList();
+            }
+            return sections;
+        }
+
     }
 }
