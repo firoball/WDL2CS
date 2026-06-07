@@ -61,11 +61,60 @@ The transpiler turned out to be very slow, which was a major roadblock. It showe
 In case further changes to `code\parser.cs` are required, the updated template file `vcc\yacc.ctpl` has to be modified accordingly and afterwards copied to same folder as `vcc.exe` (admin rights required).
 Using this method, manual patching to `parser.cs` after compiling the transpiler core can be kept to the unavoidable minimum.
 
-#### Compile transpiler
+## Build Commands
 
-* Open `code\WDL2CS Transpiler.sln` in **Visual Studio** and build project.
+With migration to .NET Standard 2.1 and .NET 10.0 for multi platform support, 
+explicit Visual Studio support has been dropped.
+Only a .csproj file is delivered - which in turn can also be openend by Visual Studio. 
 
-#### Run transpiler
+### Build Executable
+.Net 10.0 (or future compatible) will be used for building.
+
+#### Debug
+`dotnet build [-c debug]`
+
+Output: `bin/debug/`
+Used for development
+
+#### Release
+`dotnet build -c release`
+
+Output: `bin/release/`
+Used for building release binary
+
+#### Publish
+`dotnet publish -c release`
+
+Output: `bin/release/publish/` 
+
+Used for publishing release binary with all dependencies
+
+### Build DLL
+.Net Standard2.1 will be used for building.
+
+#### Debug
+`dotnet build [-c debugdll]`
+
+Output: `bin/debugdll/`
+
+Used for development
+
+#### Release
+`dotnet build -c releasedll`
+
+Output: `bin/releasedll/`
+
+Used for building release binary
+
+#### Publish
+`dotnet publish -c releasedll`
+
+Output: `bin/releasedll/publish/`
+
+Used for publishing release binary with all dependencies
+
+
+## Run transpiler
 
 * Run `wdl2cs <file>` or `wdl2cs -t <file>` (for listing all identified tokens) from command line.
 * An example for parsing through all files in a specific folder is provided: `test\test.bat`
