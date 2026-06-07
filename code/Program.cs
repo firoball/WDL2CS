@@ -41,7 +41,9 @@ namespace WDL2CS
                     ProcessOutput();
                 }
             }
-            return result;
+            
+            //negative return code is used internally only
+            return Math.Max(0, result);
         }
 
         static int ProcessInput(string[] args)
@@ -95,9 +97,11 @@ namespace WDL2CS
                 Console.WriteLine($"Options:");
                 Console.WriteLine($"-h, --help   Show help");
                 Console.WriteLine($"-f <format>  Enable specific output file format. Default: 'cs'. Available formats: {string.Join(", ", availableFormats)}");
-                Console.WriteLine($"-p           Generate a list of properties (and remove from output file");
+                Console.WriteLine($"-p           Generate a list of properties (and remove from output file)");
                 Console.WriteLine($"-t           List parsed tokens (for debugging purposes)");
-                return 0;
+
+                //negative return code: program was aborted early without error
+                return -1;
             }
 
             if (inputFilename == "")
