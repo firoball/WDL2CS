@@ -1,6 +1,7 @@
 /code/wdl
 /code/obj
 /code/bak
+/code/.idea
 .vs
 *.bak
 /code/bin

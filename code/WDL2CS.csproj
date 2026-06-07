@@ -1,99 +1,53 @@
-﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{D128E7C3-C81F-44EF-B7BD-A30CD240DB61}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>wdl2cs</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
+    <OutputType>EXE</OutputType>
+    <Platforms>x64</Platforms>
+    <TargetFrameworks>netstandard2.1;net10.0</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Version>1.0.0</Version>
+    <RootNamespace>WDL2CS</RootNamespace>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <TargetFramework>net10.0</TargetFramework>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin/debug/</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <TargetFramework>net10.0</TargetFramework>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin/release/</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'DebugDLL' ">
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin/debugdll/</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'ReleaseDLL' ">
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin/releasedll/</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>WDL2CS</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Nodes\Action.cs" />
-    <Compile Include="Nodes\Asset.cs" />
-    <Compile Include="Nodes\Global.cs" />
-    <Compile Include="Nodes\Instruction.cs" />
-    <Compile Include="Nodes\Object.cs" />
-    <Compile Include="Nodes\Property.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Static\Actions.cs" />
-    <Compile Include="Static\Assets.cs" />
-    <Compile Include="Static\Globals.cs" />
-    <Compile Include="Static\Identifier.cs" />
-    <Compile Include="Util\PropertyList.cs" />
-    <Compile Include="Static\Nodes.cs" />
-    <Compile Include="Transformer.cs" />
-    <Compile Include="Transformers\ListTransformer.cs" />
-    <Compile Include="Transformers\CS\CSActionTransformer.cs" />
-    <Compile Include="Transformers\CS\CSInstructionTransformer.cs" />
-    <Compile Include="Transformers\CS\CSAssetTransformer.cs" />
-    <Compile Include="Transformers\CS\CSGlobalTransformer.cs" />
-    <Compile Include="Transformers\CS\CSNodeTransformer.cs" />
-    <Compile Include="Transformers\CS\CSObjectTransformer.cs" />
-    <Compile Include="Transformers\CS\CSPropertyTransformer.cs" />
-    <Compile Include="Transformers\CSTransformer.cs" />
-    <Compile Include="Transformers\base\ActionTransformer.cs" />
-    <Compile Include="Transformers\base\InstructionTransformer.cs" />
-    <Compile Include="Transformers\base\PropertyTransformer.cs" />
-    <Compile Include="Transformers\base\ObjectTransformer.cs" />
-    <Compile Include="Transformers\base\AssetTransformer.cs" />
-    <Compile Include="Transformers\base\GlobalTransformer.cs" />
-    <Compile Include="Transformers\List\ListObjectTransformer.cs" />
-    <Compile Include="Transformers\List\ListPropertyTransformer.cs" />
-    <Compile Include="Transformers\List\ListAssetTransformer.cs" />
-    <Compile Include="Transformers\List\ListNodeTransformer.cs" />
-    <Compile Include="Util\Identifier.cs" />
-    <Compile Include="Util\ISection.cs" />
-    <Compile Include="Nodes\Node.cs" />
-    <Compile Include="Transformers\base\NodeTransformer.cs" />
-    <Compile Include="Util\NodeType.cs" />
-    <Compile Include="Static\Objects.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="Util\Preprocessor.cs" />
-    <Compile Include="Static\Sections.cs" />
-    <Compile Include="Util\Registry.cs" />
-    <Compile Include="Util\Util.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
-  <ProjectExtensions>
-    <VisualStudio AllowExistingFolder="true" />
-  </ProjectExtensions>
 </Project>
